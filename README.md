@@ -11,5 +11,5 @@
     关联式容器：Container_Map,Container_Set.
 
 #### 迭代器
-    反向迭代器(Reverse iterator),前向迭代器(Forward iterator),双向迭代器(Bidirectional iterator),随机迭代器(Random access iterator).
+    input_iterator,forward_iterator,bidirectional_iterator,random_access_iterator.
 
