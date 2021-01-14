@@ -26,3 +26,4 @@
     对Rb_Tree的内存非法操作进行了修改,为关联式容器新增了"比较准则"(Compare):通过类模板和function obj来实现.
     新增了Set和Multiset两个关联式容器.
     新增了pair类型.
+    对list容器调用析构函数的内存错误进行了修复.
