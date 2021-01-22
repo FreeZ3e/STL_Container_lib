@@ -31,3 +31,8 @@
 #### 2021/1/15:
     新增了Map和Multimap两个关联式容器.
     在pair类型中新增了makr_pair函数(该函数返回一个pair类型的对象).
+
+#### 2021/1/22(1st edition):
+    新增了以hash_table为底层的无序容器:Unordered_Set,Unordered_Multiset,Unordered_Map,Unordered_Multimap.
+    新增了hash_table的迭代器.
+    无序容器中部分方法还未实现(rehash等).
