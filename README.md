@@ -16,7 +16,7 @@ STL中容器和迭代器的简单实现
 &emsp;input_iterator,forward_iterator,bidirectional_iterator,random_access_iterator.
 
 ### 2020/11/8:
-1. 目前迭代器只能通过使用**range-base(C++11)**的for循环来访问.
+1. 目前迭代器只能通过使用range-base(C++11)的for循环来访问.
 2. Container_Deque的内存模型通过一个指针来实现,并不和STL中的实现一致.
 
 ### 2021/1/10:
