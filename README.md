@@ -8,12 +8,17 @@ STL中容器和迭代器的简单实现
 ### 容器
 1. 序列式容器：Container_Array,Container_Vector,Container_Deque,Container_List.
     
-2. 关联式容器：Container_Map,Container_Set.
+2. 关联式容器：Container_Map,Container_Set,Container_Multimap,Container_Multiset.
 
-3. 其他容器:RB_Tree.
+3. 无序容器: Container_Unordered_Map,Container_Unordered_Set,Container_Unordered_Multimap,Container_Unordered_Multiset.
+
+4. 其他容器: RB_Tree,hash_table.
+
+5. 其他:pair
 
 ### 迭代器
 &emsp;input_iterator,forward_iterator,bidirectional_iterator,random_access_iterator.
+&emsp;list_iterator,RB_Tree_iterator,hash_table_iterator.
 
 ### 2020/11/8:
 1. 目前迭代器只能通过使用range-base(C++11)的for循环来访问.
