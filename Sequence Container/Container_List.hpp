@@ -376,7 +376,7 @@ class list
 
 		Ty operator[](int n) = delete;
 
-		bool operator==(const list<int , default_size>& obj)
+		bool operator==(const list<Ty , default_size>& obj)
 		{
 			if (elem_count != obj.elem_count)
 				return false;
@@ -393,12 +393,12 @@ class list
 			return true;
 		}
 
-		bool operator!=(const list<int , default_size>& obj)
+		bool operator!=(const list<Ty , default_size>& obj)
 		{
 			return !((*this) == obj);
 		}
 
-		bool operator>(const list<int , default_size>& obj)
+		bool operator>(const list<Ty , default_size>& obj)
 		{
 			if (list_size > obj.list_size)
 				return true;
@@ -406,7 +406,7 @@ class list
 			return false;
 		}
 
-		bool operator<(const list<int , default_size>& obj)
+		bool operator<(const list<Ty , default_size>& obj)
 		{
 			if (list_size < obj.list_size)
 				return true;
@@ -414,7 +414,7 @@ class list
 			return false;
 		}
 
-		bool operator>=(const list<int , default_size>& obj)
+		bool operator>=(const list<Ty , default_size>& obj)
 		{
 			if (list_size >= obj.list_size)
 				return true;
@@ -422,7 +422,7 @@ class list
 			return false;
 		}
 
-		bool operator<=(const list<int , default_size>& obj)
+		bool operator<=(const list<Ty , default_size>& obj)
 		{
 			if (list_size <= obj.list_size)
 				return true;
