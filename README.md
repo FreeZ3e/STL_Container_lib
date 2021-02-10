@@ -1,4 +1,4 @@
-# 类STL的容器库(**1.0.4-alpha**)
+# 类STL的容器库(**1.1.0-alpha**)
 
 ### 介绍
 STL中容器和迭代器的简单实现
@@ -69,3 +69,7 @@ STL中容器和迭代器的简单实现
 ## 2021/2/4(1.0.4-alpha)
 1. 对序列式容器及关联式容器新增了基于迭代器范围(range-of-iterator)的erase函数.
 2. 对list_iterator和基本迭代器(input,forward,bid,random)重载了==,>,<,>=,<=,操作符;新增了step_count计数符来对遍历操作进行计数,可通过**step**函数返回其值.
+
+## 2021/2/10(1.1.0-alpha)
+1. 为hash_table新增了const_iterator;并新增了多项操作函数及操作符重载.
+2. 对无序容器新增了多项操作函数及操作符重载;新增了返回const_iterator的cbegin,cend函数.
