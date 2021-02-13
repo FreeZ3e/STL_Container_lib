@@ -1,7 +1,7 @@
 # 类STL的容器库(**1.1.0-alpha**)
 
 ### 介绍
-STL中容器和迭代器的简单实现
+STL中容器和迭代器的简单实现,在使用前请阅读QuickStart以及各容器文件下的README.
 
 
 
@@ -12,12 +12,12 @@ STL中容器和迭代器的简单实现
 
 3. 无序容器: Container_Unordered_Map,Container_Unordered_Set,Container_Unordered_Multimap,Container_Unordered_Multiset.
 
-4. 其他容器: RB_Tree,hash_table.
+4. 底层容器: RB_Tree,hash_table.
 
 5. 其他:pair
 
-### 迭代器
-&emsp;input_iterator,forward_iterator,bidirectional_iterator,random_access_iterator. 
+### 迭代器(包含const与非const)
+&emsp;input_iterator,forward_iterator,bid_iterator,random_iterator. 
 
 &emsp;list_iterator,RB_Tree_iterator,hash_table_iterator.
 
