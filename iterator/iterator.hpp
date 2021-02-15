@@ -1,3 +1,20 @@
+/* iterator implementation
+ *
+ * Copyright(c) 2021 Mashiro -1262159823@qq.com
+ *
+ * This File is part of CONTAINER LIBRARY project.
+ *
+ * version : 1.1.0-alpha
+ *
+ * author : Mashiro
+ *
+ * File name : iterator.hpp -iterator part.
+ *
+ * This library is free software;you can redistribute is and/or modify it
+ * under the APACHE LICENSE 2.0 as published by the Free Software Foundation.
+ * ------------------------------------------------------------------------
+ */
+
 #pragma once
 
 //compare struct
