@@ -14,7 +14,9 @@ STL中容器和迭代器的简单实现,在使用前请阅读QuickStart以及各
 
 4. 底层容器: RB_Tree,hash_table.
 
-5. 其他:pair
+5. 其他容器: self_string.
+
+6. 其他:pair
 
 ### 迭代器(包含const与非const)
 &emsp;input_iterator,forward_iterator,bid_iterator,random_iterator. 
