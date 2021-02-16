@@ -74,6 +74,6 @@ STL中容器和迭代器的简单实现,在使用前请阅读QuickStart以及各
 1. 为hash_table新增了const_iterator;并新增了多项操作函数及操作符重载.
 2. 对无序容器新增了多项操作函数及操作符重载;新增了返回const_iterator的cbegin,cend函数.
 
-## 2021/2/11(1.1.1-alpha)
+## 2021/2/16(1.1.1-alpha)
 1. 对序列式容器中隐含的错误做出修改.
 2. 增加了对self_string(即将上传)的支持.
