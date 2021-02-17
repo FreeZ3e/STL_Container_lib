@@ -14,7 +14,7 @@ STL中容器和迭代器的简单实现,在使用前请阅读QuickStart以及各
 
 4. 底层容器: RB_Tree,hash_table.
 
-5. 其他容器: self_string.
+5. 其他容器: self_string,queue,stack.
 
 6. 其他:pair
 
@@ -79,3 +79,6 @@ STL中容器和迭代器的简单实现,在使用前请阅读QuickStart以及各
 ## 2021/2/16(1.1.1-alpha)
 1. 对序列式容器中隐含的错误做出修改.
 2. 增加了对self_string(即将上传)的支持.
+
+## 2021/2/17(1.1.1-alpha)
+1. 新增了以deque为底层的queue和stack容器.
