@@ -17,6 +17,9 @@
 
 //插入操作:
 //obj name.insert(elem)
+//obj name.push(elem)---------------------stack,queue
+//obj name.push_back(elem)----------------vector,list,deque
+//obj name.push_front(elem)---------------list,deque
 //obj.insert(0);
 
 //删除操作:
