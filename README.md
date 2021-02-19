@@ -16,12 +16,15 @@ STL中容器和迭代器的简单实现,在使用前请阅读QuickStart以及各
 
 5. 其他容器: self_string,queue,stack.
 
-6. 其他:pair
 
 ### 迭代器(包含const与非const)
 &emsp;input_iterator,forward_iterator,bid_iterator,random_iterator. 
 
 &emsp;list_iterator,RB_Tree_iterator,hash_table_iterator.
+
+### 其他
+1. pair类型
+2. type_traits
 
 ### 2020/11/8:
 1. 目前迭代器只能通过使用range-base(C++11)的for循环来访问.
@@ -80,5 +83,8 @@ STL中容器和迭代器的简单实现,在使用前请阅读QuickStart以及各
 1. 对序列式容器中隐含的错误做出修改.
 2. 增加了对self_string(即将上传)的支持.
 
-## 2021/2/17(1.1.1-alpha)
+## 2021/2/17
 1. 新增了以deque为底层的queue和stack容器.
+
+## 2021/2/19
+1. 新增了type_traits.
