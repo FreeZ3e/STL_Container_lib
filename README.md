@@ -24,7 +24,7 @@ STL中容器和迭代器的简单实现,在使用前请阅读QuickStart以及各
 
 ### 其他
 1. pair类型
-2. =type_traits=
+2. -type_traits-
 
 ### 2020/11/8:
 1. 目前迭代器只能通过使用range-base(C++11)的for循环来访问.
