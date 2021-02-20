@@ -1,8 +1,9 @@
 # 类STL的容器库(**1.1.1-alpha**)
 
 ### 介绍
-STL中容器和迭代器的简单实现,在使用前请阅读test下的QuickStart以及各容器文件下的README.
-更新日志见Log.md.
+1. 该容器库为STL中容器和迭代器的简单实现.
+2. 在使用前请阅读test下的QuickStart以及各容器文件下的README.
+3. 更新日志见Log.md.
 
 
 
