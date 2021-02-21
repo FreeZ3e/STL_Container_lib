@@ -323,6 +323,8 @@ class list
 			}
 
 			Head = CurPtr = nullptr;
+            alloc(list_size);
+
 			elem_count = 0;
 		}
 
