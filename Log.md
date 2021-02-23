@@ -63,3 +63,8 @@
 
 ## 2021/2/21
 1. 对list中clear函数未进行内存重分配的bug进行修复.
+
+## 2021/2/23
+1. 为deque与vector新增了empty函数.
+2. 为序列式容器新增了insert函数,该函数调用push_back函数.
+3. 新增算法库algorithm.
