@@ -27,3 +27,10 @@
 ### 其他
 1. pair类型
 2. **type_traits**
+3. **algorithm**
+
+
+### 最近更新:2021/2/23:
+1. 为deque和vector新增empty函数.
+2. 为序列式容器新增insert函数,该函数调用push_back完成插入操作.
+3. 新增算法库(algorithm).
