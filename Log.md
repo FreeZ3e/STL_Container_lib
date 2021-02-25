@@ -69,5 +69,5 @@
 2. 为序列式容器新增了insert函数,该函数调用push_back函数.
 3. 新增算法库algorithm.
 
-## 2021/2/26(1.1.2)-alpha
+## 2021/2/26(1.1.2-alpha)
 1. 修复了algorithm中sort算法的错误,并为传入对象的sort函数增加了"**比较准则(compare函数)**"模板.
