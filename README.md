@@ -31,4 +31,6 @@
 
 
 ### 最近更新:2021/2/26(1.1.2-alpha):
-1. 修复了algorithm中sort算法的错误,并为传入对象的sort函数增加了"**比较准则(compare函数)**"模板.
+1. 修复了algorithm中sort算法的错误,并为其增加了"**比较准则(compare函数)**"模板.
+2. 为迭代器添加了表示数据类型的TypeValue标签.
+3. 为List,RB_Tree,HashTable的节点类型添加了表示数据类型的TypeValue标签.
