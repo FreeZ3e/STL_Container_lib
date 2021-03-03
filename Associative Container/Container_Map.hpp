@@ -19,8 +19,8 @@
  * template<typename key,typename value>
  * class map
  * {
- *      //operator : RB_Tree_iterator
- *      //const_operator : const_RB_Tree_iterator
+ *      //iterator : RB_Tree_iterator
+ *      //const_iterator : const_RB_Tree_iterator
  *
  *      //compare : Unique_Compare
  *		//pair : pair<key,value>
