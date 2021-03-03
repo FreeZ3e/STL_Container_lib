@@ -19,8 +19,8 @@
  * template<typename key,typename value>
  * class Multimap
  * {
- *      //operator : RB_Tree_iterator
- *      //const_operator : const_RB_Tree_iterator
+ *      //iterator : RB_Tree_iterator
+ *      //const_iterator : const_RB_Tree_iterator
  *
  *      //compare : Equal_Compare
  *      //pair : pair<key,value>
