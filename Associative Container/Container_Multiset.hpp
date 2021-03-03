@@ -19,8 +19,8 @@
  * template<typename Ty>
  * class Multiset
  * {
- *      //operator : RB_Tree_iterator
- *      //const_operator : const_RB_Tree_iterator
+ *      //iterator : RB_Tree_iterator
+ *      //const_iterator : const_RB_Tree_iterator
  *
  *      //compare : Equal_Compare
  *
