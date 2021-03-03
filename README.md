@@ -30,6 +30,9 @@
 3. **algorithm**
 
 
-### 最近更新:2021/3/1
-1. 为list添加了传入元素的erase函数.
-2. 为algorithm新增了replace,unique函数;优化了sort对模板的依赖.
+## 最近更新 : 2021/3/3
+为algorithm新增了以下函数:
+1. mismatch : 返回第一个不相同的元素的迭代器位置
+2. copy : 将容器中的元素拷贝到另一个容器中(支持不同容器)
+3. adjacent_find : 找到并返回容器或范围中相同的元素值
+4. includes : 判断两个容器是否具有包含关系
