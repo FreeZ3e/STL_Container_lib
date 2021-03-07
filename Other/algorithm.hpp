@@ -790,8 +790,19 @@ namespace lib_algo
 
 	//for_each----------------------------------------------------------
 
-	template<typename t,typename func_t>
-	inline void for_each(t& obj ,func_t& function)
+	template<typename t>
+	inline void for_each(t& obj ,void(*function)(typename t::TypeValue))
+	{
+		auto p = obj.begin();
+
+		for (; p != obj.end(); ++p)
+		{
+			function(*p);
+		}
+	}
+
+	template<typename t>
+	inline void for_each(t& obj , typename t::TypeValue(*function)(typename t::TypeValue))
 	{
 		auto p = obj.begin();
 
@@ -801,12 +812,23 @@ namespace lib_algo
 		}
 	}
 
-	template<typename t,typename func_t>
-	inline void for_each(t p_begin , t p_end , func_t& function)
+	template<typename t>
+	inline void for_each(t p_begin , t p_end , void(*function)(typename t::TypeValue))
 	{
 		int step = p_end.step() - p_begin.step();
 
 		for (int n = 0; n < step; ++n,++p_begin)
+		{
+			function(*p_begin);
+		}
+	}
+
+	template<typename t>
+	inline void for_each(t p_begin , t p_end , typename t::TypeValue(*function)(typename t::TypeValue))
+	{
+		int step = p_end.step() - p_begin.step();
+
+		for (int n = 0; n < step; ++n , ++p_begin)
 		{
 			*p_begin = function(*p_begin);
 		}
