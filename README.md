@@ -30,8 +30,5 @@
 3. **algorithm**
 
 
-## 最近更新 : 2021/3/6:
-1. 对algorith中的sort算法进行了重写.
-2. 对各迭代器的递增操作符进行了修改.
-3. 为HashTable新增了rehash函数;该函数接受一个新的hash函数,并进行rehash操作.
-4. 对RB_Tree中的insert函数潜在的错误进行了修改.
+## 最近更新 :2021/3/7:
+1. 对algorithm中的for_each函数进行了修改.
