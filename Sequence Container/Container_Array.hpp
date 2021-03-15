@@ -85,17 +85,14 @@ class array
 		using const_iterator = const_Random_iterator<Ty>;
 
 	public:
-		array(const initializer_list<Ty>& list)
+		explicit array(const initializer_list<Ty>& list)
 		{
-			int count = 0;
-			for (auto p = list.begin(); p != list.end(); ++p)
+			for (auto p : list)
 			{
-				if (count < size)
+				if (elem_count < size)
 				{
-					arr[count] = (*p);
-					++count;
-
-					elem_count++;
+					arr[elem_count] = p;
+					++elem_count;
 				}
 				else
 					break;
@@ -111,18 +108,17 @@ class array
 			}
 		}
 
-		array(const array<Ty , size>& obj)
+		explicit array(const array<Ty , size>& obj)
 		{
-			for (int i = 0; i < size; ++i)
+			for (int i = 0; i < obj.elem_count; ++i)
 			{
-				Ty temp = obj.arr[i];
-				arr[i] = temp;
-
-				elem_count++;
+				arr[i] = obj.arr[i];
 			}
+
+			elem_count = obj.elem_count;
 		}
 
-		explicit array(Ty num)
+		array(Ty num)
 		{
 			for (int i = 0;i<size;++i)
 			{
@@ -135,12 +131,14 @@ class array
 		array()
 		{
 			for (int i = 0; i < size; ++i)
-				arr[i] = 0;
+				arr[i] = (Ty)0;
 		}
 
 		~array()
 		{
-			delete[] arr;
+			if(arr != nullptr)
+				delete[] arr;
+
 			arr = nullptr;
 		}
 
@@ -166,7 +164,7 @@ class array
 
 		Ty back() const
 		{
-			return arr[size - 1];
+			return arr[elem_count-1];
 		}
 
 		Ty front() const
@@ -186,38 +184,15 @@ class array
 
 		void swap(array<Ty , size>& obj)
 		{
-			//swap elem
+			Ty* self_ptr = this->arr;
+			Ty* obj_ptr = obj.arr;
 
-			//keep obj arr
-			Ty* obj_arr = new Ty[size];
-			for (int n = 0; n < size; ++n)
-			{
-				obj_arr[n] = obj.arr[n];
-			}
-			
-			//swap obj arr
-			int count = 0;
-			for (auto& p : obj)
-			{
-				p = this->arr[count];
-				count++;
-			}
+			obj.arr = self_ptr;
+			this->arr = obj_ptr;
 
-			//swap this->arr
-			for (int n = 0; n < size; ++n)
-			{
-				Ty temp = obj_arr[n];
-				arr[n] = temp;
-			}
-
-			//swap elem_count
 			int temp = elem_count;
-
 			elem_count = obj.elem_count;
-			obj.elem_count = elem_count;
-
-			delete[] obj_arr;
-			obj_arr = nullptr;
+			obj.elem_count = temp;
 		}
 
 
@@ -253,9 +228,8 @@ class array
 		self& operator=(const array<Ty , size>& obj)
 		{
 			for (int n = 0; n < obj.elem_count; ++n)
-			{	
-				Ty temp = obj.arr[n];
-				this->arr[n] = temp;
+			{
+				this->arr[n] = obj.arr[n];
 			}
 
 			this->elem_count = obj.elem_count;
