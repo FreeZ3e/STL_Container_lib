@@ -33,7 +33,7 @@
  *      //operations
  *
  *		void insert(Ty elem)--------------------------------call push_back().
- *      void insert(int pos,Ty elem)------------------------insert elem in pos position.
+ *      void insert(iterator pos,Ty elem)------------------------insert elem before pos position.
  *      void push_back(Ty elem)
  *      void emplace_back(Ty elem)--------------------------insert elem without copy.
  *      void pop_back()
@@ -161,16 +161,12 @@ class vector
 			push_back(elem);
 		}
 
-		void insert(int pos , Ty elem)
+		void insert(iterator pos , Ty elem)
 		{
-			if (elem_count == arr_size)
+			if (pos != begin())
 			{
-				arr_size = arr_size * 2;
-				MemoryExpand(arr_size);
+				*(pos-1) = elem;
 			}
-
-			arr[pos] = elem;
-			elem_count++;
 		}
 
 		void push_back(Ty elem)
