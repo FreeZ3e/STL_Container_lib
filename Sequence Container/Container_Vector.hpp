@@ -119,10 +119,10 @@ class vector
 			elem_count = arr_size;
 		}
 
-		vector(const initializer_list<Ty>& list)
+		explicit vector(const initializer_list<Ty>& list)
 		{
 			arr_size = list.size();
-			arr = new Ty[(size_t)arr_size];
+			arr = new Ty[arr_size];
 
 			for (auto p = list.begin(); p != list.end(); ++p)
 			{
@@ -134,15 +134,14 @@ class vector
 			}
 		}
 
-		vector(const vector<Ty>& obj)
+		explicit vector(const vector<Ty>& obj)
 		{
 			arr_size = obj.arr_size;
 			arr = new Ty[arr_size];
 
 			for (int n = 0; n < obj.elem_count; ++n)
 			{
-				Ty temp = obj.arr[n];
-				arr[n] = temp;
+				arr[n] = obj.arr[n];
 			}
 
 			elem_count = obj.elem_count;
@@ -358,27 +357,11 @@ class vector
 
 		void swap(vector<Ty>& obj)
 		{
-			if (arr_size > obj.arr_size)
-				obj.resize(arr_size);
-			else if (arr_size < obj.arr_size)
-				resize(obj.arr_size);
+			Ty* temp_ptr = arr;
+			Ty* obj_ptr = obj.arr;
 
-			Ty* ptr = new Ty[obj.elem_count];
-
-			for (int n = 0; n < obj.elem_count; ++n)
-			{
-				ptr[n] = obj.arr[n];
-			}
-
-			for (int n = 0; n < elem_count; ++n)
-			{
-				obj.arr[n] = this->arr[n];
-			}
-
-			for (int n = 0; n < obj.elem_count; ++n)
-			{
-				this->arr[n] = ptr[n];
-			}
+			arr = obj_ptr;
+			obj.arr = temp_ptr;
 
 			int temp_count = elem_count;
 			elem_count = obj.elem_count;
@@ -387,9 +370,6 @@ class vector
 			size_t temp_size = arr_size;
 			arr_size = obj.arr_size;
 			obj.arr_size = temp_size;
-
-			delete[] ptr;
-			ptr = nullptr;
 		}
 
 
@@ -433,8 +413,7 @@ class vector
 
 			for (int n = 0; n < obj.elem_count; ++n)
 			{
-				Ty temp = obj.arr[n];
-				this->arr[n] = temp;
+				this->arr[n] = obj.arr[n];
 			}
 
 			this->elem_count = obj.elem_count;
