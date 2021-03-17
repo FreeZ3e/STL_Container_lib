@@ -121,7 +121,7 @@ class deque
 			elem_count = body_size;
 		}
 
-		deque(const initializer_list<Ty>& list)
+		explicit deque(const initializer_list<Ty>& list)
 		{
 			body_size = list.size() * 2;
 			body = new Ty[body_size];
@@ -133,14 +133,13 @@ class deque
 			}
 		}
 
-		deque(const deque<Ty>& obj)
+		explicit deque(const deque<Ty>& obj)
 		{
 			body = new Ty[obj.body_size];
 
 			for (int n=0; n < obj.elem_count; ++n)
 			{
-				Ty temp = obj.body[n];
-				body[elem_count] = temp;
+				body[elem_count] = obj.body[n];
 
 				elem_count++;
 			}
@@ -357,31 +356,11 @@ class deque
 
 		void swap(deque<Ty>& obj)
 		{
-			//check size
-			if (body_size > obj.body_size)
-				obj.resize(body_size);
-			else if (body_size < obj.body_size)
-				resize(obj.body_size);
+			Ty* temp_arr = body;
+			Ty* obj_arr = obj.body;
 
-			//keep elem
-			Ty* ptr = new Ty[obj.elem_count];
-
-			for (int n = 0; n < obj.elem_count; ++n)
-			{
-				ptr[n] = obj.body[n];
-			}
-
-			//swap elem
-
-			for (int n = 0; n < elem_count; ++n)
-			{
-				obj.body[n] = this->body[n];
-			}
-
-			for (int n = 0; n < obj.elem_count; ++n)
-				body[n] = ptr[n];
-
-			//swap count & size
+			body = obj_arr;
+			obj.body = temp_arr;
 
 			int temp_count = elem_count;
 			elem_count = obj.elem_count;
@@ -390,11 +369,6 @@ class deque
 			size_t temp_size = body_size;
 			body_size = obj.body_size;
 			obj.body_size = temp_size;
-
-
-			//free ptr
-			delete[] ptr;
-			ptr = nullptr;
 		}
 
 
@@ -438,8 +412,7 @@ class deque
 
 			for (int n = 0; n < obj.elem_count; ++n)
 			{
-				Ty temp = obj.body[n];
-				body[n] = temp;
+				body[n] = obj.body[n];
 			}
 
 			elem_count = obj.elem_count;
