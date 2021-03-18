@@ -140,7 +140,7 @@ class list
 				push_back(elem);
 		}
 
-		list(const initializer_list<Ty>& list)
+		explicit list(const initializer_list<Ty>& list)
 		{
 			list_size = list.size();
 			alloc(list_size);
@@ -156,7 +156,7 @@ class list
 			}
 		}
 
-		list(const list<Ty , default_size>& obj)
+		explicit list(const list<Ty , default_size>& obj)
 		{
 			list_size = obj.list_size;
 			alloc(list_size);
@@ -166,8 +166,7 @@ class list
 
 			for (int n=0;n<obj.elem_count;++n)
 			{
-				Ty temp = ptr->data;
-				CurPtr->data = temp;
+				CurPtr->data = ptr->data;
 
 				if (CurPtr->next)
 					CurPtr = CurPtr->next;
@@ -401,61 +400,23 @@ class list
 
 		void swap(list<Ty , default_size>& obj)
 		{
-			//keep data
+			node* temp_head = Head;
+			node* temp_CurPtr = CurPtr;
+			node* obj_head = obj.Head;
+			node* obj_CurPtr = obj.CurPtr;
+
+			Head = obj_head;
+			CurPtr = obj_CurPtr;
+			obj.Head = temp_head;
+			obj.CurPtr = temp_CurPtr;
+
 			int temp_count = elem_count;
-			Ty* arr = new Ty[elem_count];
-			node* ptr = Head;
+			elem_count = obj.elem_count;
+			obj.elem_count = temp_count;
 
-			int count = 0;
-			while (ptr)
-			{
-				arr[count] = ptr->data;
-
-				ptr = ptr->next;
-				count++;
-			}count = 0;
-
-			//keep obj data
-			int obj_elem_count = obj.elem_count;
-			Ty* obj_arr = new Ty[obj.elem_count];
-			ptr = obj.Head;
-
-			while (ptr)
-			{
-				obj_arr[count] = ptr->data;
-
-				ptr = ptr->next;
-				count++;
-			}count = 0;
-
-			//free & alloc memory
-			obj.clear();
-			obj.alloc(list_size);
-			clear();
-			alloc(obj.list_size);
-
-			//obj
-			for (int n = 0; n < temp_count; ++n)
-			{
-				Ty temp = arr[n];
-				obj.push_back(temp);
-			}
-
-			//this
-			for (int n = 0; n < obj_elem_count; ++n)
-			{
-				Ty temp = obj_arr[n];
-				push_back(temp);
-			}
-
-			//swap size
 			size_t temp_size = list_size;
 			list_size = obj.list_size;
 			obj.list_size = temp_size;
-
-			//swap elem_count
-			elem_count = obj_elem_count;
-			obj.elem_count = temp_count;
 		}
 
 
