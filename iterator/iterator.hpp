@@ -1679,3 +1679,447 @@ struct const_hash_table_iterator
 			return Lhs.step_count == Rhs.step_count;
 		}
 };
+
+
+
+//iterator for deque
+template<typename Ty>
+class deque_iterator
+{
+	private:
+		Ty** ptr = nullptr;
+
+		int insert_count = 0;
+		int buffer_count = 0;
+		int body_size = 0;
+		int step_count = 0;
+
+	public:
+		using self = deque_iterator<Ty>;
+		using TypeValue = Ty;
+
+	public:
+		deque_iterator() = delete;
+
+		deque_iterator(Ty** init_ptr , int insert , int buffer , int body , int count) :ptr(init_ptr) , insert_count(insert) , buffer_count(buffer) , body_size(body) , step_count(count)
+		{
+		}
+
+		~deque_iterator()
+		{
+			ptr = nullptr;
+		}
+
+
+		int step()
+		{
+			return step_count;
+		}
+
+		int buffer()
+		{
+			return buffer_count;
+		}
+
+		int insert_flag()
+		{
+			return insert_count;
+		}
+
+		Ty& operator*()
+		{
+			return ptr[buffer_count][insert_count];
+		}
+
+		self& operator=(const self& obj)
+		{
+			this->ptr = obj.ptr;
+			this->body_size = obj.body_size;
+			this->buffer_count = obj.buffer_count;
+			this->insert_count = obj.insert_count;
+			this->step_count = obj.step_count;
+
+			return *this;
+		}
+
+		self& operator++()
+		{
+			if (insert_count == body_size - 1)
+			{
+				buffer_count++;
+				insert_count = 0;
+			}
+			else
+			{
+				insert_count++;
+			}
+
+			step_count++;
+			return *this;
+		}
+
+		self operator+(int n)
+		{
+			int insert_count_save = insert_count;
+			int buffer_count_save = buffer_count;
+
+			for (int i = 0; i < n; ++i)
+			{
+				if (insert_count == body_size - 1)
+				{
+					buffer_count++;
+					insert_count = 0;
+				}
+				else
+				{
+					insert_count++;
+				}
+			}
+
+			int return_insert_count = insert_count;
+			int return_buffer_count = buffer_count;
+
+			buffer_count = buffer_count_save;
+			insert_count = insert_count_save;
+
+			return self(ptr , return_insert_count , return_buffer_count , body_size , step_count + n);
+		}
+
+		self operator++(int)
+		{
+			auto temp = *this;
+
+			if (insert_count == body_size - 1)
+			{
+				buffer_count++;
+				insert_count = 0;
+			}
+			else
+			{
+				insert_count++;
+			}
+
+			step_count++;
+			return temp;
+		}
+
+		self& operator--()
+		{
+			if (insert_count == 0)
+			{
+				buffer_count--;
+				insert_count = body_size - 1;
+			}
+			else
+			{
+				insert_count--;
+			}
+
+			step_count--;
+			return *this;
+		}
+
+		self operator-(int n)
+		{
+			int insert_count_save = insert_count;
+			int buffer_count_save = buffer_count;
+
+			for (int i = 0; i < n; ++i)
+			{
+				if (insert_count == 0)
+				{
+					buffer_count--;
+					insert_count = body_size - 1;
+				}
+				else
+				{
+					insert_count--;
+				}
+			}
+
+			int return_insert_count = insert_count;
+			int return_buffer_count = buffer_count;
+
+			buffer_count = buffer_count_save;
+			insert_count = insert_count_save;
+
+			return self(ptr , return_insert_count , return_buffer_count , body_size , step_count - n);
+		}
+
+		self operator--(int)
+		{
+			auto temp = *this;
+
+			if (insert_count == 0)
+			{
+				buffer_count--;
+				insert_count = body_size - 1;
+			}
+			else
+			{
+				insert_count--;
+			}
+
+			step_count--;
+			return temp;
+		}
+
+		bool operator>(const self& obj)
+		{
+			if (this->step_count > obj.step_count)
+				return true;
+
+			return false;
+		}
+
+		bool operator<(const self& obj)
+		{
+			if (this->step_count < obj.step_count)
+				return true;
+
+			return false;
+		}
+
+		bool operator>=(const self& obj)
+		{
+			if (this->step_count >= obj.step_count)
+				return true;
+
+			return false;
+		}
+
+		bool operator<=(const self& obj)
+		{
+			if (this->step_count <= obj.step_count)
+				return true;
+
+			return false;
+		}
+
+	private:
+		friend bool operator==(const self& Lhs , const self& Rhs)
+		{
+			return Lhs.step_count == Rhs.step_count;
+		}
+
+		friend bool operator!=(const self& Lhs , const self& Rhs)
+		{
+			return Lhs.step_count != Rhs.step_count;
+		}
+};
+
+//const iterator for deque
+template<typename Ty>
+class const_deque_iterator
+{
+	private:
+		Ty** ptr = nullptr;
+
+		int insert_count = 0;
+		int buffer_count = 0;
+		int body_size = 0;
+		int step_count = 0;
+
+	public:
+		using self = const_deque_iterator<Ty>;
+		using TypeValue = Ty;
+
+	public:
+		const_deque_iterator() = delete;
+
+		const_deque_iterator(Ty** init_ptr , int insert , int buffer , int body , int count) :ptr(init_ptr) , insert_count(insert) , buffer_count(buffer) , body_size(body) , step_count(count)
+		{
+		}
+
+		~const_deque_iterator()
+		{
+			ptr = nullptr;
+		}
+
+
+		int step()
+		{
+			return step_count;
+		}
+
+		Ty operator*()
+		{
+			return ptr[buffer_count][insert_count];
+		}
+
+		self& operator=(const self& obj)
+		{
+			this->ptr = obj.ptr;
+			this->body_size = obj.body_size;
+			this->buffer_count = obj.buffer_count;
+			this->insert_count = obj.insert_count;
+			this->step_count = obj.step_count;
+
+			return *this;
+		}
+
+		self& operator++()
+		{
+			if (insert_count == body_size - 1)
+			{
+				buffer_count++;
+				insert_count = 0;
+			}
+			else
+			{
+				insert_count++;
+			}
+
+			step_count++;
+			return *this;
+		}
+
+		self operator+(int n)
+		{
+			int insert_count_save = insert_count;
+			int buffer_count_save = buffer_count;
+
+			for (int i = 0; i < n; ++i)
+			{
+				if (insert_count == body_size - 1)
+				{
+					buffer_count++;
+					insert_count = 0;
+				}
+				else
+				{
+					insert_count++;
+				}
+			}
+
+			int return_insert_count = insert_count;
+			int return_buffer_count = buffer_count;
+
+			buffer_count = buffer_count_save;
+			insert_count = insert_count_save;
+
+			return self(ptr , return_insert_count , return_buffer_count , body_size , step_count + n);
+		}
+
+		self operator++(int)
+		{
+			auto temp = *this;
+
+			if (insert_count == body_size - 1)
+			{
+				buffer_count++;
+				insert_count = 0;
+			}
+			else
+			{
+				insert_count++;
+			}
+
+			step_count++;
+			return temp;
+		}
+
+		self& operator--()
+		{
+			if (insert_count == 0)
+			{
+				buffer_count--;
+				insert_count = body_size - 1;
+			}
+			else
+			{
+				insert_count--;
+			}
+
+			step_count--;
+			return *this;
+		}
+
+		self operator-(int n)
+		{
+			int insert_count_save = insert_count;
+			int buffer_count_save = buffer_count;
+
+			for (int i = 0; i < n; ++i)
+			{
+				if (insert_count == 0)
+				{
+					buffer_count--;
+					insert_count = body_size - 1;
+				}
+				else
+				{
+					insert_count--;
+				}
+			}
+
+			int return_insert_count = insert_count;
+			int return_buffer_count = buffer_count;
+
+			buffer_count = buffer_count_save;
+			insert_count = insert_count_save;
+
+			return self(ptr , return_insert_count , return_buffer_count , body_size , step_count - n);
+		}
+
+		self operator--(int)
+		{
+			auto temp = *this;
+
+			if (insert_count == 0)
+			{
+				buffer_count--;
+				insert_count = body_size - 1;
+			}
+			else
+			{
+				insert_count--;
+			}
+
+			step_count--;
+			return temp;
+		}
+
+		bool operator>(const self& obj)
+		{
+			if (this->step_count > obj.step_count)
+				return true;
+
+			return false;
+		}
+
+		bool operator<(const self& obj)
+		{
+			if (this->step_count < obj.step_count)
+				return true;
+
+			return false;
+		}
+
+		bool operator>=(const self& obj)
+		{
+			if (this->step_count >= obj.step_count)
+				return true;
+
+			return false;
+		}
+
+		bool operator<=(const self& obj)
+		{
+			if (this->step_count <= obj.step_count)
+				return true;
+
+			return false;
+		}
+
+	private:
+		friend bool operator==(const self& Lhs , const self& Rhs)
+		{
+			return Lhs.step_count == Rhs.step_count;
+		}
+
+		friend bool operator!=(const self& Lhs , const self& Rhs)
+		{
+			return Lhs.step_count != Rhs.step_count;
+		}
+};

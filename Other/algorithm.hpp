@@ -30,8 +30,14 @@
 *inline decltype(auto) find(obj,elem)
 *inline decltype(auto) find(iterator p_begin,iterator p_end)
 * 
+*inline decltype(auto) find_if(obj,pred)
+*inline decltype(auto) find_if(obj,pred)
+* 
 *inline int count(obj,elem)
 *inline int count(iterator p_begin,iterator p_end,elem)
+* 
+*inline int count_if(obj,function)
+*inline int count_if(iterator p_begin,iterator p_end,function)
 * 
 *inline bool search(obj,elem)
 *inline bool search(iterator p_begin,iterator p_end,elem)
@@ -71,6 +77,8 @@
 * 
 *inline void for_each(obj,function)
 *inline void for_each(iterator p_begin,iterator p_end,function)
+* 
+*inline void remove_if(obj,function)
 */
 
 
@@ -163,7 +171,7 @@ namespace lib_algo
 
 	//default sort compare function
 	template<typename t>
-	inline t less_compare(t elem1 , t elem2)
+	static inline t less_compare(t elem1 , t elem2)
 	{
 		return elem1 < elem2 ? elem1 : elem2;
 	}
@@ -234,6 +242,8 @@ namespace lib_algo
 			if (*p == elem)
 				return p;
 		}
+
+		return p-1;
 	}
 
 	//find by iterator range
@@ -247,6 +257,40 @@ namespace lib_algo
 			
 			++p_begin;
 		}
+
+		return p_begin-1;
+	}
+
+	//-----------------------------------------------------------------
+
+
+	//find_if----------------------------------------------------------
+
+	template<typename t>
+	inline decltype(auto) find_if(const t& obj , bool(*pred)(typename t::TypeValue))
+	{
+		auto p = obj.cbegin();
+		for (; p != obj.cend(); ++p)
+		{
+			if (pred(*p) == true)
+				return p;
+		}
+
+		return p - 1;
+	}
+
+	template<typename t>
+	inline decltype(auto) find_if(t p_begin , t p_end , bool(*pred)(typename t::TypeValue))
+	{
+		while (p_begin != p_end)
+		{
+			if (pred(*p_begin) == true)
+				return p_begin;
+
+			++p_begin;
+		}
+
+		return p_begin - 1;
 	}
 
 	//-----------------------------------------------------------------
@@ -280,6 +324,43 @@ namespace lib_algo
 		{
 			if (*p_begin == elem)
 				count++;
+
+			++p_begin;
+		}
+
+		return count;
+	}
+
+	//-----------------------------------------------------------------
+
+
+	//count_if---------------------------------------------------------
+
+	template<typename t>
+	inline int count_if(const t& obj , bool(*function)(typename t::TypeValue))
+	{
+		int count = 0;
+
+		auto p = obj.cbegin();
+		for (; p != obj.cend(); ++p)
+		{
+			if (function(*p) == true)
+				++count;
+		}
+
+		return count;
+	}
+
+	template<typename t>
+	inline int count_if(t p_begin , t p_end , bool(*function)(typename t::TypeValue))
+	{
+		int count = 0;
+		int step = p_end.step() - p_begin.step();
+
+		for (int n = 0; n < step; ++n)
+		{
+			if (function(*p_begin) == true)
+				++count;
 
 			++p_begin;
 		}
@@ -831,6 +912,24 @@ namespace lib_algo
 		for (int n = 0; n < step; ++n , ++p_begin)
 		{
 			*p_begin = function(*p_begin);
+		}
+	}
+
+	//------------------------------------------------------------------
+
+
+	//remove_if---------------------------------------------------------
+
+	template<typename t>
+	inline void remove_if(t& obj , bool(*function)(typename t::TypeValue))
+	{
+		auto p = obj.begin();
+		for (; p != obj.end();)
+		{
+			if (function(*p) == true)
+				p = obj.erase(p);
+			else
+				++p;
 		}
 	}
 

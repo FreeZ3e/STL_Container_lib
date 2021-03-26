@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.1.1-alpha
+ * version : 1.1.2-alpha
  *
  * author : Mashiro
  *
@@ -91,7 +91,10 @@
  * template<typename t1,typename t2 = void>
  * struct is_iterator
  *
- *
+ * template<typename t>
+ * struct is_pod
+ * 
+ * 
  * 
  * 
  *
@@ -375,12 +378,14 @@ namespace lib_type
 	struct is_reference
 	{
 		enum {value = false};
+		using type = false_type_tag;
 	};
 
 	template<typename t>
 	struct is_reference<t&>
 	{
 		enum {value = true};
+		using type = true_type_tag;
 	};
 	//---------------------------------------------------------
 
@@ -390,12 +395,14 @@ namespace lib_type
 	struct is_rvalue_reference
 	{
 		enum {value = false};
+		using type = false_type_tag;
 	};
 
 	template<typename t>
 	struct is_rvalue_reference<t&&>
 	{
 		enum {value = true};
+		using type = true_type_tag;
 	};
 	//---------------------------------------------------------
 
@@ -405,12 +412,14 @@ namespace lib_type
 	struct is_const
 	{
 		enum {value = false};
+		using type = false_type_tag;
 	};
 
 	template<typename t>
 	struct is_const<const t>
 	{
 		enum {value = true};
+		using type = true_type_tag;
 	};
 	//---------------------------------------------------------
 
@@ -420,12 +429,14 @@ namespace lib_type
 	struct is_const_reference
 	{
 		enum {value = false};
+		using type = false_type_tag;
 	};
 
 	template<typename t>
 	struct is_const_reference<const t&>
 	{
 		enum {value = true};
+		using type = true_type_tag;
 	};
 	//---------------------------------------------------------
 
@@ -435,12 +446,14 @@ namespace lib_type
 	struct is_const_pointer
 	{
 		enum {value = false};
+		using type = false_type_tag;
 	};
 
 	template<typename t>
 	struct is_const_pointer<const t*>
 	{
 		enum {value = true};
+		using type = true_type_tag;
 	};
 	//---------------------------------------------------------
 
@@ -450,12 +463,14 @@ namespace lib_type
 	struct is_pointer_const
 	{
 		enum {value = false};
+		using type = false_type_tag;
 	};
 
 	template<typename t>
 	struct is_pointer_const<t* const>
 	{
 		enum {value = true};
+		using type = true_type_tag;
 	};
 	//---------------------------------------------------------
 
@@ -465,12 +480,14 @@ namespace lib_type
 	struct is_volatile
 	{
 		enum {value = false};
+		using type = false_type_tag;
 	};
 
 	template<typename t>
 	struct is_volatile<volatile t>
 	{
 		enum {value = true};
+		using type = true_type_tag;
 	};
 	//---------------------------------------------------------
 
@@ -480,12 +497,14 @@ namespace lib_type
 	struct is_signed
 	{
 		enum {value = true};
+		using type = true_type_tag;
 	};
 
 	template<>
 	struct is_signed<unsigned>
 	{
 		enum {value = false};
+		using type = false_type_tag;
 	};
 	//---------------------------------------------------------
 
@@ -495,12 +514,14 @@ namespace lib_type
 	struct is_unsigned
 	{
 		enum {value = false};
+		using type = false_type_tag;
 	};
 
 	template<>
 	struct is_unsigned<unsigned>
 	{
 		enum {value = true};
+		using type = true_type_tag;
 	};
 	//---------------------------------------------------------
 
@@ -510,78 +531,91 @@ namespace lib_type
 	struct is_function
 	{
 		enum {value = false};
+		using type = false_type_tag;
 	};
 
 	template<typename t , typename... args>
 	struct is_function<t(args...)>
 	{
 		enum {value = true};
+		using type = true_type_tag;
 	};
 
 	template<typename t,typename... args>
 	struct is_function<t(args...) const>
 	{
 		enum {value = true};
+		using type = true_type_tag;
 	};
 
 	template<typename t,typename... args>
 	struct is_function<t(args...) volatile>
 	{
 		enum {value = true};
+		using type = true_type_tag;
 	};
 
 	template<typename t,typename... args>
 	struct is_function<t(args...) const volatile>
 	{
 		enum {value = true};
+		using type = true_type_tag;
 	};
 
 	template<typename t,typename... args>
 	struct is_function<t(args...) &>
 	{
 		enum {value = ture};
+		using type = true_type_tag;
 	};
 
 	template<typename t,typename... args>
 	struct is_function<t(args...) const&>
 	{
 		enum {value = true};
+		using type = true_type_tag;
 	};
 
 	template<typename t,typename... args>
 	struct is_function<t(args...) volatile&>
 	{
 		enum {value = true};
+		using type = true_type_tag;
 	};
 
 	template<typename t,typename... args>
 	struct is_function<t(args...) const volatile&>
 	{
 		enum {value = true};
+		using type = true_type_tag;
 	};
 
 	template<typename t,typename... args>
 	struct is_function<t(args...) &&>
 	{
 		enum {value = ture};
+		using type = true_type_tag;
 	};
 
 	template<typename t,typename... args>
 	struct is_function<t(args...) const&&>
 	{
 		enum {value = true};
+		using type = true_type_tag;
 	};
 
 	template<typename t,typename... args>
 	struct is_function<t(args...) volatile&&>
 	{
 		enum {value = true};
+		using type = true_type_tag;
 	};
 
 	template<typename t,typename... args>
 	struct is_function<t(args...) const volatile&&>
 	{
 		enum {value = true};
+		using type = true_type_tag;
 	};
 	//---------------------------------------------------------
 
@@ -591,12 +625,14 @@ namespace lib_type
 	struct is_member_pointer
 	{
 		enum {value = false};
+		using type = false_type_tag;
 	};
 
 	template<typename t,typename u>
 	struct is_member_pointer<t u::*>
 	{
 		enum {value = true};
+		using type = true_type_tag;
 	};
 	//----------------------------------------------------------
 
@@ -634,12 +670,14 @@ namespace lib_type
 	struct is_same
 	{
 		enum {value = false};
+		using type = false_type_tag;
 	};
 
 	template<typename t>
 	struct is_same<t , t>
 	{
 		enum {value = true};
+		using type = true_type_tag;
 	};
 	//-------------------------------------------------------------
 
@@ -690,94 +728,209 @@ namespace lib_type
 	struct is_iterator
 	{
 		enum {value = false};
+		using type = false_type_tag;
 	};
 
 	template<typename u>
 	struct is_iterator<input_iterator<u>>
 	{
 		enum {value = true};
+		using type = true_type_tag;
 	};
 
 	template<typename u>
 	struct is_iterator<const_input_iterator<u>>
 	{
 		enum {value = true};
+		using type = true_type_tag;
 	};
 
 	template<typename u>
 	struct is_iterator<forward_iterator<u>>
 	{
 		enum {value = true};
+		using type = true_type_tag;
 	};
 
 	template<typename u>
 	struct is_iterator<const_forward_iterator<u>>
 	{
 		enum {value = true};
+		using type = true_type_tag;
 	};
 
 	template<typename u>
 	struct is_iterator<Bid_iterator<u>>
 	{
 		enum {value = true};
+		using type = true_type_tag;
 	};
 
 	template<typename u>
 	struct is_iterator<const_Bid_iterator<u>>
 	{
 		enum {value = true};
+		using type = true_type_tag;
 	};
 
 	template<typename u>
 	struct is_iterator<Random_iterator<u>>
 	{
 		enum {value = true};
+		using type = true_type_tag;
 	};
 
 	template<typename u>
 	struct is_iterator<const_Random_iterator<u>>
 	{
 		enum {value = true};
+		using type = true_type_tag;
 	};
 
 	template<typename u>
 	struct is_iterator<List_iterator<u>>
 	{
 		enum {value = true};
+		using type = true_type_tag;
 	};
 
 	template<typename u>
 	struct is_iterator<const_List_iterator<u>>
 	{
 		enum {value = true};
+		using type = true_type_tag;
 	};
 
 	template<typename u>
 	struct is_iterator<RB_Tree_iterator<u>>
 	{
 		enum {value = true};
+		using type = true_type_tag;
 	};
 
 	template<typename u>
 	struct is_iterator<const_RB_Tree_iterator<u>>
 	{
 		enum {value = true};
+		using type = true_type_tag;
 	};
 
 	template<typename u1,typename u2>
 	struct is_iterator<hash_table_iterator<u1,u2>>
 	{
 		enum {value = true};
+		using type = true_type_tag;
 	};
 
 	template<typename u1,typename u2>
 	struct is_iterator<const_hash_table_iterator<u1 , u2>>
 	{
 		enum {value = true};
+		using type = true_type_tag;
 	};
 	//---------------------------------------------------------
 
 
+	//is_pod---------------------------------------------------
+
+	template<typename t>
+	struct is_pod
+	{
+		enum {value = false};
+		using type = false_type_tag;
+	};
+
+	template<>
+	struct is_pod<char>
+	{
+		enum {value = true};
+		using type = true_type_tag;
+	};
+
+	template<>
+	struct is_pod<unsigned char>
+	{
+		enum {value = true};
+		using type = true_type_tag;
+	};
+
+	template<>
+	struct is_pod<short>
+	{
+		enum {value = true};
+		using type = true_type_tag;
+	};
+
+	template<>
+	struct is_pod<unsigned short>
+	{
+		enum {value = true};
+		using type = true_type_tag;
+	};
+
+	template<>
+	struct is_pod<int>
+	{
+		enum {value = true};
+		using type = true_type_tag;
+	};
+
+	template<>
+	struct is_pod<unsigned int>
+	{
+		enum {value = true};
+		using type = true_type_tag;
+	};
+
+	template<>
+	struct is_pod<long>
+	{
+		enum {value = true};
+		using type = true_type_tag;
+	};
+
+	template<>
+	struct is_pod<unsigned long>
+	{
+		enum {value = true};
+		using type = true_type_tag;
+	};
+
+	template<>
+	struct is_pod<long long>
+	{
+		enum {value = true};
+		using type = true_type_tag;
+	};
+
+	template<>
+	struct is_pod<float>
+	{
+		enum {value = true};
+		using type = true_type_tag;
+	};
+
+	template<>
+	struct is_pod<double>
+	{
+		enum {value = true};
+		using type = true_type_tag;
+	};
+
+	template<>
+	struct is_pod<long double>
+	{
+		enum {value = true};
+		using type = true_type_tag;
+	};
+
+	template<typename t>
+	struct is_pod<t*>
+	{
+		enum {value = true};
+		using type = true_type_tag;
+	};
+	//---------------------------------------------------------
 
 
 
@@ -999,4 +1152,5 @@ namespace lib_type
 		using type_value = unsigned;
 	};
 	//-----------------------------------------------------------
+
 }
