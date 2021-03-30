@@ -378,45 +378,19 @@ class hash_table
 
 		void swap(self& obj)
 		{
-			//keep data
-			hash_node<Ty>** temp = new hash_node<Ty>*[obj.bucket_size];
+			hash_node<Ty>** temp_ptr = buckets;
+			hash_node<Ty>** obj_ptr = obj.buckets;
 
-			for (int n = 0; n < obj.bucket_size; ++n)
-			{
-				temp[n] = obj.buckets[n];
-			}
+			buckets = obj_ptr;
+			obj.buckets = temp_ptr;
 
-			//swap obj data
-			delete[] obj.buckets;
-			obj.buckets = new hash_node<Ty>*[this->bucket_size];
-			obj.init_bucket(this->bucket_size);
+			int temp_count = elem_count;
+			elem_count = obj.elem_count;
+			obj.elem_count = temp_count;
 
-			for (int n = 0; n < (int)this->bucket_size; ++n)
-			{
-				obj.buckets[n] = this->buckets[n];
-			}
-
-			//swap this data
-			delete[] buckets;
-			buckets = new hash_node<Ty>*[obj.bucket_size];
-			init_bucket(obj.bucket_size);
-
-			for (int n = 0; n < (int)obj.bucket_size; ++n)
-			{
-				this->buckets[n] = temp[n];
-			}
-
-			//swap elem_count && bucket_size
-			int count = obj.elem_count;
-			obj.elem_count = this->elem_count;
-			this->elem_count = count;
-
-			int size = obj.bucket_size;
-			obj.bucket_size = this->bucket_size;
-			this->bucket_size = size;
-
-			delete[] temp;
-			temp = nullptr;
+			size_t temp_size = bucket_size;
+			bucket_size = obj.bucket_size;
+			obj.bucket_size = temp_size;
 		}
 
 

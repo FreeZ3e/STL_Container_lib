@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.1.1-alpha
+ * version : 1.1.2-alpha
  *
  * author : Mashiro
  *
@@ -103,14 +103,14 @@ class map
 			tree = new RB_Tree();
 		}
 		
-		map(const pair& obj)
+		explicit map(const pair& obj)
 		{
 			tree = new RB_Tree(pair);
 
 			elem_count++;
 		}
 
-		map(const initializer_list<pair>& obj)
+		explicit map(const initializer_list<pair>& obj)
 		{
 			tree = new RB_Tree();
 
@@ -120,7 +120,7 @@ class map
 			}
 		}
 		
-		map(const map<key , value>& obj)
+		explicit map(const map<key , value>& obj)
 		{
 			tree = new RB_Tree();
 
@@ -239,35 +239,15 @@ class map
 
 		void swap(map<key , value>& obj)
 		{
-			//keep obj tree
-			pair* arr = new pair[obj.elem_count];
+			RB_Tree* temp_tree = tree;
+			RB_Tree* obj_tree = obj.tree;
 
-			int count = 0;
-			for (auto p : obj)
-			{
-				arr[count] = p;
-				count++;
-			}
+			tree = obj_tree;
+			obj.tree = temp_tree;
 
-			//swap obj tree
-			obj.clear();
-
-			map<key,value>::const_iterator p = cbegin();
-			for (; p != cend(); ++p)
-			{
-				obj.insert((*p));
-			}
-
-			//swap this tree
-			this->clear();
-
-			for (int n = 0; n < count; ++n)
-			{
-				insert(arr[n]);
-			}
-
-			delete[] arr;
-			arr = nullptr;
+			int temp_count = elem_count;
+			elem_count = obj.elem_count;
+			obj.elem_count = temp_count;
 		}
 
 

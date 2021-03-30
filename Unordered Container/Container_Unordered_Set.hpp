@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.1.1-alpha
+ * version : 1.1.2-alpha
  *
  * author : Mashiro
  *
@@ -26,7 +26,7 @@
  *
  *      //ctor
  *
- *      explicit Unordered_Set(size_t size)--------------------initialize with size.
+ *      Unordered_Set(size_t size)--------------------initialize with size.
  *      Unordered_Set(const initializer_list<Ty>& list)
  *      Unordered_Set(const Unordered_Set<Ty>& obj)
  *
@@ -91,12 +91,12 @@ class Unordered_Set
 	public:
 		Unordered_Set() = delete;
 
-		explicit Unordered_Set(size_t size)
+		Unordered_Set(size_t size)
 		{
 			ptr = new hash_table<Ty>(size);
 		}
 
-		Unordered_Set(const initializer_list<Ty>& list)
+		explicit Unordered_Set(const initializer_list<Ty>& list)
 		{
 			size_t size = list.size();
 			ptr = new hash_table<Ty>(size);
@@ -107,7 +107,7 @@ class Unordered_Set
 			}
 		}
 
-		Unordered_Set(const Unordered_Set<Ty>& obj)
+		explicit Unordered_Set(const Unordered_Set<Ty>& obj)
 		{
 			size_t size = obj.ptr->buckets_count();
 			ptr = new hash_table<Ty>(size);
@@ -204,28 +204,11 @@ class Unordered_Set
 
 		void swap(Unordered_Set<Ty>& obj)
 		{
-			hash_table<Ty>* temp = new hash_table<Ty>(obj.buckets_count());
+			hash_table<Ty>* temp_ptr = ptr;
+			hash_table<Ty>* obj_ptr = obj.ptr;
 
-			for (auto p : obj)
-			{
-				temp->insert(p);
-			}
-
-			//swap obj data
-			obj.clear();
-
-			for (auto p = begin() ; p != end(); ++p)
-			{
-				obj.insert((*p));
-			}
-
-			//swap this data;
-			this->clear();
-
-			for (auto p = temp->begin(); p != temp->end(); ++p)
-			{
-				this->insert(*p);
-			}
+			ptr = obj_ptr;
+			obj.ptr = temp_ptr;
 		}
 
 		

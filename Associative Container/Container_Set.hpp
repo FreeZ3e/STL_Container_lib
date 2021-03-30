@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.1.1-alpha
+ * version : 1.1.2-alpha
  *
  * author : Mashiro
  *
@@ -102,7 +102,7 @@ class set
 			elem_count++;
 		}
 
-		set(const initializer_list<Ty>& list)
+		explicit set(const initializer_list<Ty>& list)
 		{
 			tree = new RB_Tree<Ty , Unique_Compare>();
 
@@ -112,7 +112,7 @@ class set
 			}
 		}
 
-		set(const set<Ty>& obj)
+		explicit set(const set<Ty>& obj)
 		{
 			tree = new RB_Tree<Ty , Unique_Compare>();
 
@@ -214,35 +214,15 @@ class set
 
 		void swap(set<Ty>& obj)
 		{
-			//keep obj tree
-			Ty* arr = new Ty[obj.elem_count];
+			RB_Tree<Ty , Unique_Compare>* temp_tree = tree;
+			RB_Tree<Ty , Unique_Compare>* obj_tree = obj.tree;
 
-			int count = 0;
-			for (auto p : obj)
-			{
-				arr[count] = p;
-				count++;
-			}
+			tree = obj_tree;
+			obj.tree = temp_tree;
 
-			//swap obj tree
-			obj.clear();
-			
-			set<Ty>::const_iterator p = cbegin();
-			for (; p != cend(); ++p)
-			{
-				obj.insert((*p));
-			}
-
-			//swap this tree
-			this->clear();
-
-			for (int n = 0; n < count; ++n)
-			{
-				insert(arr[n]);
-			}
-
-			delete[] arr;
-			arr = nullptr;
+			int temp_count = elem_count;
+			elem_count = obj.elem_count;
+			obj.elem_count = temp_count;
 		}
 
 

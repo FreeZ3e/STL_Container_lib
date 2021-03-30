@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.1.1-alpha
+ * version : 1.1.2-alpha
  *
  * author : Mashiro
  *
@@ -26,7 +26,7 @@
  * 
  *      //ctor
  *
- *      explicit Unordered_Multiset(size_t size)--------------------initialize with size.
+ *      Unordered_Multiset(size_t size)--------------------initialize with size.
  *      Unordered_Multiset(const initializer_list<Ty>& list)
  *      Unordered_Multiset(const Unordered_Multiset<Ty>& obj)
  *
@@ -91,12 +91,12 @@ class Unordered_Multiset
 	public:
 		Unordered_Multiset() = delete;
 
-		explicit Unordered_Multiset(size_t size)
+		Unordered_Multiset(size_t size)
 		{
 			ptr = new hash_table<Ty,Equal_Compare>(size);
 		}
 
-		Unordered_Multiset(const initializer_list<Ty>& list)
+		explicit Unordered_Multiset(const initializer_list<Ty>& list)
 		{
 			size_t size = list.size();
 			ptr = new hash_table<Ty, Equal_Compare>(size);
@@ -107,7 +107,7 @@ class Unordered_Multiset
 			}
 		}
 
-		Unordered_Multiset(const Unordered_Multiset<Ty>& obj)
+		explicit Unordered_Multiset(const Unordered_Multiset<Ty>& obj)
 		{
 			size_t size = obj.ptr->buckets_count();
 			ptr = new hash_table<Ty,Equal_Compare>(size);
@@ -204,28 +204,11 @@ class Unordered_Multiset
 
 		void swap(Unordered_Multiset<Ty>& obj)
 		{
-			hash_table<Ty,Equal_Compare>* temp = new hash_table<Ty , Equal_Compare>(obj.buckets_count());
+			hash_table<Ty , Equal_Compare>* temp_ptr = ptr;
+			hash_table<Ty , Equal_Compare>* obj_ptr = obj.ptr;
 
-			for (auto p : obj)
-			{
-				temp->insert(p);
-			}
-
-			//swap obj data
-			obj.clear();
-
-			for (auto p = begin(); p != end(); ++p)
-			{
-				obj.insert((*p));
-			}
-
-			//swap this data;
-			this->clear();
-
-			for (auto p = temp->begin(); p != temp->end(); ++p)
-			{
-				this->insert(*p);
-			}
+			ptr = obj_ptr;
+			obj.ptr = temp_ptr;
 		}
 
 

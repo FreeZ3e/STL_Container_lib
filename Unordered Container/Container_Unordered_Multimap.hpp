@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.1.1-alpha
+ * version : 1.1.2-alpha
  *
  * author : Mashiro
  *
@@ -27,7 +27,7 @@
  *
  *      //ctor
  *
- *      explicit Unordered_Multimap(size_t size)--------------------initialize with size.
+ *      Unordered_Multimap(size_t size)--------------------initialize with size.
  *      Unordered_Multimap(const initializer_list<pair>& list)
  *      Unordered_Multimap(const Unordered_Multimap<key,value>& obj)
  *
@@ -99,12 +99,12 @@ class Unordered_Multimap
 	public:
 		Unordered_Multimap() = delete;
 
-		explicit Unordered_Multimap(size_t size)
+		Unordered_Multimap(size_t size)
 		{
 			ptr = new hash_table(size);
 		}
 
-		Unordered_Multimap(const initializer_list<pair>& list)
+		explicit Unordered_Multimap(const initializer_list<pair>& list)
 		{
 			size_t size = list.size();
 			ptr = new hash_table(size);
@@ -115,7 +115,7 @@ class Unordered_Multimap
 			}
 		}
 
-		Unordered_Multimap(const Unordered_Multimap<key , value>& obj)
+		explicit Unordered_Multimap(const Unordered_Multimap<key , value>& obj)
 		{
 			size_t size = obj.ptr->buckets_count();
 			ptr = new hash_table(size);
@@ -242,28 +242,11 @@ class Unordered_Multimap
 
 		void swap(Unordered_Multimap<key , value>& obj)
 		{
-			hash_table* temp = new hash_table(obj.buckets_count());
+			hash_table* temp_ptr = ptr;
+			hash_table* obj_ptr = obj.ptr;
 
-			for (auto p : obj)
-			{
-				temp->insert(p);
-			}
-
-			//swap obj data
-			obj.clear();
-
-			for (auto p = begin(); p != end(); ++p)
-			{
-				obj.insert((*p));
-			}
-
-			//swap this data;
-			this->clear();
-
-			for (auto p = temp->begin(); p != temp->end(); ++p)
-			{
-				this->insert(*p);
-			}
+			ptr = obj_ptr;
+			obj.ptr = temp_ptr;
 		}
 
 

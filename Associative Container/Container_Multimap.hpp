@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.1.1-alpha
+ * version : 1.1.2-alpha
  *
  * author : Mashiro
  *
@@ -103,14 +103,14 @@ class Multimap
 			tree = new RB_Tree();
 		}
 
-		Multimap(const pair& obj)
+		explicit Multimap(const pair& obj)
 		{
 			tree = new RB_Tree(pair);
 
 			elem_count++;
 		}
 
-		Multimap(const initializer_list<pair>& obj)
+		explicit Multimap(const initializer_list<pair>& obj)
 		{
 			tree = new RB_Tree();
 
@@ -121,7 +121,7 @@ class Multimap
 			}
 		}
 
-		Multimap(const Multimap<key , value>& obj)
+		explicit Multimap(const Multimap<key , value>& obj)
 		{
 			tree = new RB_Tree();
 
@@ -243,36 +243,17 @@ class Multimap
 
 		void swap(Multimap<key , value>& obj)
 		{
-			//keep obj tree
-			pair* arr = new pair[obj.elem_count];
+			RB_Tree* temp_tree = tree;
+			RB_Tree* obj_tree = obj.tree;
 
-			int count = 0;
-			for (auto p : obj)
-			{
-				arr[count] = p;
-				count++;
-			}
+			tree = obj_tree;
+			obj.tree = temp_tree;
 
-			//swap obj tree
-			obj.clear();
-
-			Multimap<key , value>::const_iterator p = cbegin();
-			for (; p != cend(); ++p)
-			{
-				obj.insert((*p));
-			}
-
-			//swap this tree
-			this->clear();
-
-			for (int n = 0; n < count; ++n)
-			{
-				insert(arr[n]);
-			}
-
-			delete[] arr;
-			arr = nullptr;
+			int temp_count = elem_count;
+			elem_count = obj.elem_count;
+			obj.elem_count = temp_count;
 		}
+
 
 
 		//RB_Tree iterator

@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.1.1-alpha
+ * version : 1.1.2-alpha
  *
  * author : Mashiro
  *
@@ -71,11 +71,8 @@
 
 #pragma once
 #include<initializer_list>
-#include<iostream>
 #include"RB_Tree.hpp"
 
-using std::cout;
-using std::endl;
 using std::initializer_list;
 
 template<typename Ty>
@@ -106,7 +103,7 @@ class Multiset
 			elem_count++;
 		}
 
-		Multiset(const initializer_list<Ty>& list)
+		explicit Multiset(const initializer_list<Ty>& list)
 		{
 			tree = new RB_Tree();
 
@@ -117,7 +114,7 @@ class Multiset
 			}
 		}
 
-		Multiset(const Multiset<Ty>& obj)
+		explicit Multiset(const Multiset<Ty>& obj)
 		{
 			tree = new RB_Tree();
 
@@ -226,35 +223,15 @@ class Multiset
 
 		void swap(Multiset<Ty>& obj)
 		{
-			//keep obj tree
-			Ty* arr = new Ty[obj.elem_count];
+			RB_Tree* temp_tree = tree;
+			RB_Tree* obj_tree = obj.tree;
 
-			int count = 0;
-			for (auto p : obj)
-			{
-				arr[count] = p;
-				count++;
-			}
+			tree = obj_tree;
+			obj.tree = temp_tree;
 
-			//swap obj tree
-			obj.clear();
-
-			Multiset<Ty>::const_iterator p = cbegin();
-			for (; p != cend(); ++p)
-			{
-				obj.insert((*p));
-			}
-
-			//swap this tree
-			this->clear();
-
-			for (int n = 0; n < count; ++n)
-			{
-				insert(arr[n]);
-			}
-
-			delete[] arr;
-			arr = nullptr;
+			int temp_count = elem_count;
+			elem_count = obj.elem_count;
+			obj.elem_count = temp_count;
 		}
 
 

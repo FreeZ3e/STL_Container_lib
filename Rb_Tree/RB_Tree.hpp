@@ -26,7 +26,7 @@
  *
  *      RB_Tree(const RB_Tree<Ty,Compare_Class>& obj)
  *      RB_Tree(const initializer_list<Ty>& obj)
- *      explicit RB_Tree(Ty elem)
+ *		RB_Tree(Ty elem)
  *      RB_Tree()
  *
  *      //operations
@@ -133,12 +133,12 @@ class RB_Tree
 		int NodeCount = 0;
 
 	public:
-		RB_Tree(const RB_Tree<Ty , Compare_Class>& obj):RB_Tree()
+		explicit RB_Tree(const RB_Tree<Ty , Compare_Class>& obj):RB_Tree()
 		{
 			TreeCopy(obj.head);
 		}
 
-		RB_Tree(const initializer_list<Ty>& obj):RB_Tree()
+		explicit RB_Tree(const initializer_list<Ty>& obj):RB_Tree()
 		{
 			for (auto p:obj)
 			{
@@ -146,7 +146,7 @@ class RB_Tree
 			}
 		}
 
-		explicit RB_Tree(Ty elem)
+		RB_Tree(Ty elem)
 		{
 			header = new TreeNode<Ty>;
 			head = new TreeNode<Ty>(elem,nullptr,nullptr,header);
@@ -299,31 +299,23 @@ class RB_Tree
 
 		void swap(RB_Tree<Ty , Compare_Class>& obj)
 		{
-			//keep obj tree
-			Ty* arr = new Ty[obj.NodeCount];
+			TreeNode<Ty>* temp_head = head;
+			TreeNode<Ty>* obj_head = obj.head;
 
-			int count = 0;
-			for (auto p : obj)
-			{
-				arr[count] = p;
-				count++;
-			}
+			TreeNode<Ty>* temp_header = header;
+			TreeNode<Ty>* obj_header = obj.header;
 
-			//swap obj tree
-			obj.Destory();
-			obj.TreeCopy(this->head);
+			head = obj_head;
+			obj.head = temp_head;
 
-			//swap this tree
-			this->Destory();
+			header = obj_header;
+			obj.header = temp_header;
 
-			for (int n = 0; n < count; ++n)
-			{
-				Insert(arr[n]);
-			}
-
-			delete[] arr;
-			arr = nullptr;
+			int temp_count = NodeCount;
+			NodeCount = obj.NodeCount;
+			obj.NodeCount = temp_count;
 		}
+
 
 
 		//iterator
@@ -361,7 +353,7 @@ class RB_Tree
 			return *this;
 		}
 
-		bool operator==(const RB_Tree<Ty,Compare_Class>& obj)
+		bool operator==(const RB_Tree<Ty , Compare_Class>& obj)
 		{
 			if (NodeCount != obj.NodeCount)
 				return false;
