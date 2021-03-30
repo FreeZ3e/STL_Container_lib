@@ -30,8 +30,5 @@
 3. **algorithm**
 
 
-## 最近更新 :2021/3/26
-1. 对deque进行重写,使用了新的数据结构:通过二级指针实现的动态数组(与SGI STL中的map_ptr一致).
-2. 新增了deque的迭代器:deque_iterator.
-3. 对type_traits进行了更新:新增了is_pod用于判断类型是否为普通的旧类型.
-4. 对algorithm进行了更新:新增了find_if,count_if,remove_if用于条件触发的函数.
+## 最近更新 : 2021/3/30
+1. 对关联式和无序容器及其底层构造函数的隐式转换进行了限制,重写其swap函数.
