@@ -516,11 +516,7 @@ class list
 			for (int n = 0; n < list_size; ++n)
 			{
 				ptr->next = new node;
-
-				if (n != 0)
-				{
-					ptr->next->last = ptr;
-				}
+				ptr->next->last = ptr;
 
 				ptr = ptr->next;
 			}ptr->next = nullptr;
