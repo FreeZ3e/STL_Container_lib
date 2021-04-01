@@ -548,7 +548,10 @@ class RB_Tree
 
 				if (ptr->Father == ptr->Father->Father->Lchild)//father => Lchild
 				{
-					if (uncle != nullptr && uncle->Color == Red) //case 1
+					if (uncle == nullptr)
+						break;
+
+					if (uncle->Color == Red) //case 1
 					{
 						ptr->Father->Color = Black;
 						uncle->Color = Black;
@@ -556,7 +559,7 @@ class RB_Tree
 
 						ptr = ptr->Father->Father;
 					}
-					else                                        
+					else
 					{
 						if (ptr == ptr->Father->Rchild)//case 2
 						{
@@ -572,7 +575,10 @@ class RB_Tree
 				}
 				else//father => Rchild
 				{
-					if (uncle && uncle->Color == Red)//case 1
+					if (uncle == nullptr)
+						break;
+
+					if (uncle->Color == Red)//case 1
 					{
 						ptr->Father->Color = Black;
 						uncle->Color = Black;
@@ -732,7 +738,7 @@ class RB_Tree
 			
 		TreeNode<Ty>* Maximum(TreeNode<Ty>* ptr)
 		{
-			if (ptr)
+			if (ptr != nullptr)
 			{
 				while (ptr->Rchild != nullptr)
 				{
@@ -747,7 +753,7 @@ class RB_Tree
 
 		TreeNode<Ty>* Minimum(TreeNode<Ty>* ptr)
 		{
-			if (ptr)
+			if (ptr != nullptr)
 			{
 				while (ptr->Lchild != nullptr)
 				{
