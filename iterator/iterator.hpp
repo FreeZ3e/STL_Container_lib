@@ -56,8 +56,15 @@ struct input_iterator
 	public:
 		input_iterator() = default;
 
-		input_iterator(Ty* InitPtr) :ptr(InitPtr)
+		explicit input_iterator(Ty* InitPtr) :ptr(InitPtr)
+		{}
+
+		input_iterator(const self& obj):ptr(obj.ptr)
+		{ }
+
+		~input_iterator()
 		{
+			ptr = nullptr;
 		}
 
 		Ty& operator*()
@@ -98,13 +105,14 @@ struct forward_iterator
 	public:
 		forward_iterator() = default;
 
-		forward_iterator(Ty* InitPtr) :ptr(InitPtr)
-		{
-		}
+		explicit forward_iterator(Ty* InitPtr) :ptr(InitPtr)
+		{}
+
+		forward_iterator(const self& obj):ptr(obj.ptr)
+		{ }
 
 		~forward_iterator()
 		{
-			delete ptr;
 			ptr = nullptr;
 		}
 
@@ -166,8 +174,15 @@ struct Bid_iterator
 	public:
 		Bid_iterator() = default;
 
-		Bid_iterator(Ty* InitPtr) :ptr(InitPtr)
+		explicit Bid_iterator(Ty* InitPtr) :ptr(InitPtr)
+		{}
+
+		Bid_iterator(const self& obj):ptr(obj.ptr)
+		{ }
+
+		~Bid_iterator()
 		{
+			ptr = nullptr;
 		}
 
 		Ty& operator*()
@@ -248,11 +263,19 @@ struct Random_iterator
 	public:
 		Random_iterator() = default;
 
-		Random_iterator(Ty* InitPtr) :ptr(InitPtr)
+		explicit Random_iterator(Ty* InitPtr) :ptr(InitPtr)
 		{}
 
-		Random_iterator(Ty* InitPtr,int num):ptr(InitPtr),step_count(num)
+		explicit Random_iterator(Ty* InitPtr,int num):ptr(InitPtr),step_count(num)
 		{ }
+
+		Random_iterator(const self& obj) :ptr(obj.ptr),step_count(obj.step_count)
+		{ }
+
+		~Random_iterator()
+		{
+			ptr = nullptr;
+		}
 
 		Ty& operator*()
 		{
@@ -379,8 +402,12 @@ struct const_input_iterator
 			this->ptr = obj.ptr;
 		}
 
-		const_input_iterator(Ty* InitPtr) :ptr(InitPtr)
+		explicit const_input_iterator(Ty* InitPtr) :ptr(InitPtr)
+		{}
+
+		~const_input_iterator()
 		{
+			ptr = nullptr;
 		}
 
 		Ty operator*() const
@@ -416,8 +443,12 @@ struct const_forward_iterator
 			this->ptr = obj.ptr;
 		}
 
-		const_forward_iterator(Ty* InitPtr) :ptr(InitPtr)
+		explicit const_forward_iterator(Ty* InitPtr) :ptr(InitPtr)
+		{}
+
+		~const_forward_iterator()
 		{
+			ptr = nullptr;
 		}
 
 		Ty operator*() const
@@ -472,8 +503,12 @@ struct const_Bid_iterator
 			this->ptr = obj.ptr;
 		}
 
-		const_Bid_iterator(Ty* InitPtr) :ptr(InitPtr)
+		explicit const_Bid_iterator(Ty* InitPtr) :ptr(InitPtr)
+		{}
+
+		~const_Bid_iterator()
 		{
+			ptr = nullptr;
 		}
 
 		Ty operator*() const
@@ -547,14 +582,19 @@ struct const_Random_iterator
 		const_Random_iterator(const self& obj)
 		{
 			this->ptr = obj.ptr;
+			this->step_count = obj.step_count;
 		}
 
-		const_Random_iterator(Ty* InitPtr) :ptr(InitPtr)
+		explicit const_Random_iterator(Ty* InitPtr) :ptr(InitPtr)
+		{}
+
+		explicit const_Random_iterator(Ty* InitPtr , int num):ptr(InitPtr),step_count(num)
+		{}
+
+		~const_Random_iterator()
 		{
+			ptr = nullptr;
 		}
-
-		const_Random_iterator(Ty* InitPtr , int num):ptr(InitPtr),step_count(num)
-		{ }
 
 		Ty operator*() const
 		{
@@ -667,11 +707,19 @@ struct List_iterator
 	public:
 		List_iterator() = default;
 
-		List_iterator(Ty* InitPtr):ptr(InitPtr)
+		explicit List_iterator(Ty* InitPtr):ptr(InitPtr)
 		{}
 
-		List_iterator(Ty* InitPtr,int num):ptr(InitPtr),step_count(num)
+		explicit List_iterator(Ty* InitPtr,int num):ptr(InitPtr),step_count(num)
+		{}
+
+		List_iterator(const self& obj):ptr(obj.ptr),step_count(obj.step_count)
 		{ }
+
+		~List_iterator()
+		{
+			ptr = nullptr;
+		}
 
 		decltype(ptr->data)& operator*()
 		{
@@ -802,12 +850,12 @@ struct List_iterator
 	private:
 		friend bool operator!=(const self& Lhs , const self& Rhs)
 		{
-			return Lhs.ptr != Rhs.ptr;
+			return Lhs.step_count != Rhs.step_count;
 		}
 
 		friend bool operator==(const self& Lhs , const self& Rhs)
 		{
-			return Lhs.ptr == Rhs.ptr;
+			return Lhs.step_count == Rhs.step_count;
 		}
 };
 
@@ -828,13 +876,20 @@ struct const_List_iterator
 		const_List_iterator(const self& obj)
 		{
 			this->ptr = obj.ptr;
+			this->step_count = obj.step_count;
 		}
 
-		const_List_iterator(Ty* InitPtr) :ptr(InitPtr)
+		explicit const_List_iterator(Ty* InitPtr) :ptr(InitPtr)
 		{}
 
-		const_List_iterator(Ty* InitPtr,int num):ptr(InitPtr),step_count(num)
-		{ }
+		explicit const_List_iterator(Ty* InitPtr,int num):ptr(InitPtr),step_count(num)
+		{}
+
+		~const_List_iterator()
+		{
+			ptr = nullptr;
+		}
+
 
 		decltype(ptr->data) operator*() const
 		{
@@ -950,12 +1005,12 @@ struct const_List_iterator
 	private:
 		friend bool operator!=(const self& Lhs , const self& Rhs)
 		{
-			return Lhs.ptr != Rhs.ptr;
+			return Lhs.step_count != Rhs.step_count;
 		}
 
 		friend bool operator==(const self& Lhs , const self& Rhs)
 		{
-			return Lhs.ptr == Rhs.ptr;
+			return Lhs.step_count == Rhs.step_count;
 		}
 };
 
@@ -977,11 +1032,19 @@ struct RB_Tree_iterator
 	public:
 		RB_Tree_iterator() = default;
 
-		RB_Tree_iterator(Ty* p):ptr(p)
+		explicit RB_Tree_iterator(Ty* p):ptr(p)
 		{}
 
-		RB_Tree_iterator(Ty* p,int num):ptr(p),step_count(num)
-		{ }
+		explicit RB_Tree_iterator(Ty* p,int num):ptr(p),step_count(num)
+		{}
+
+		RB_Tree_iterator(const self& obj):ptr(obj.ptr),step_count(obj.step_count)
+		{}
+
+		~RB_Tree_iterator()
+		{
+			ptr = nullptr;
+		}
 
 		decltype(ptr->data)& operator*()
 		{
@@ -1186,13 +1249,19 @@ struct const_RB_Tree_iterator
 		const_RB_Tree_iterator(const self& obj)
 		{
 			this->ptr = obj.ptr;
+			this->step_count = obj.step_count;
 		}
 
-		const_RB_Tree_iterator(Ty* p) :ptr(p)
+		explicit const_RB_Tree_iterator(Ty* p) :ptr(p)
 		{}
 
-		const_RB_Tree_iterator(Ty* p,int num):ptr(p),step_count(num)
-		{ }
+		explicit const_RB_Tree_iterator(Ty* p,int num):ptr(p),step_count(num)
+		{}
+
+		~const_RB_Tree_iterator()
+		{
+			ptr = nullptr;
+		}
 
 		decltype(ptr->data) operator*() const
 		{
@@ -1404,10 +1473,25 @@ struct hash_table_iterator
 	public:
 		hash_table_iterator() = default;
 
-		hash_table_iterator(Ty head , Hash* InitPtr , int size,int step,int jump_count = 0) :node(head) , ptr(InitPtr) , bucket_size(size),step_count(step),count(jump_count)
+		explicit hash_table_iterator(Ty head , Hash* InitPtr , int size,int step,int jump_count = 0) :node(head) , ptr(InitPtr) , bucket_size(size),step_count(step),count(jump_count)
 		{
 			if(node == nullptr)//head == nullptr
 				bucket_jump();
+		}
+
+		hash_table_iterator(const self& obj)
+		{
+			node = obj.node;
+			ptr = obj.ptr;
+			bucket_size = obj.bucket_size;
+			count = obj.count;
+			step_count = obj.step_count;
+		}
+
+		~hash_table_iterator()
+		{
+			ptr = nullptr;
+			node = nullptr;
 		}
 
 		int step()
@@ -1553,10 +1637,25 @@ struct const_hash_table_iterator
 	public:
 		const_hash_table_iterator() = delete;
 
-		const_hash_table_iterator(Ty head , Hash* InitPtr , int size , int step,int jump_count = 0) :node(head) , ptr(InitPtr) , bucket_size(size) , step_count(step),count(jump_count)
+		explicit const_hash_table_iterator(Ty head , Hash* InitPtr , int size , int step,int jump_count = 0) :node(head) , ptr(InitPtr) , bucket_size(size) , step_count(step),count(jump_count)
 		{
 			if (node == nullptr)//head == nullptr
 				bucket_jump();
+		}
+
+		const_hash_table_iterator(const self& obj)
+		{
+			node = obj.node;
+			ptr = obj.ptr;
+			bucket_size = obj.bucket_size;
+			count = obj.count;
+			step_count = obj.step_count;
+		}
+
+		~const_hash_table_iterator()
+		{
+			ptr = nullptr;
+			node = nullptr;
 		}
 
 		int step()
@@ -1701,8 +1800,16 @@ class deque_iterator
 	public:
 		deque_iterator() = delete;
 
-		deque_iterator(Ty** init_ptr , int insert , int buffer , int body , int count) :ptr(init_ptr) , insert_count(insert) , buffer_count(buffer) , body_size(body) , step_count(count)
+		explicit deque_iterator(Ty** init_ptr , int insert , int buffer , int body , int count) :ptr(init_ptr) , insert_count(insert) , buffer_count(buffer) , body_size(body) , step_count(count)
+		{}
+
+		deque_iterator(const self& obj)
 		{
+			ptr = obj.ptr;
+			insert_count = obj.insert_count;
+			buffer_count = obj.buffer_count;
+			body_size = obj.body_size;
+			step_count = obj.step_count;
 		}
 
 		~deque_iterator()
@@ -1927,8 +2034,16 @@ class const_deque_iterator
 	public:
 		const_deque_iterator() = delete;
 
-		const_deque_iterator(Ty** init_ptr , int insert , int buffer , int body , int count) :ptr(init_ptr) , insert_count(insert) , buffer_count(buffer) , body_size(body) , step_count(count)
+		explicit const_deque_iterator(Ty** init_ptr , int insert , int buffer , int body , int count) :ptr(init_ptr) , insert_count(insert) , buffer_count(buffer) , body_size(body) , step_count(count)
+		{}
+
+		const_deque_iterator(const self& obj)
 		{
+			ptr = obj.ptr;
+			insert_count = obj.insert_count;
+			buffer_count = obj.buffer_count;
+			body_size = obj.body_size;
+			step_count = obj.step_count;
 		}
 
 		~const_deque_iterator()
