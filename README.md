@@ -31,6 +31,6 @@
 
 
 ## 2021/4/1
-1.对Rb_Tree中的InsertFixup函数存在的错误进行了修正.
-2.对List中的alloc函数存在的错误进行了修正.
+1.对Rb_Tree中的InsertFixup函数存在的错误进行了修正. 
+2.对List中的alloc函数存在的错误进行了修正. 
 3.对iterator的构造函数的隐式转换进行了限制,新增了拷贝构造函数.
