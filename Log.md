@@ -128,3 +128,8 @@
 1. 对Rb_Tree中的InsertFixup函数存在的错误进行了修正.
 2. 对List中的alloc函数存在的错误进行了修正.
 3. 对iterator的构造函数的隐式转换进行了限制,新增了拷贝构造函数.
+
+## 2021/4/3:
+1. 新增了insert_iterator,back_insert_iterator,front_insert_iterator.上述迭代器用于元素的插入,属于input_iterator. 
+同时为其添加了不同的inserter函数用于生成迭代器对象.
+2. 新增了reverse_iterator反向迭代器.同时为其添加了生成迭代器对象的reverser函数.
