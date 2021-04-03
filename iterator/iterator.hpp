@@ -42,6 +42,255 @@ struct Unique_Compare :public Compare_Method
 };
 
 
+
+//insert iterator
+template<typename container>
+class insert_iterator
+{
+	private:
+		container* ptr = nullptr;
+
+	public:
+		using self = insert_iterator<container>;
+		using TypeValue = typename container::TypeValue;
+
+	public:
+		insert_iterator() = delete;
+
+		explicit insert_iterator(container& obj) :ptr(&obj)
+		{
+		}
+
+		insert_iterator(const self& obj) :ptr(obj.ptr)
+		{
+		}
+
+		~insert_iterator()
+		{
+			ptr = nullptr;
+		}
+
+		self& operator()(const TypeValue& elem)
+		{
+			ptr->insert(elem);
+			return *this;
+		}
+
+
+		//opeartor ban
+		self& operator=(self) = delete;
+		self& operator++() = delete;
+		self operator++(int n) = delete;
+		self& operator--() = delete;
+		self operator--(int n) = delete;
+};
+
+//back_insert_iterator
+template<typename container>
+class back_insert_iterator
+{
+	private:
+		container* ptr = nullptr;
+
+	public:
+		using self = back_insert_iterator<container>;
+		using TypeValue = typename container::TypeValue;
+
+	public:
+		back_insert_iterator() = delete;
+
+		explicit back_insert_iterator(container& obj) :ptr(&obj)
+		{
+		}
+
+		back_insert_iterator(const self& obj) :ptr(obj.ptr)
+		{
+		}
+
+		~back_insert_iterator()
+		{
+			ptr = nullptr;
+		}
+
+		self& operator()(const TypeValue& elem)
+		{
+			ptr->push_back(elem);
+			return *this;
+		}
+
+		//opeartor ban
+		self& operator=(self) = delete;
+		self& operator++() = delete;
+		self operator++(int n) = delete;
+		self& operator--() = delete;
+		self operator--(int n) = delete;
+};
+
+//front_insert_iterator
+template<typename container>
+class front_insert_iterator
+{
+	private:
+		container* ptr = nullptr;
+
+	public:
+		using self = front_insert_iterator<container>;
+		using TypeValue = typename container::TypeValue;
+
+	public:
+		front_insert_iterator() = delete;
+
+		explicit front_insert_iterator(container& obj) :ptr(&obj)
+		{
+		}
+
+		front_insert_iterator(const self& obj) :ptr(obj.ptr)
+		{
+		}
+
+		~front_insert_iterator()
+		{
+			ptr = nullptr;
+		}
+
+		self& operator()(const TypeValue& elem)
+		{
+			ptr->push_front(elem);
+			return *this;
+		}
+
+		//opeartor ban
+		self& operator=(self) = delete;
+		self& operator++() = delete;
+		self operator++(int n) = delete;
+		self& operator--() = delete;
+		self operator--(int n) = delete;
+};
+
+//reverse iterator
+template<typename iterator_t>
+class reverse_iterator
+{
+	private:
+		iterator_t iter;
+
+	public:
+		using self = reverse_iterator<iterator_t>;
+		using TypeValue = typename iterator_t::TypeValue;
+
+	public:
+		reverse_iterator() = delete;
+
+		explicit reverse_iterator(iterator_t obj) :iter(obj)
+		{
+		}
+
+		reverse_iterator(const self& obj) :iter(obj.iter)
+		{
+		}
+
+
+		iterator_t base() const
+		{
+			return iter;
+		}
+
+		auto operator*()
+		{
+			iterator_t temp = iter;
+			return *--temp;
+		}
+
+		self& operator++()
+		{
+			--iter;
+			return *this;
+		}
+
+		self operator++(int)
+		{
+			self temp = *this;
+
+			--iter;
+			return temp;
+		}
+
+		self& operator+(int n)
+		{
+			for (int i = 0; i < n; ++i)
+			{
+				--iter;
+			}
+
+			return *this;
+		}
+
+		self& operator--()
+		{
+			++iter;
+			return *this;
+		}
+
+		self operator--(int)
+		{
+			self temp = *this;
+
+			++iter;
+			return temp;
+		}
+
+		self& operator-(int n)
+		{
+			for (int i = 0; i < n; ++i)
+			{
+				++iter;
+			}
+
+			return *this;
+		}
+
+	private:
+		friend bool operator!=(const self& Lhs , const self& Rhs)
+		{
+			return Lhs.iter != Rhs.iter;
+		}
+
+		friend bool operator==(const self& Lhs , const self& Rhs)
+		{
+			return Lhs.iter == Rhs.iter;
+		}
+};
+
+
+//helper function
+template<typename container>
+inline insert_iterator<container> inserter(container& obj)
+{
+	return insert_iterator<container>(obj);
+}
+
+template<typename container>
+inline front_insert_iterator<container> front_inserter(container& obj)
+{
+	return front_insert_iterator<container>(obj);
+}
+
+template<typename container>
+inline back_insert_iterator<container> back_inserter(container& obj)
+{
+	return back_insert_iterator<container>(obj);
+}
+
+template<typename iterator_t>
+inline reverse_iterator<iterator_t> reverser(iterator_t obj)
+{
+	return reverse_iterator<iterator_t>(obj);
+}
+
+
+
+
+
 //iterator
 template<typename Ty>
 struct input_iterator
