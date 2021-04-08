@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.1.1-alpha
+ * version : 1.2.0-alpha
  *
  * author : Mashiro
  *
@@ -90,7 +90,8 @@ class self_string
 		int elem_count = 0;
 
 	public:
-		using value = char*;
+		using self = self_string;
+		using TypeValue = char*;
 		using iterator = Random_iterator<char>;
 		using const_iterator = const_Random_iterator<char>;
 
@@ -471,7 +472,7 @@ class self_string
 			return *this;
 		}
 
-		bool operator==(const self_string& obj)
+		bool operator==(const self_string& obj) const
 		{
 			if (elem_count != obj.elem_count)
 				return false;
@@ -485,7 +486,7 @@ class self_string
 			return true;
 		}
 
-		bool operator!=(const self_string& obj)
+		bool operator!=(const self_string& obj) const
 		{
 			return !((*this) == obj);
 		}

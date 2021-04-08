@@ -82,32 +82,32 @@ struct pair
 		return temp;
 	}
 
-	bool operator==(const pair<Key_Ty , Value_Ty>& obj)
+	bool operator==(const pair<Key_Ty , Value_Ty>& obj) const
 	{
 		return key == obj.key;
 	}
 
-	bool operator!=(const pair<Key_Ty , Value_Ty>& obj)
+	bool operator!=(const pair<Key_Ty , Value_Ty>& obj) const
 	{
 		return key != obj.key;
 	}
 
-	bool operator>=(const pair<Key_Ty , Value_Ty>& obj)
+	bool operator>=(const pair<Key_Ty , Value_Ty>& obj) const
 	{
 		return key >= obj.key;
 	}
 
-	bool operator<=(const pair<Key_Ty , Value_Ty>& obj)
+	bool operator<=(const pair<Key_Ty , Value_Ty>& obj) const
 	{
 		return key <= obj.key;
 	}
 
-	bool operator>(const pair<Key_Ty , Value_Ty>& obj)
+	bool operator>(const pair<Key_Ty , Value_Ty>& obj) const
 	{
 		return key > obj.key;
 	}
 
-	bool operator<(const pair<Key_Ty , Value_Ty>& obj)
+	bool operator<(const pair<Key_Ty , Value_Ty>& obj) const
 	{
 		return key < obj.key;
 	}

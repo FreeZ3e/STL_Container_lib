@@ -4,7 +4,7 @@
 * 
 * This File is part of CONTAINER LIBRARY project.
 * 
-* version : 1.1.2-alpha
+* version : 1.2.0-alpha
 * 
 * author : Mashiro
 * 
@@ -83,7 +83,8 @@
 
 
 #pragma once
-
+#include"type_traits.hpp"
+using namespace lib_type;
 
 namespace lib_algo
 {
@@ -405,8 +406,10 @@ namespace lib_algo
 
 	//swap-------------------------------------------------------------
 
-	template<typename t1,typename t2>
-	void swap(t1& obj1 , t2& obj2)
+	//inside functions
+
+	template<typename t1,typename t2>//not pod type
+	void __swap(t1& obj1 , t2& obj2,false_type_tag)
 	{
 		int arr1_size = obj1.size();
 		int arr2_size = obj2.size();
@@ -444,6 +447,45 @@ namespace lib_algo
 
 			n++;
 		}
+	}
+
+	template<typename t1,typename t2>//is pod type
+	inline void __swap(t1& obj1 , t2& obj2 , true_type_tag)
+	{
+		auto temp = obj1;
+		obj1 = (t1)obj2;
+		obj2 = (t2)temp;
+	}
+
+	template<typename t>
+	inline void __swap(t& obj1 , t& obj2,false_type_tag)
+	{
+		obj1.swap(obj2);
+	}
+
+	template<typename t>
+	inline void __swap(t& obj1 , t& obj2 , true_type_tag)
+	{
+		t temp = obj1;
+		obj1 = obj2;
+		obj2 = temp;
+	}
+
+
+	//warrper
+
+	template<typename t1 , typename t2>
+	inline void swap(t1& obj1 , t2& obj2)
+	{
+		typename is_pod<t1>::type type_tag;
+		__swap(obj1 , obj2 , type_tag);
+	}
+
+	template<typename t>
+	inline void swap(t& obj1 , t& obj2)
+	{
+		typename is_pod<t>::type type_tag;
+		__swap(obj1 , obj2 , type_tag);
 	}
 
 	//-----------------------------------------------------------------

@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.1.2-alpha
+ * version : 1.2.0-alpha
  *
  * author : Mashiro
  *
@@ -288,7 +288,7 @@ class Unordered_Map
 			return *this;
 		}
 
-		bool operator==(const Unordered_Map<key,value>& obj)
+		bool operator==(const Unordered_Map<key,value>& obj) const
 		{
 			if (size() != obj.size() || buckets_count() != obj.buckets_count())
 				return false;
@@ -304,12 +304,12 @@ class Unordered_Map
 			return true;
 		}
 
-		bool operator!=(const Unordered_Map<key,value>& obj)
+		bool operator!=(const Unordered_Map<key,value>& obj) const
 		{
 			return !((*this) == obj);
 		}
 
-		bool operator>(const Unordered_Map<key,value>& obj)
+		bool operator>(const Unordered_Map<key,value>& obj) const
 		{
 			if (size() > obj.size())
 				return true;
@@ -317,7 +317,7 @@ class Unordered_Map
 			return false;
 		}
 
-		bool operator<(const Unordered_Map<key,value>& obj)
+		bool operator<(const Unordered_Map<key,value>& obj) const
 		{
 			if (size() < obj.size())
 				return true;
@@ -325,7 +325,7 @@ class Unordered_Map
 			return false;
 		}
 
-		bool operator>=(const Unordered_Map<key,value>& obj)
+		bool operator>=(const Unordered_Map<key,value>& obj) const
 		{
 			if (size() >= obj.size())
 				return true;
@@ -333,7 +333,7 @@ class Unordered_Map
 			return false;
 		}
 
-		bool operator<=(const Unordered_Map<key,value>& obj)
+		bool operator<=(const Unordered_Map<key,value>& obj) const
 		{
 			if (size() <= obj.size())
 				return true;

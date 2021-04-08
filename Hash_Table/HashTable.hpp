@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.1.2-alpha
+ * version : 1.2.0-alpha
  *
  * author : Mashiro
  *
@@ -442,7 +442,7 @@ class hash_table
 			return *this;
 		}
 
-		bool operator==(const self& obj)
+		bool operator==(const self& obj) const
 		{
 			if (elem_count != obj.elem_count || bucket_size != obj.bucket_size)
 				return false;
@@ -456,12 +456,12 @@ class hash_table
 			return true;
 		}
 
-		bool operator!=(const self& obj)
+		bool operator!=(const self& obj) const
 		{
 			return !((*this) == obj);
 		}
 
-		bool operator>(const self& obj)
+		bool operator>(const self& obj) const
 		{
 			if (elem_count > obj.elem_count)
 				return true;
@@ -469,7 +469,7 @@ class hash_table
 			return false;
 		}
 
-		bool operator<(const self& obj)
+		bool operator<(const self& obj) const
 		{
 			if (elem_count < obj.elem_count)
 				return true;
@@ -477,7 +477,7 @@ class hash_table
 			return false;
 		}
 
-		bool operator>=(const self& obj)
+		bool operator>=(const self& obj) const
 		{
 			if (elem_count >= obj.elem_count)
 				return true;
@@ -485,7 +485,7 @@ class hash_table
 			return false;
 		}
 
-		bool operator<=(const self& obj)
+		bool operator<=(const self& obj) const
 		{
 			if (elem_count <= obj.elem_count)
 				return true;

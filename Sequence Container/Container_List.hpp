@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.1.2-alpha
+ * version : 1.2.0-alpha
  *
  * author : Mashiro
  *
@@ -118,6 +118,7 @@ class list
 		int elem_count = 0;
 
 	public:
+		using self = list<Ty , default_size>;
 		using TypeValue = Ty;
 		using iterator = List_iterator<node>;
 		using const_iterator = const_List_iterator<node>;
@@ -447,7 +448,7 @@ class list
 
 		Ty operator[](int n) = delete;
 
-		bool operator==(const list<Ty , default_size>& obj)
+		bool operator==(const list<Ty , default_size>& obj) const
 		{
 			if (elem_count != obj.elem_count)
 				return false;
@@ -464,12 +465,12 @@ class list
 			return true;
 		}
 
-		bool operator!=(const list<Ty , default_size>& obj)
+		bool operator!=(const list<Ty , default_size>& obj) const
 		{
 			return !((*this) == obj);
 		}
 
-		bool operator>(const list<Ty , default_size>& obj)
+		bool operator>(const list<Ty , default_size>& obj) const
 		{
 			if (list_size > obj.list_size)
 				return true;
@@ -477,7 +478,7 @@ class list
 			return false;
 		}
 
-		bool operator<(const list<Ty , default_size>& obj)
+		bool operator<(const list<Ty , default_size>& obj) const
 		{
 			if (list_size < obj.list_size)
 				return true;
@@ -485,7 +486,7 @@ class list
 			return false;
 		}
 
-		bool operator>=(const list<Ty , default_size>& obj)
+		bool operator>=(const list<Ty , default_size>& obj) const
 		{
 			if (list_size >= obj.list_size)
 				return true;
@@ -493,7 +494,7 @@ class list
 			return false;
 		}
 
-		bool operator<=(const list<Ty , default_size>& obj)
+		bool operator<=(const list<Ty , default_size>& obj) const
 		{
 			if (list_size <= obj.list_size)
 				return true;

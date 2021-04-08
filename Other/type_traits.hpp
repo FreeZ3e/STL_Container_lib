@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.1.2-alpha
+ * version : 1.2.0-alpha
  *
  * author : Mashiro
  *
@@ -100,6 +100,9 @@
  *
  * template<typename t>
  * struct traits
+ * 
+ * template<typename t,bool is_pod_type = is_pod<t>::value>
+ * struct type_traits
  *
  * template<typename t>
  * struct get_TypeValue
@@ -937,6 +940,28 @@ namespace lib_type
 	//traits---------------------------------------------------
 	template<typename t>
 	struct traits
+	{
+		using type_value = t;
+	};
+	//---------------------------------------------------------
+
+
+	//type_tratis----------------------------------------------
+	template<typename t,bool is_pod_type = is_pod<t>::value>
+	struct type_traits
+	{ };
+
+	template<typename t>
+	struct type_traits<t,false>
+	{
+		using type_value = typename t::TypeValue;
+		using self_type = typename t::self;
+		using iterator = typename t::iterator;
+		using const_iterator = typename t::const_iterator;
+	};
+
+	template<typename t>
+	struct type_traits<t , true>
 	{
 		using type_value = t;
 	};

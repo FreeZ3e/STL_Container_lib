@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.1.1-alpha
+ * version : 1.2.0-alpha
  *
  * author : Mashiro
  *
@@ -69,7 +69,8 @@ class stack
 	private:
 		deque<Ty>* arr = nullptr;
 	public:
-		using value = Ty;
+		using self = stack<Ty>;
+		using TypeValue = Ty;
 		using iterator = Random_iterator<Ty>;
 		using const_iterator = const_Random_iterator<Ty>;
 
@@ -196,7 +197,7 @@ class stack
 			return *this;
 		}
 
-		bool operator==(const stack<Ty>& obj)
+		bool operator==(const stack<Ty>& obj) const
 		{
 			if (this->size() != obj.size())
 				return false;
@@ -213,7 +214,7 @@ class stack
 			return true;
 		}
 
-		bool operator!=(const stack<Ty>& obj)
+		bool operator!=(const stack<Ty>& obj) const
 		{
 			return !((*this) == obj);
 		}

@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.1.2-alpha
+ * version : 1.2.0-alpha
  *
  * author : Mashiro
  *
@@ -397,7 +397,7 @@ class deque
 			return false;
 		}
 
-		iterator find(Ty elem)
+		iterator find(Ty elem) const
 		{
 			auto p = begin();
 			for (; p != end(); ++p)
@@ -409,7 +409,7 @@ class deque
 			return end();
 		}
 
-		const_iterator cfind(Ty elem)
+		const_iterator cfind(Ty elem) const
 		{
 			auto p = cbegin();
 			for (; p != cend(); ++p)
@@ -553,7 +553,7 @@ class deque
 			return *this;
 		}
 
-		bool operator==(const deque<Ty>& obj)
+		bool operator==(const deque<Ty>& obj) const
 		{
 			if (elem_count != obj.elem_count)
 				return false;
@@ -570,27 +570,27 @@ class deque
 			return true;
 		}
 
-		bool operator!=(const deque<Ty>& obj)
-		{
+		bool operator!=(const deque<Ty>& obj) const
+		{ 
 			return !((*this) == obj);
 		}
 
-		bool operator>(const deque<Ty>& obj)
+		bool operator>(const deque<Ty>& obj) const
 		{
 			return (max_size() > obj.max_size());
 		}
 
-		bool operator>=(const deque<Ty>& obj)
+		bool operator>=(const deque<Ty>& obj) const
 		{
 			return (max_size() >= obj.max_size());
 		}
 
-		bool operator<(const deque<Ty>& obj)
+		bool operator<(const deque<Ty>& obj) const
 		{
 			return (max_size() < obj.max_size());
 		}
 
-		bool operator<=(const deque<Ty>& obj)
+		bool operator<=(const deque<Ty>& obj) const
 		{
 			return (max_size() <= obj.max_size());
 		}

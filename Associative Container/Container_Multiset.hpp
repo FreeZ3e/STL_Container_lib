@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.1.2-alpha
+ * version : 1.2.0-alpha
  *
  * author : Mashiro
  *
@@ -273,7 +273,7 @@ class Multiset
 			return *this;
 		}
 
-		bool operator==(const Multiset<Ty>& obj)
+		bool operator==(const Multiset<Ty>& obj) const
 		{
 			if (elem_count != obj.elem_count)
 				return false;
@@ -289,12 +289,12 @@ class Multiset
 			return true;
 		}
 
-		bool operator!=(const Multiset<Ty>& obj)
+		bool operator!=(const Multiset<Ty>& obj) const
 		{
 			return !((*this) == obj);
 		}
 
-		bool operator>(const Multiset<Ty>& obj)
+		bool operator>(const Multiset<Ty>& obj) const
 		{
 			if (elem_count > obj.elem_count)
 				return true;
@@ -302,7 +302,7 @@ class Multiset
 			return false;
 		}
 
-		bool operator<(const Multiset<Ty>& obj)
+		bool operator<(const Multiset<Ty>& obj) const
 		{
 			if (elem_count < obj.elem_count)
 				return true;
@@ -310,7 +310,7 @@ class Multiset
 			return false;
 		}
 
-		bool operator>=(const Multiset<Ty>& obj)
+		bool operator>=(const Multiset<Ty>& obj) const
 		{
 			if (elem_count >= obj.elem_count)
 				return true;
@@ -318,7 +318,7 @@ class Multiset
 			return false;
 		}
 
-		bool operator<=(const Multiset<Ty>& obj)
+		bool operator<=(const Multiset<Ty>& obj) const
 		{
 			if (elem_count <= obj.elem_count)
 				return true;

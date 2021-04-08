@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.1.1-alpha
+ * version : 1.2.0-alpha
  *
  * author : Mashiro
  *
@@ -237,7 +237,7 @@ class array
 			return *this;
 		}
 
-		bool operator==(const array<Ty , size>& obj)
+		bool operator==(const array<Ty , size>& obj) const
 		{
 			if (this->elem_count != obj.elem_count)
 				return false;
@@ -251,12 +251,12 @@ class array
 			return true;
 		}
 
-		bool operator!=(const array<Ty , size>& obj)
+		bool operator!=(const array<Ty , size>& obj) const
 		{
 			return !((*this) == obj);
 		}
 
-		bool operator>(const array<Ty , size>& obj)
+		bool operator>(const array<Ty , size>& obj) const
 		{
 			if (size > obj.size)
 				return true;
@@ -264,7 +264,7 @@ class array
 			return false;
 		}
 
-		bool operator<(const array<Ty , size>& obj)
+		bool operator<(const array<Ty , size>& obj) const
 		{
 			if (size < obj.size)
 				return true;
@@ -272,7 +272,7 @@ class array
 			return false;
 		}
 
-		bool operator<=(const array<Ty , size>& obj)
+		bool operator<=(const array<Ty , size>& obj) const
 		{
 			if (size <= obj.size)
 				return true;
@@ -280,7 +280,7 @@ class array
 			return false;
 		}
 
-		bool operator>=(const array<Ty , size>& obj)
+		bool operator>=(const array<Ty , size>& obj) const
 		{
 			if (size >= obj.size)
 				return true;

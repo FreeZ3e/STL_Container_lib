@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.1.1-alpha
+ * version : 1.2.0-alpha
  *
  * author : Mashiro
  *
@@ -417,7 +417,7 @@ class vector
 			return *this;
 		}
 
-		bool operator==(const vector<Ty>& obj)
+		bool operator==(const vector<Ty>& obj) const
 		{
 			if (elem_count != obj.elem_count)
 				return false;
@@ -431,12 +431,12 @@ class vector
 			return true;
 		}
 
-		bool operator!=(const vector<Ty>& obj)
+		bool operator!=(const vector<Ty>& obj) const
 		{
 			return !((*this) == obj);
 		}
 
-		bool operator>(const vector<Ty>& obj)
+		bool operator>(const vector<Ty>& obj) const
 		{
 			if (arr_size > obj.arr_size)
 				return true;
@@ -444,7 +444,7 @@ class vector
 			return false;
 		}
 
-		bool operator<(const vector<Ty>& obj)
+		bool operator<(const vector<Ty>& obj) const
 		{
 			if (arr_size < obj.arr_size)
 				return true;
@@ -452,7 +452,7 @@ class vector
 			return false;
 		}
 
-		bool operator<=(const vector<Ty>& obj)
+		bool operator<=(const vector<Ty>& obj) const
 		{
 			if (arr_size <= obj.arr_size)
 				return true;
@@ -460,7 +460,7 @@ class vector
 			return false;
 		}
 
-		bool operator>=(const vector<Ty>& obj)
+		bool operator>=(const vector<Ty>& obj) const
 		{
 			if (arr_size >= obj.arr_size)
 				return true;

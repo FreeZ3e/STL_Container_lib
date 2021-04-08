@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.1.2-alpha
+ * version : 1.2.0-alpha
  *
  * author : Mashiro
  *
@@ -353,7 +353,7 @@ class RB_Tree
 			return *this;
 		}
 
-		bool operator==(const RB_Tree<Ty , Compare_Class>& obj)
+		bool operator==(const RB_Tree<Ty , Compare_Class>& obj) const
 		{
 			if (NodeCount != obj.NodeCount)
 				return false;
@@ -369,12 +369,12 @@ class RB_Tree
 			return true;
 		}
 
-		bool operator!=(const RB_Tree<Ty , Compare_Class>& obj)
+		bool operator!=(const RB_Tree<Ty , Compare_Class>& obj) const
 		{
 			return !((*this) == obj);
 		}
 
-		bool operator>(const RB_Tree<Ty , Compare_Class>& obj)
+		bool operator>(const RB_Tree<Ty , Compare_Class>& obj) const
 		{
 			if (NodeCount > obj.NodeCount)
 				return true;
@@ -382,7 +382,7 @@ class RB_Tree
 			return false;
 		}
 
-		bool operator<(const RB_Tree<Ty , Compare_Class>& obj)
+		bool operator<(const RB_Tree<Ty , Compare_Class>& obj) const
 		{
 			if (NodeCount < obj.NodeCount)
 				return true;
@@ -390,7 +390,7 @@ class RB_Tree
 			return false;
 		}
 
-		bool operator>=(const RB_Tree<Ty , Compare_Class>& obj)
+		bool operator>=(const RB_Tree<Ty , Compare_Class>& obj) const
 		{
 			if (NodeCount >= obj.NodeCount)
 				return true;
@@ -398,7 +398,7 @@ class RB_Tree
 			return false;
 		}
 
-		bool operator<=(const RB_Tree<Ty , Compare_Class>& obj)
+		bool operator<=(const RB_Tree<Ty , Compare_Class>& obj) const
 		{
 			if (NodeCount <= obj.NodeCount)
 				return true;

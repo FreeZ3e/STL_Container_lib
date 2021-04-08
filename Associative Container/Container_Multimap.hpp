@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.1.2-alpha
+ * version : 1.2.0-alpha
  *
  * author : Mashiro
  *
@@ -293,7 +293,7 @@ class Multimap
 			return *this;
 		}
 
-		bool operator==(const Multimap<key , value>& obj)
+		bool operator==(const Multimap<key , value>& obj) const
 		{
 			if (elem_count != obj.elem_count)
 				return false;
@@ -309,12 +309,12 @@ class Multimap
 			return true;
 		}
 
-		bool operator!=(const Multimap<key , value>& obj)
+		bool operator!=(const Multimap<key , value>& obj) const
 		{
 			return !((*this) == obj);
 		}
 
-		bool operator>(const Multimap<key , value>& obj)
+		bool operator>(const Multimap<key , value>& obj) const
 		{
 			if (elem_count > obj.elem_count)
 				return true;
@@ -322,7 +322,7 @@ class Multimap
 			return false;
 		}
 
-		bool operator<(const Multimap<key , value>& obj)
+		bool operator<(const Multimap<key , value>& obj) const
 		{
 			if (elem_count < obj.elem_count)
 				return true;
@@ -330,7 +330,7 @@ class Multimap
 			return false;
 		}
 
-		bool operator>=(const Multimap<key , value>& obj)
+		bool operator>=(const Multimap<key , value>& obj) const
 		{
 			if (elem_count >= obj.elem_count)
 				return true;
@@ -338,7 +338,7 @@ class Multimap
 			return false;
 		}
 
-		bool operator<=(const Multimap<key , value>& obj)
+		bool operator<=(const Multimap<key , value>& obj) const
 		{
 			if (elem_count <= obj.elem_count)
 				return true;
