@@ -133,3 +133,9 @@
 1. 新增了insert_iterator,back_insert_iterator,front_insert_iterator.上述迭代器用于元素的插入,属于input_iterator. 
 同时为其添加了不同的inserter函数用于生成迭代器对象.
 2. 新增了reverse_iterator反向迭代器.同时为其添加了生成迭代器对象的reverser函数.
+
+## 2021/4/8(1.2.0-alpha):
+1. 新增了functor adapters,实现在functional.hpp文件下,详细信息请阅读该文件下的README.
+2. 对各容器的运算符进行了const修饰,校对了各容器的型别定义标签.
+3. 在type_traits.hpp下新增了type_traits,用于对容器型别标签的萃取.
+4. 重写了algorithm下的swap函数,针对不同情况选择不同方式,提升了其运行效率.
