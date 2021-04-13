@@ -31,8 +31,5 @@
 4. **functional**
 
 
-##  2021/4/8(1.2.0-alpha)
-1. 新增了functor adapters,实现在functional.hpp文件下,详细信息请阅读该文件下的README.
-2. 对各容器的运算符进行了const修饰,校对了各容器的型别定义标签.
-3. 在type_traits.hpp下新增了type_traits,用于对容器型别标签的萃取.
-4. 重写了algorithm下的swap函数,针对不同情况选择不同方式,提升了其运行效率.
+##  2021/4/13:
+1. 新增了编译期运行的元函数(mate functors).实现在tmp.hpp下,作用与functional.hpp下的仿函数类似.
