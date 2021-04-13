@@ -56,6 +56,7 @@
 *					mem_fun,mem_fun_ref
 */
 
+#pragma once
 
 //unary_function
 template<typename Arg,typename Result>
