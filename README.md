@@ -32,5 +32,6 @@
 5. **mate functors(tmp)**
 
 
-##  2021/4/13:
-1. 新增了编译期运行的元函数(mate functors).实现在tmp.hpp下,作用与functional.hpp下的仿函数类似.
+## 2021/4/22
+1. 对algorithm中的sort函数进行了重写:使用以insert sort和quick sort为基础的intro sort.
+2. 对list_iterator中step_count的计数错误进行了修正.
