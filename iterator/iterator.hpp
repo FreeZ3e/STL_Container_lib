@@ -984,26 +984,34 @@ struct List_iterator
 		{
 			Ty* temp = ptr;
 
+			int count = 0;
 			for (int i = 0; i < n; ++i)
 			{
 				if (temp->next != nullptr)
+				{
 					temp = temp->next;
+					count++;
+				}
 			}
 
-			return self(temp , step_count + n);
+			return self(temp , step_count + count);
 		}
 
 		self operator-(int n)
 		{
 			Ty* temp = ptr;
 
+			int count = 0;
 			for (int i = 0; i < n; ++i)
 			{
 				if (temp->last != nullptr)
+				{
 					temp = temp->last;
+					count++;
+				}
 			}
 
-			return self(temp , step_count - n);
+			return self(temp , step_count - count);
 		}
 
 		self& operator++()
@@ -1011,8 +1019,7 @@ struct List_iterator
 			if (ptr->next)
 			{
 				ptr = ptr->next;
-				step_count++;
-			}
+			}step_count++;
 
 			return *this;
 		}
@@ -1024,8 +1031,7 @@ struct List_iterator
 			if (ptr->next)
 			{
 				ptr = ptr->next;
-				step_count++;
-			}
+			}step_count++;
 
 			return temp;
 		}
@@ -1035,8 +1041,7 @@ struct List_iterator
 			if (ptr->last)
 			{
 				ptr = ptr->last;
-				step_count--;
-			}
+			}step_count--;
 
 			return *this;
 		}
@@ -1048,8 +1053,7 @@ struct List_iterator
 			if (ptr->last)
 			{
 				ptr = ptr->last;
-				step_count--;
-			}
+			}step_count--;
 
 			return temp;
 		}
@@ -1149,26 +1153,34 @@ struct const_List_iterator
 		{
 			Ty* temp = ptr;
 
+			int count = 0;
 			for (int i = 0; i < n; ++i)
 			{
 				if (temp->next != nullptr)
+				{
 					temp = temp->next;
+					count++;
+				}
 			}
 
-			return self(temp , step_count + n);
+			return self(temp , step_count + count);
 		}
 
 		self operator-(int n)
 		{
 			Ty* temp = ptr;
 
+			int count = 0;
 			for (int i = 0; i < n; ++i)
 			{
 				if (temp->last != nullptr)
+				{
 					temp = temp->last;
+					count++;
+				}
 			}
 
-			return self(temp , step_count - n);
+			return self(temp , step_count - count);
 		}
 
 		self& operator++()
@@ -1176,8 +1188,7 @@ struct const_List_iterator
 			if (ptr->next)
 			{
 				ptr = ptr->next;
-				step_count++;
-			}
+			}step_count++;
 
 			return *this;
 		}
@@ -1189,8 +1200,7 @@ struct const_List_iterator
 			if (ptr->next)
 			{
 				ptr = ptr->next;
-				step_count++;
-			}
+			}step_count++;
 
 			return temp;
 		}
@@ -1200,8 +1210,7 @@ struct const_List_iterator
 			if (ptr->last)
 			{
 				ptr = ptr->last;
-				step_count--;
-			}
+			}step_count--;
 
 			return *this;
 		}
@@ -1213,8 +1222,7 @@ struct const_List_iterator
 			if (ptr->last)
 			{
 				ptr = ptr->last;
-				step_count--;
-			}
+			}step_count--;
 
 			return temp;
 		}
