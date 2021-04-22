@@ -169,6 +169,8 @@ namespace lib_algo
 
 
 	//sort----------------------------------------------------------
+	//sort call insert_sort & quick_sort
+	//when sort range less than threshold  -just call insert_sort
 
 	//default sort compare function
 	template<typename t>
@@ -177,53 +179,137 @@ namespace lib_algo
 		return elem1 < elem2 ? elem1 : elem2;
 	}
 
-	//sort by obj
-	template<typename t>
-	void sort(t& obj , 
-			  typename t::TypeValue(*compare)(typename t::TypeValue , typename t::TypeValue) = less_compare) noexcept
-	{
-		auto p = obj.begin();
-		for (; p < obj.end() - 1;++p)//bubble sort
-		{
-			for (auto p1 = obj.begin(); p1 < obj.end() - p.step()-1;)
-			{
-				auto cur = *p1;
-				auto ptr = p1;
-				auto next = *(++p1);
 
-				if (compare(next,cur) != cur)//compare function
+	//insert_sort
+	template<typename t>
+	void _insert_sort(t p_begin , t p_end ,
+					 typename t::TypeValue(*compare)(typename t::TypeValue , typename t::TypeValue) = less_compare)
+	{
+		int step = p_end.step() - p_begin.step();
+		auto beg = p_begin;
+		auto next = p_begin + 1;
+
+		for (int n = 0; n < step - 1; ++n)
+		{
+			next = p_begin + 1;
+			for (auto p = p_begin; p >= beg; --p)
+			{
+				if (compare(*next , *p) != *p)
 				{
-					auto temp = *ptr;
-					*ptr = *p1;
-					*p1 = temp;
+					//swap
+					auto tmp = *next;
+					*next = *p;
+					*p = tmp;
+
+					//next reset
+					next = p;
 				}
+			}
+
+			p_begin++;
+		}
+	}
+	
+	//quick_sort_helper
+	template<typename t,typename value>
+	void _quick_sort_less(t& beg , t& end , const value& key)
+	{
+		while (beg < end)
+		{
+			while (*end >= key && beg < end)
+				--end;
+			while (*beg <= key && beg < end)
+				++beg;
+
+			if (beg < end)
+			{
+				auto temp = *beg;
+				*beg = *end;
+				*end = temp;
 			}
 		}
 	}
 
-	//sort by iterator range
-	template<typename t>
-	void sort(t p_begin , t p_end, 
-			  typename t::TypeValue(*compare)(typename t::TypeValue , typename t::TypeValue) = less_compare) noexcept
+	template<typename t,typename value>
+	void _quick_sort_max(t& beg , t& end , const value& key)
 	{
-		int step = p_end.step() - p_begin.step();
-		auto begin_save = p_begin;
-
-		for (int n = 0; n < step - 1; ++n)//bubble sort
+		while (beg < end)
 		{
-			p_begin = begin_save;
-			for (int i = 0; i < step - 1 - n; ++i)
-			{
-				auto cur = *p_begin;
-				auto ptr = p_begin;
-				auto next = *(++p_begin);
+			while (*end <= key && beg < end)
+				--end;
+			while (*beg >= key && beg < end)
+				++beg;
 
-				if (compare(next , cur) != cur)//compare function
-				{
-					auto temp = *ptr;
-					*ptr = *p_begin;
-					*p_begin = temp;
-				}
+			if (beg < end)
+			{
+				auto temp = *beg;
+				*beg = *end;
+				*end = temp;
+			}
+		}
+	}
+
+
+	//quick_sort
+	template<typename t>
+	void _quick_sort(t p_begin , t p_end,
+					 typename t::TypeValue(*compare)(typename t::TypeValue , typename t::TypeValue) = less_compare)
+	{
+		int const threshold = 16;
+		if (p_begin >= p_end || p_end.step() - p_begin.step() < threshold)
+			return;
+
+		int key = *p_begin;
+		auto _beg = p_begin;
+		auto _end = p_end - 1;
+
+		if (compare(1 , 2) == 1)
+			_quick_sort_less(_beg , _end , key);
+		else
+			_quick_sort_max(_beg , _end , key);
+
+		*p_begin = *_beg;
+		*_beg = key;
+
+
+		_quick_sort(p_begin , _beg , compare);
+		_quick_sort(_beg + 1 , p_end , compare);
+	}
+
+	//sort
+	template<typename t>
+	void sort(t p_begin , t p_end ,
+			   typename t::TypeValue(*compare)(typename t::TypeValue , typename t::TypeValue) = less_compare)
+	{
+		const int threshold = 16;
+
+		if (p_begin != p_end)
+		{
+			if (p_end.step() - p_begin.step() < threshold)
+				_insert_sort(p_begin , p_end , compare);
+
+			else
+			{
+				_quick_sort(p_begin , p_end , compare);
+				_insert_sort(p_begin , p_end , compare);
+			}
+		}
+	}
+
+	template<typename t>
+	void sort(t& obj ,
+			   typename t::TypeValue(*compare)(typename t::TypeValue , typename t::TypeValue) = less_compare)
+	{
+		const int threshold = 16;
+
+		if (!obj.empty())
+		{
+			if (obj.size() < threshold)
+				_insert_sort(obj.begin() , obj.end() , compare);
+			else
+			{
+				_quick_sort(obj.begin() , obj.end() , compare);
+				_insert_sort(obj.begin() , obj.end() , compare);
 			}
 		}
 	}
@@ -773,6 +859,7 @@ namespace lib_algo
 		}
 	}
 
+
 	//------------------------------------------------------------------
 
 
@@ -822,7 +909,7 @@ namespace lib_algo
 
 	//copy_from --> obj
 	template<typename t1,typename t2>
-	inline void copy(const t1& copy_from, t2& obj)
+	void copy(const t1& copy_from , t2& obj)
 	{
 		auto p = copy_from.cbegin();
 		obj.clear();
@@ -833,9 +920,9 @@ namespace lib_algo
 		}
 	}
 
-	//copy elem in range to obj 
+	//copy elem in range to obj
 	template<typename t1,typename t2>
-	inline void copy(t1 p_begin , t1 p_end , t2& obj)
+	void copy(t1 p_begin , t1 p_end , t2& obj)
 	{
 		int step = p_end.step() - p_begin.step();
 		obj.clear();
@@ -914,7 +1001,7 @@ namespace lib_algo
 	//for_each----------------------------------------------------------
 
 	template<typename t>
-	inline void for_each(t& obj ,void(*function)(typename t::TypeValue))
+	inline void for_each(t& obj , void(*function)(typename t::TypeValue))
 	{
 		auto p = obj.begin();
 
@@ -936,7 +1023,7 @@ namespace lib_algo
 	}
 
 	template<typename t>
-	inline void for_each(t p_begin , t p_end , void(*function)(typename t::TypeValue))
+	inline void for_each(t& p_begin , t& p_end , void(*function)(typename t::TypeValue))
 	{
 		int step = p_end.step() - p_begin.step();
 
