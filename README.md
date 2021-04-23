@@ -32,6 +32,5 @@
 5. **mate functors(tmp)**
 
 
-## 2021/4/22
-1. 对algorithm中的sort函数进行了重写:使用以insert sort和quick sort为基础的intro sort.
-2. 对list_iterator中step_count的计数错误进行了修正.
+## 2021/4/23
+1. 重写了copy函数,对各种情况及是否pod类型做细分处理.
