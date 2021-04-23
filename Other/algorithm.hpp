@@ -907,30 +907,79 @@ namespace lib_algo
 
 	//copy--------------------------------------------------------------
 
-	//copy_from --> obj
-	template<typename t1,typename t2>
-	void copy(const t1& copy_from , t2& obj)
-	{
-		auto p = copy_from.cbegin();
-		obj.clear();
 
-		for (; p != copy_from.cend(); ++p)
+	template<typename t1,typename t2>
+	void _range_greater(t1 p_begin , t1 p_end , t2& obj)
+	{
+		for (auto p = obj.begin(); p != obj.end(); ++p,++p_begin)
 		{
-			obj.insert(*p);
+			*p = *p_begin;
+		}
+
+		while (p_begin != p_end)
+		{
+			obj.insert(*p_begin);
+			++p_begin;
 		}
 	}
 
-	//copy elem in range to obj
 	template<typename t1,typename t2>
-	void copy(t1 p_begin , t1 p_end , t2& obj)
+	inline void _range_equal(t1 p_begin , t1 p_end , t2& obj)
 	{
-		int step = p_end.step() - p_begin.step();
+		for (auto p = obj.begin(); p != obj.end(),p_begin != p_end; ++p , ++p_begin)
+		{
+			*p = *p_begin;
+		}
+	}
+
+	template<typename t1,typename t2>
+	inline void _range_less(t1 p_begin , t1 p_end , t2& obj)
+	{
 		obj.clear();
 
-		for (int n = 0; n < step; ++n)
+		while (p_begin != p_end)
 		{
 			obj.insert(*(p_begin++));
 		}
+	}
+
+
+
+	template<typename t1,typename t2>
+	inline void copy(t1 p_begin , t1 p_end , t2& obj)
+	{
+		if (p_end.step() - p_begin.step() == obj.size())
+			_range_equal(p_begin , p_end , obj);
+		else if (p_end.step() - p_begin.step() > obj.size())
+			_range_greater(p_begin , p_end , obj);
+		else
+			_range_less(p_begin , p_end , obj);
+	}
+
+	//not pod type
+	template<typename t1,typename t2>
+	inline void _copy(const t1& copy_from , t2& obj , false_type_tag)
+	{
+		if (copy_from.size() == obj.size())
+			_range_equal(copy_from.cbegin() , copy_from.cend() , obj);
+		else if (copy_from.size() > obj.size())
+			_range_greater(copy_from.cbegin() , copy_from.cend() , obj);
+		else
+			_range_less(copy_from.cbegin() , copy_from.cend() , obj);
+	}
+
+	//is pod type
+	template<typename t1,typename t2>
+	inline void _copy(const t1& copy_from , t2& obj , true_type_tag)
+	{
+		obj = (t2)copy_from;
+	}
+
+	template<typename t1,typename t2>
+	inline void copy(const t1& copy_from , t2& obj)
+	{
+		typename is_pod<t1>::type type_tag;
+		_copy(copy_from , obj , type_tag);
 	}
 
 	//------------------------------------------------------------------
