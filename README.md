@@ -32,5 +32,7 @@
 5. **mate functors(tmp)**
 
 
-## 2021/4/23
-1. 重写了copy函数,对各种情况及是否pod类型做细分处理.
+## 2021/5/5
+1. 对sort函数进行了优化,为其内增了堆排序(heap_sort),且为quick_sort进行了优化.
+2. 修正了hash_table中insert函数存在的错误.
+3. 修正了RB_Tree中对内存的非法操作.
