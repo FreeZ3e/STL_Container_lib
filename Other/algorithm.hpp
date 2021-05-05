@@ -55,7 +55,7 @@
 * 
 *inline decltype(auto) min(obj)
 *inline decltype(auto) min(iterator p_begin,iterator p_end)
-* 
+*
 *inline decltype(auto) max(obj)
 *inline decltype(auto) max(iterator p_begin,iterator p_end)
 * 
@@ -127,10 +127,9 @@ namespace lib_algo
 	template<typename t>
 	bool equal(t p_begin , t p_end)
 	{
-		int step = p_end.step() - p_begin.step();
 		auto elem = *(p_begin);
 
-		for (int n = 0; n < step; ++n , ++p_begin)
+		for (;p_begin < p_end; ++p_begin)
 		{
 			if (*(p_begin) != elem)
 				return false;
@@ -169,8 +168,9 @@ namespace lib_algo
 
 
 	//sort----------------------------------------------------------
-	//sort call insert_sort & quick_sort
+	//sort call insert_sort , quick_sort & heap_sort
 	//when sort range less than threshold  -just call insert_sort
+	//when depth_limit == 0 - return to heap_sort
 
 	//default sort compare function
 	template<typename t>
@@ -180,10 +180,107 @@ namespace lib_algo
 	}
 
 
-	//insert_sort
+
+	template<typename t>
+	void _PercolateDown(t p_begin , int index , int size)
+	{
+		auto min = *p_begin;
+
+		while (index * 2 + 1 < size)
+		{
+			min = index * 2 + 1;
+
+			if (index * 2 + 2 < size)
+			{
+				if (*(p_begin + min) > *(p_begin + (index * 2 + 2)))
+					min = index * 2 + 2;
+
+				if (*(p_begin + index) < *(p_begin + min))
+					break;
+				else
+				{
+					auto temp = *(p_begin + index);
+					*(p_begin + index) = *(p_begin + min);
+					*(p_begin + min) = temp;
+
+					index = min;
+				}
+			}
+		}
+	}
+
+	template<typename t>
+	void _PercolateUp(t p_begin, int index , int size)
+	{
+		auto max = *p_begin;
+
+		while (index * 2 + 1 < size)
+		{
+			max = index * 2 + 1;
+
+			if (index * 2 + 2 < size)
+			{
+				if(*(p_begin+max) < *(p_begin+(index * 2 + 2)))
+				   max = index * 2 + 2;
+			}
+
+			if(*(p_begin + index) > *(p_begin + max))
+				break;
+			else
+			{
+				auto temp = *(p_begin + index);
+				*(p_begin + index) = *(p_begin + max);
+				*(p_begin + max) = temp;
+
+				index = max;
+			}
+		}
+	}
+
+	template<typename t>
+	void _heap_built(t p_begin , t p_end,
+					 typename t::TypeValue(*compare)(typename t::TypeValue , typename t::TypeValue) = less_compare)
+	{
+		for (int n = (p_end.step() - p_begin.step()) / 2 - 1; n >= 0; --n)
+		{
+			if (compare(1 , 2) == 1)
+				_PercolateUp(p_begin , n , p_end.step() - p_begin.step());
+			else
+				_PercolateDown(p_begin , n , p_end.step() - p_begin.step());
+		}
+	}
+
+	//heap_sort
+	template<typename t>
+	void _heap_sort(t p_begin , t p_end,
+				   typename t::TypeValue(*compare)(typename t::TypeValue , typename t::TypeValue) = less_compare)
+	{
+		int size = p_end.step() - p_begin.step();
+		_heap_built(p_begin,p_end);
+
+		auto beg = p_begin;
+		auto cur = p_end - 1;
+		for (int n = size - 1; n >= 1; --n)
+		{
+			auto temp = *beg;
+			*beg = *cur;
+			*cur = temp;
+
+			--cur;
+			--size;
+
+			if (compare(1 , 2) == 1)
+				_PercolateUp(p_begin , 0 , size);
+			else
+				_PercolateDown(p_begin , 0 , size);
+		}
+	}
+	
+
+	//insert sort
 	template<typename t>
 	void _insert_sort(t p_begin , t p_end ,
-					 typename t::TypeValue(*compare)(typename t::TypeValue , typename t::TypeValue) = less_compare)
+					  typename t::TypeValue(*compare)(typename t::TypeValue , typename t::TypeValue) = less_compare)
 	{
 		int step = p_end.step() - p_begin.step();
 		auto beg = p_begin;
@@ -210,6 +307,7 @@ namespace lib_algo
 		}
 	}
 	
+
 	//quick_sort_helper
 	template<typename t,typename value>
 	void _quick_sort_less(t& beg , t& end , const value& key)
@@ -250,16 +348,101 @@ namespace lib_algo
 	}
 
 
+	//median3 pivot
+	template<typename t>
+	auto _median3_less(t p_begin , t p_end)	//retrun pivot value of container
+	{
+		int middle = (p_end.step()-p_begin.step())/2;	//middle point
+
+
+		//to set value of points
+		if (*p_begin > *(p_begin + middle))
+		{
+			auto temp = *p_begin;
+			*p_begin = *(p_begin + middle);
+			*(p_begin + middle) = temp;
+		}
+		if (*p_begin > *p_end)
+		{
+			auto temp = *p_begin;
+			*p_begin = *p_end;
+			*p_end = temp;
+		}
+		if (*(p_begin + middle) > *p_end)
+		{
+			auto temp = *(p_begin + middle);
+			*(p_begin + middle) = *p_end;
+			*p_end = temp;
+		}
+
+		auto temp = *(p_begin + middle);
+		*(p_begin + middle) + *(p_end - 1);
+		*(p_end - 1) = temp;
+
+		return *(p_end - 1);
+	}
+
+	template<typename t>
+	auto _median3_max(t p_begin , t p_end)
+	{
+		int middle = (p_end.step() - p_begin.step()) / 2;	//middle point
+
+
+		//to set value of points
+		if (*p_begin < *(p_begin + middle))
+		{
+			auto temp = *p_begin;
+			*p_begin = *(p_begin + middle);
+			*(p_begin + middle) = temp;
+		}
+		if (*p_begin < *p_end)
+		{
+			auto temp = *p_begin;
+			*p_begin = *p_end;
+			*p_end = temp;
+		}
+		if (*(p_begin + middle) < *p_end)
+		{
+			auto temp = *(p_begin + middle);
+			*(p_begin + middle) = *p_end;
+			*p_end = temp;
+		}
+
+		auto temp = *(p_begin + middle);
+		*(p_begin + middle) + *(p_end - 1);
+		*(p_end - 1) = temp;
+
+		return *(p_end - 1);
+	}
+
 	//quick_sort
 	template<typename t>
-	void _quick_sort(t p_begin , t p_end,
+	void _quick_sort(t p_begin , t p_end , int depth_limit , 
 					 typename t::TypeValue(*compare)(typename t::TypeValue , typename t::TypeValue) = less_compare)
 	{
-		int const threshold = 16;
-		if (p_begin >= p_end || p_end.step() - p_begin.step() < threshold)
+		if (p_end.step() - p_begin.step() <= 32)	//threshold = 32
+		{
+			_insert_sort(p_begin , p_end , compare);	//trun to insert sort
 			return;
+		}
 
-		int key = *p_begin;
+			
+		if (depth_limit <= 0)		//if too many divisions
+		{
+			_heap_sort(p_begin , p_end , compare);		//trun to heap sort
+			return;
+		}
+
+		depth_limit = (depth_limit >> 1) + (depth_limit >> 2);	//allow 1.5 log2(N) divisions
+
+		
+		auto key = *p_begin;	//find pivot by median3
+		if (compare(1 , 2) == 1)
+			key = _median3_less(p_begin , p_end - 1);
+		else
+			key = _median3_less(p_begin , p_end - 1);
+
+
 		auto _beg = p_begin;
 		auto _end = p_end - 1;
 
@@ -272,26 +455,39 @@ namespace lib_algo
 		*_beg = key;
 
 
-		_quick_sort(p_begin , _beg , compare);
-		_quick_sort(_beg + 1 , p_end , compare);
+		auto middle = _beg;
+		if (middle.step() != -1)
+		{
+			_quick_sort(p_begin , middle - 1 , depth_limit , compare);	//into left loop
+			_quick_sort(middle + 1 , p_end , depth_limit , compare);	//into right loop
+		}
 	}
+
+
+	//quick sort depth limit
+	inline int limit(int n)
+	{
+		int res = 0;
+		for (; n > 1; n >>= 1)
+			++res;
+
+		return res;
+	}
+
 
 	//sort
 	template<typename t>
 	void sort(t p_begin , t p_end ,
 			   typename t::TypeValue(*compare)(typename t::TypeValue , typename t::TypeValue) = less_compare)
 	{
-		const int threshold = 16;
-
 		if (p_begin != p_end)
 		{
-			if (p_end.step() - p_begin.step() < threshold)
+			if (p_end.step() - p_begin.step() < 32)		//threshold = 32
 				_insert_sort(p_begin , p_end , compare);
 
 			else
 			{
-				_quick_sort(p_begin , p_end , compare);
-				_insert_sort(p_begin , p_end , compare);
+				_quick_sort(p_begin , p_end , limit(p_end.step() - p_begin.step()) * 2 , compare);
 			}
 		}
 	}
@@ -300,16 +496,13 @@ namespace lib_algo
 	void sort(t& obj ,
 			   typename t::TypeValue(*compare)(typename t::TypeValue , typename t::TypeValue) = less_compare)
 	{
-		const int threshold = 16;
-
 		if (!obj.empty())
 		{
-			if (obj.size() < threshold)
+			if (obj.size() < 32)		//threshold = 32
 				_insert_sort(obj.begin() , obj.end() , compare);
 			else
 			{
-				_quick_sort(obj.begin() , obj.end() , compare);
-				_insert_sort(obj.begin() , obj.end() , compare);
+				_quick_sort(obj.begin() , obj.end() , limit(obj.size()) * 2 , compare);
 			}
 		}
 	}
