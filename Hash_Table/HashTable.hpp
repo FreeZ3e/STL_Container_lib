@@ -183,7 +183,6 @@ class hash_table
 			while (key >= bucket_size || elem_count >= bucket_size)//oversize
 			{
 				resize(bucket_size);
-				bucket_size = bucket_size * 2;
 			}
 
 			if (buckets[key] == nullptr)//unique
