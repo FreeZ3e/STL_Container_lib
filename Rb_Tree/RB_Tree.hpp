@@ -82,6 +82,7 @@
 #include"iterator.hpp"
 #include<initializer_list>
 #include<functional>
+#include<iostream>
 
 using std::initializer_list;
 using std::function;
@@ -460,7 +461,7 @@ class RB_Tree
 			{
 				Self_Insert(elem , ptr->Rchild , ptr);
 
-				if (ptr->Father != header)
+				if (ptr != nullptr && ptr->Rchild != nullptr && ptr->Father != header)
 				{
 					Insert_FixUp(ptr->Rchild);
 				}
@@ -469,7 +470,7 @@ class RB_Tree
 			{
 				Self_Insert(elem , ptr->Lchild , ptr);
 
-				if (ptr->Father != header)
+				if (ptr != nullptr && ptr->Lchild != nullptr && ptr->Father != header)
 				{
 					Insert_FixUp(ptr->Lchild);
 				}
@@ -480,7 +481,7 @@ class RB_Tree
 				{
 					Self_Insert(elem , ptr->Rchild , ptr);
 
-					if (ptr->Father != header)
+					if (ptr != nullptr && ptr->Rchild != nullptr && ptr->Father != header)
 					{
 						Insert_FixUp(ptr->Rchild);
 					}
@@ -546,11 +547,11 @@ class RB_Tree
 			{
 				TreeNode<Ty>* uncle = FindUncle(ptr->Father);
 
+				if (uncle == nullptr)
+					break;
+
 				if (ptr->Father == ptr->Father->Father->Lchild)//father => Lchild
 				{
-					if (uncle == nullptr)
-						break;
-
 					if (uncle->Color == Red) //case 1
 					{
 						ptr->Father->Color = Black;
@@ -575,9 +576,6 @@ class RB_Tree
 				}
 				else//father => Rchild
 				{
-					if (uncle == nullptr)
-						break;
-
 					if (uncle->Color == Red)//case 1
 					{
 						ptr->Father->Color = Black;
@@ -676,6 +674,7 @@ class RB_Tree
 						ptr->Father->Rchild = k1;
 				}
 
+				
 				k1->Lchild = ptr;
 				ptr->Father = k1;
 			}
@@ -705,6 +704,7 @@ class RB_Tree
 						ptr->Father->Lchild = k1;
 				}
 
+			
 				k1->Rchild = ptr;
 				ptr->Father = k1;
 			}
