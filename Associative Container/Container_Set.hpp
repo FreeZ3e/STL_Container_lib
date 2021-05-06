@@ -202,7 +202,7 @@ class set
 			return this->elem_count;
 		}
 
-		bool find(Ty elem) const
+		bool find(Ty elem)
 		{
 			return tree->Search(elem);
 		}

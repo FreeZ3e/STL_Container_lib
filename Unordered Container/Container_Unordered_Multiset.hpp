@@ -192,7 +192,7 @@ class Unordered_Multiset
 			return count;
 		}
 
-		bool find(Ty elem) const
+		bool find(Ty elem)
 		{
 			return ptr->find(elem);
 		}

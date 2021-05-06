@@ -192,7 +192,7 @@ class Unordered_Set
 			return count;
 		}
 
-		bool find(Ty elem) const
+		bool find(Ty elem)
 		{
 			return ptr->find(elem);
 		}

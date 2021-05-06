@@ -226,12 +226,12 @@ class Multimap
 			return this->elem_count;
 		}
 
-		bool find(const pair& elem) const
+		bool find(const pair& elem)
 		{
 			return tree->Search(elem);
 		}
 
-		bool find(key k) const
+		bool find(key k)
 		{
 			return tree->Search(make_pair(k , 0));
 		}

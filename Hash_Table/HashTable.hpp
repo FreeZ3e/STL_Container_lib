@@ -303,7 +303,7 @@ class hash_table
 		
 		//other
 
-		hash_node<Ty>* find(Ty elem) const
+		hash_node<Ty>* find(Ty elem)
 		{
 			for (int n = 0; n < (int)bucket_size; ++n)
 			{

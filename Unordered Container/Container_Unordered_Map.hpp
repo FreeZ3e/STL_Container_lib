@@ -225,12 +225,12 @@ class Unordered_Map
 			return count;
 		}
 
-		bool find(const pair& obj) const
+		bool find(const pair& obj)
 		{
 			return ptr->find(obj);
 		}
 
-		bool find(key k) const
+		bool find(key k)
 		{
 			return ptr->find(make_pair(k , 0));
 		}

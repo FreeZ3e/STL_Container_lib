@@ -82,7 +82,6 @@
 #include"iterator.hpp"
 #include<initializer_list>
 #include<functional>
-#include<iostream>
 
 using std::initializer_list;
 using std::function;
@@ -279,7 +278,7 @@ class RB_Tree
 			return false;
 		}
 
-		int count(Ty elem) const
+		int count(Ty elem)
 		{
 			int _count = 0;
 
