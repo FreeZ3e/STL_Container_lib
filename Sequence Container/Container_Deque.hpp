@@ -292,8 +292,6 @@ class deque
 					arr[count++] = *p;
 			}
 
-			//reset flag
-			elem_count = count;
 			//clear
 			clear();
 
@@ -330,8 +328,7 @@ class deque
 					arr[count++] = *p;
 			}
 
-			//reset flag
-			elem_count = count;
+
 			//clear
 			clear();
 
@@ -397,7 +394,7 @@ class deque
 			return false;
 		}
 
-		iterator find(Ty elem) const
+		iterator find(Ty elem)
 		{
 			auto p = begin();
 			for (; p != end(); ++p)

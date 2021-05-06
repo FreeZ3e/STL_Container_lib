@@ -225,7 +225,7 @@ class vector
 
 			int count = 0;
 			int del = 0;
-			for (int n = 0; n < elem_count; ++n)
+			for (int n = 0; n < elem_count; ++n)	//save data
 			{
 				if ((*ptr) != arr[n])
 				{
@@ -239,7 +239,7 @@ class vector
 			delete[] arr;
 			arr = new Ty[arr_size];
 
-			for (int n = 0; n < elem_count - 1; ++n)
+			for (int n = 0; n < count; ++n)	//reset data
 			{
 				arr[n] = temp[n];
 			}
@@ -247,9 +247,9 @@ class vector
 			delete[] temp;
 			temp = nullptr;
 
-			elem_count--;
+			elem_count = count;
 
-			return iterator(&arr[del]);
+			return iterator(&arr[del] , del);
 		}
 
 		const_iterator erase(const_iterator ptr)
@@ -272,7 +272,7 @@ class vector
 			delete[] arr;
 			arr = new Ty[arr_size];
 
-			for (int n = 0; n < elem_count - 1; ++n)
+			for (int n = 0; n < count; ++n)
 			{
 				arr[n] = temp[n];
 			}
@@ -280,9 +280,9 @@ class vector
 			delete[] temp;
 			temp = nullptr;
 
-			elem_count--;
+			elem_count = count;
 
-			return const_iterator(&arr[del]);
+			return const_iterator(&arr[del] , del);
 
 		}
 

@@ -57,6 +57,8 @@
  *      void clear()
  *      Ty front()
  *      Ty back()
+ *		iterator find(Ty elem)
+ *		const_iterator cfind(Ty elem)
  *      bool empty()
  *      int size()
  *      size_t max_size()
@@ -83,6 +85,7 @@
  *      //private function
  *
  *      void alloc(size_t list_size)------------------allocation memory and initialize container.
+ *		void destory()
  * }
  * ----------------------------------------------------------------------------------------------
 */
@@ -182,7 +185,7 @@ class list
 
 		~list()
 		{
-			clear();
+			destory();
 		}
 
 
@@ -299,22 +302,30 @@ class list
 
 		iterator erase(iterator ptr)
 		{
-			auto temp = ptr;
-			++ptr;
+			if (ptr == end())
+			{
+				remove(*ptr);
+				return end();
+			}
 
-			remove((*temp));
-			
-			return ptr;
+			auto next_val = *(ptr+1);
+
+			remove(*ptr);
+			return find(next_val);
 		}
 
 		const_iterator erase(const_iterator ptr)
 		{
-			auto temp = ptr;
-			++ptr;
+			if (ptr == cend())
+			{
+				remove(*ptr);
+				return cend();
+			}
 
-			remove((*temp));
+			auto next_val = *(ptr + 1);
 
-			return ptr;
+			remove(*ptr);
+			return cfind(next_val);
 		}
 
 		void erase(iterator p_begin , iterator p_end)
@@ -357,6 +368,30 @@ class list
 		Ty back() const
 		{
 			return CurPtr->last->data;
+		}
+
+		iterator find(Ty elem)
+		{
+			auto p = begin();
+			for (; p != end(); ++p)
+			{
+				if (*p == elem)
+					return p;
+			}
+
+			return end();
+		}
+
+		const_iterator cfind(Ty elem) const
+		{
+			auto p = cbegin();
+			for (; p != cend(); ++p)
+			{
+				if (*p == elem)
+					return p;
+			}
+
+			return cend();
 		}
 
 		bool empty() const
@@ -521,5 +556,21 @@ class list
 
 				ptr = ptr->next;
 			}ptr->next = nullptr;
+		}
+
+		void destory()
+		{
+			node* ptr = Head;
+
+			while (ptr)
+			{
+				node* temp = ptr;
+				ptr = ptr->next;
+
+				delete temp;
+			}
+
+			Head = CurPtr = nullptr;
+			elem_count = 0;
 		}
 };
