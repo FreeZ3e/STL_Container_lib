@@ -42,6 +42,9 @@
 *inline bool search(obj,elem)
 *inline bool search(iterator p_begin,iterator p_end,elem)
 * 
+*iterator search_n(obj,elem,n)
+*iterator search_n(iterator p_begin,iterator p_end,elem,n)
+* 
 *void swap(obj1,obj2)---------------------------------------support swap operation between different container.
 * 
 *inline void reverse(obj)
@@ -53,19 +56,28 @@
 *decltype(auto) upper_bound(obj,elem)
 *decltype(auto) upper_bound(iterator p_begin,iterator p_end,elem)
 * 
-*inline decltype(auto) min(obj)
-*inline decltype(auto) min(iterator p_begin,iterator p_end)
+*inline decltype(auto) min_element(obj)
+*inline decltype(auto) min_element(iterator p_begin,iterator p_end)
 *
-*inline decltype(auto) max(obj)
-*inline decltype(auto) max(iterator p_begin,iterator p_end)
+*inline decltype(auto) max_element(obj)
+*inline decltype(auto) max_element(iterator p_begin,iterator p_end)
+* 
+*inline t min(obj1,obj2)
+*inline t min(obj1,obj2,comp)
+* 
+*inline t max(obj1,obj2)
+*inline t max(obj1,obj2,comp)
 * 
 *inline void replace(obj,elem)
 *inline void replace(iterator p_begin,iterator p_end,elem)
 * 
 *void unique(obj)
 * 
-*auto mismatch(obj)
-*t(iterator type) mismatch(iterator p_begin,iterator p_end)
+*auto mismatch_element(obj)
+*t(iterator type) mismatch_element(iterator p_begin,iterator p_end)
+* 
+*iterator mismatch(obj1,obj2)
+*iterator mismatch(iterator p_begin1,iterator p_end1,iterator p_begin2,iterator p_end2)
 * 
 *inline void copy(copy_from,obj)
 *inline void copy(iterator p_begin,iterator p_end,obj)
@@ -79,6 +91,9 @@
 *inline void for_each(iterator p_begin,iterator p_end,function)
 * 
 *inline void remove_if(obj,function)
+* 
+*iterator merge(obj1,obj2,result)
+*iterator merge(iterator p_begin1,iterator p_end2,iterator p_begin2,iterator p_end2,result)
 */
 
 
@@ -683,6 +698,69 @@ namespace lib_algo
 	//-----------------------------------------------------------------
 
 
+	//search_n---------------------------------------------------------
+
+	template<typename t,typename arg>
+	auto search_n(const t& obj , const arg& elem , int n)
+	{
+		if (n <= 0)
+			return obj.cbegin();
+
+		auto first = find(obj,elem);
+
+		while(first != obj.cend())
+		{
+			int count = n - 1;
+			auto i = first;
+			++i;
+
+			while (i != obj.cend() && count != 0 && *i == elem)
+			{
+				++i;
+				--count;
+			}
+
+			if (count == 0)
+				return first;
+			else
+				first = find(i , obj.cend() , elem);
+		}
+
+		return obj.cend() - 1;
+	}
+
+	template<typename t,typename arg>
+	auto search_n(t p_begin , t p_end , const arg& elem , int n)
+	{
+		if (n <= 0)
+			return p_begin;
+
+		auto first = find(p_begin , p_end , elem);
+
+		while (p_begin != p_end)
+		{
+			int count = n - 1;
+			auto i = first;
+			++i;
+
+			while (i != p_end && count != 0 && *i == elem)
+			{
+				++i;
+				--count;
+			}
+
+			if (count == 0)
+				return first;
+			else
+				first = find(i , p_end , elem);
+		}
+
+		return p_end - 1;
+	}
+
+	//-----------------------------------------------------------------
+
+
 	//swap-------------------------------------------------------------
 
 	//inside functions
@@ -810,7 +888,7 @@ namespace lib_algo
 	//min--------------------------------------------------------------
 
 	template<typename t>
-	inline decltype(auto) min(const t& obj)
+	inline decltype(auto) min_element(const t& obj)
 	{
 		auto p = obj.cbegin();
 		auto res = *(obj.cbegin());
@@ -827,7 +905,7 @@ namespace lib_algo
 	}
 
 	template<typename t>
-	inline decltype(auto) min(t p_begin , t p_end)
+	inline decltype(auto) min_element(t p_begin , t p_end)
 	{
 		auto res = *(p_begin);
 		int step = p_end.step() - p_begin.step();
@@ -849,7 +927,7 @@ namespace lib_algo
 	//max--------------------------------------------------------------
 
 	template<typename t>
-	inline decltype(auto) max(const t& obj)
+	inline decltype(auto) max_element(const t& obj)
 	{
 		auto p = obj.cbegin();
 		auto res = *(obj.cbegin());
@@ -866,7 +944,7 @@ namespace lib_algo
 	}
 
 	template<typename t>
-	inline decltype(auto) max(t p_begin , t p_end)
+	inline decltype(auto) max_element(t p_begin , t p_end)
 	{
 		auto res = *(p_begin);
 		int step = p_end.step() - p_begin.step();
@@ -884,6 +962,39 @@ namespace lib_algo
 
 	//------------------------------------------------------------------
 
+
+	//max---------------------------------------------------------------
+
+	template<typename t>
+	inline const t& max(const t& obj1 , const t& obj2)
+	{
+		return obj1 > obj2 ? obj1 : obj2;
+	}
+
+	template<typename t,typename compare>
+	inline const t& max(const t& obj1 , const t& obj2 , compare comp)
+	{
+		return comp(obj1 , obj2) ? obj1 : obj2;
+	}
+
+	//------------------------------------------------------------------
+
+
+	//min---------------------------------------------------------------
+
+	template<typename t>
+	inline const t& min(const t& obj1 , const t& obj2)
+	{
+		return obj1 < obj2 ? obj1 : obj2;
+	}
+
+	template<typename t,typename compare>
+	inline const t& min(const t& obj1 , const t& obj2 , compare comp)
+	{
+		return comp(obj1 , obj2) ? obj1 : obj2;
+	}
+
+	//------------------------------------------------------------------
 
 	//lower_bound-------------------------------------------------------
 
@@ -1056,11 +1167,11 @@ namespace lib_algo
 	//------------------------------------------------------------------
 
 
-	//mismatch----------------------------------------------------------
-	//return first position where two ranges differ
+	//mismatch_element----------------------------------------------------------
+	//return first diff elem iterator position in same container
 
 	template<typename t>
-	auto mismatch(const t& obj)
+	auto mismatch_element(const t& obj)
 	{
 		auto p = obj.cbegin();
 
@@ -1078,7 +1189,7 @@ namespace lib_algo
 	}
 
 	template<typename t>
-	t mismatch(t p_begin,t p_end)
+	t mismatch_element(t p_begin,t p_end)
 	{
 		int step = p_end.step() - p_begin.step();
 
@@ -1093,6 +1204,40 @@ namespace lib_algo
 				return ptr;
 			}
 		}
+	}
+
+	//------------------------------------------------------------------
+
+
+	//mismatch----------------------------------------------------------
+	//return first diff elem between two different containers
+
+	template<typename t1,typename t2>
+	auto mismatch(const t1& obj1 , const t2& obj2)//obj1:greater range  obj2:less range
+	{											  //return less range container's iterator
+		auto p1 = obj1.cbegin();
+		auto p2 = obj2.cbegin();
+
+		for (; p1 != obj1.cend() , p2 != obj2.cend(); ++p1 , ++p2)
+		{
+			if (*p1 != *p2)
+				return p2;
+		}
+
+		return p2;
+	}
+
+	template<typename t1,typename t2>
+	auto mismatch(t1 p_begin1 , t1 p_end1,// greater range
+				  t2 p_begin2 , t2 p_end2)// less range
+	{
+		for (; p_begin1 != p_end1 , p_begin2 != p_end2; ++p_begin1 , ++p_begin2)
+		{
+			if (*p_begin1 != *p_begin2)
+				return p_begin2;
+		}
+
+		return p_begin2;
 	}
 
 	//------------------------------------------------------------------
@@ -1193,7 +1338,7 @@ namespace lib_algo
 
 			if (cur == next)
 			{
-				return cur;
+				return p;
 			}
 		}
 	}
@@ -1210,7 +1355,7 @@ namespace lib_algo
 
 			if (cur == next)
 			{
-				return cur;
+				return p_begin;
 			}
 		}
 	}
@@ -1222,8 +1367,11 @@ namespace lib_algo
 	//if obj1 includes obj2,return true.
 
 	template<typename t1,typename t2>
-	bool includes(const t1& obj1 , const t2& obj2)
+	bool includes(const t1& obj1 , const t2& obj2)//obj1 : greater range  obj2 : less range
 	{
+		if (obj1.size() < obj2.size())
+			return false;
+
 		auto p = obj2.cbegin();
 
 		for (; p != obj2.cend(); ++p)
@@ -1302,6 +1450,91 @@ namespace lib_algo
 			else
 				++p;
 		}
+	}
+
+	//------------------------------------------------------------------
+
+
+	//merge-------------------------------------------------------------
+	//support different type containers
+
+	template<typename t1,typename t2,typename t3>
+	auto merge(const t1& obj1 , const t2& obj2 , t3& result)
+	{
+		auto p1 = obj1.cbegin();
+		auto p2 = obj2.cbegin();
+		
+		while (p1 != obj1.cend() && p2 != obj2.cend())
+		{
+			if (*p1 < *p2)
+			{
+				result.insert(*p1);
+				++p1;
+			}
+			else
+			{
+				result.insert(*p2);
+				++p2;
+			}
+		}
+
+		if (p1 != obj1.cend())
+		{
+			while (p1 != obj1.cend())
+			{
+				result.insert(*p1);
+				++p1;
+			}
+		}
+		if (p2 != obj2.cend())
+		{
+			while (p2 != obj2.cend())
+			{
+				result.insert(*p2);
+				++p2;
+			}
+		}
+
+		return result.begin();
+	}
+
+	
+	template<typename t1,typename t2,typename t3>
+	auto merge(t1 p_begin1 , t1 p_end1 ,
+			   t2 p_begin2 , t2 p_end2 , t3& result)
+	{
+		while (p_begin1 != p_end1 && p_begin2 != p_end2)
+		{
+			if (*p_begin1 < *p_begin2)
+			{
+				result.insert(*p_begin1);
+				++p_begin1;
+			}
+			else
+			{
+				result.insert(*p_begin2);
+				++p_begin2;
+			}
+		}
+
+		if (p_begin1 != p_end1)
+		{
+			while (p_begin1 != p_end1)
+			{
+				result.insert(*p_begin1);
+				++p_begin1;
+			}
+		}
+		if (p_begin2 != p_end2)
+		{
+			while (p_begin2 != p_end2)
+			{
+				result.insert(*p_begin2);
+				++p_begin2;
+			}
+		}
+
+		return result.begin();
 	}
 
 	//------------------------------------------------------------------
