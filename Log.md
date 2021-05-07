@@ -154,3 +154,14 @@
 1. 对sort函数进行了优化,为其内增了堆排序(heap_sort),且为quick_sort进行了优化.
 2. 修正了hash_table中insert函数存在的错误.
 3. 修正了RB_Tree中对内存的非法操作.
+
+### 2021/5/7:
+1. 对以下函数进行了修改:
+- 将mismatch函数更名为mismatch_element
+- 将min和max函数更名为min_element和max_element
+- 将adjacent_find修改为迭代器类型
+2. 新增以下函数:
+- mismatch:对两个容器或范围中的元素进行比对,返回第一个不同的元素的迭代器.
+- max,min:用于比较两个容器的大小,也可指定比较准则comp(仿函数).
+- merge:用于合并两个容器或范围中的元素;与STL不同,支持不同类型容器的合并,合并后的容器也可与前者类型不同.
+- search_n:指定一个值,返回指向容器或范围中连续出现该值n次的序列开头的迭代器.
