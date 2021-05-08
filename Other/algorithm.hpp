@@ -99,7 +99,6 @@
 
 #pragma once
 #include"type_traits.hpp"
-#include<iostream>
 using namespace lib_type;
 
 namespace lib_algo
