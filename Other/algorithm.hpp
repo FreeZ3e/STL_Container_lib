@@ -365,18 +365,11 @@ namespace lib_algo
 
 	//median3 pivot
 	template<typename t>
-	auto _median3_less(t p_begin , t p_end)	//retrun pivot value of container
+	auto _median3(t p_begin , t p_end)	//retrun pivot value of container
 	{
-		int middle = (p_end.step()-p_begin.step())/2;	//middle point
+		int middle = (p_end.step() - p_begin.step()) / 2;	//middle point
 
-
-		//to set value of points
-		if (*p_begin > *(p_begin + middle))
-		{
-			auto temp = *p_begin;
-			*p_begin = *(p_begin + middle);
-			*(p_begin + middle) = temp;
-		}
+		//keep left val min
 		if (*p_begin > *p_end)
 		{
 			auto temp = *p_begin;
@@ -389,45 +382,14 @@ namespace lib_algo
 			*(p_begin + middle) = *p_end;
 			*p_end = temp;
 		}
-
-		auto temp = *(p_begin + middle);
-		*(p_begin + middle) + *(p_end - 1);
-		*(p_end - 1) = temp;
-
-		return *(p_end - 1);
-	}
-
-	template<typename t>
-	auto _median3_max(t p_begin , t p_end)
-	{
-		int middle = (p_end.step() - p_begin.step()) / 2;	//middle point
-
-
-		//to set value of points
-		if (*p_begin < *(p_begin + middle))
-		{
-			auto temp = *p_begin;
-			*p_begin = *(p_begin + middle);
-			*(p_begin + middle) = temp;
-		}
-		if (*p_begin < *p_end)
-		{
-			auto temp = *p_begin;
-			*p_begin = *p_end;
-			*p_end = temp;
-		}
-		if (*(p_begin + middle) < *p_end)
+		if (*(p_begin + middle) > *p_begin)
 		{
 			auto temp = *(p_begin + middle);
-			*(p_begin + middle) = *p_end;
-			*p_end = temp;
+			*(p_begin + middle) = *p_begin;
+			*p_begin = temp;
 		}
 
-		auto temp = *(p_begin + middle);
-		*(p_begin + middle) + *(p_end - 1);
-		*(p_end - 1) = temp;
-
-		return *(p_end - 1);
+		return *p_end;
 	}
 
 	//quick_sort
@@ -441,7 +403,7 @@ namespace lib_algo
 			return;
 		}
 
-			
+
 		if (depth_limit <= 0)		//if too many divisions
 		{
 			_heap_sort(p_begin , p_end , compare);		//trun to heap sort
@@ -451,20 +413,15 @@ namespace lib_algo
 		depth_limit = (depth_limit >> 1) + (depth_limit >> 2);	//allow 1.5 log2(N) divisions
 
 		
-		auto key = *p_begin;	//find pivot by median3
-		if (compare(1 , 2) == 1)
-			key = _median3_less(p_begin , p_end - 1);
-		else
-			key = _median3_less(p_begin , p_end - 1);
-
+		auto key = _median3(p_begin , p_end - 1);	//find pivot by median3
 
 		auto _beg = p_begin;
-		auto _end = p_end - 1;
+		auto _end = p_end-1;
 
 		if (compare(1 , 2) == 1)
-			_quick_sort_less(_beg , _end , key);
+			_quick_sort_less(_beg , _end, key);
 		else
-			_quick_sort_max(_beg , _end , key);
+			_quick_sort_max(_beg , _end, key);
 
 		*p_begin = *_beg;
 		*_beg = key;
@@ -498,11 +455,11 @@ namespace lib_algo
 		if (p_begin != p_end)
 		{
 			if (p_end.step() - p_begin.step() < 32)		//threshold = 32
-				_insert_sort(p_begin , p_end , compare);
+				_insert_sort(p_begin , p_end, compare);
 
 			else
 			{
-				_quick_sort(p_begin , p_end , limit(p_end.step() - p_begin.step()) * 2 , compare);
+				_quick_sort(p_begin , p_end, limit(p_end.step() - p_begin.step()) * 2 , compare);
 			}
 		}
 	}
