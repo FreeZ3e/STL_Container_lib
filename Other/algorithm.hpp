@@ -99,6 +99,7 @@
 
 #pragma once
 #include"type_traits.hpp"
+#include<iostream>
 using namespace lib_type;
 
 namespace lib_algo
@@ -199,7 +200,7 @@ namespace lib_algo
 	template<typename t>
 	void _PercolateDown(t p_begin , int index , int size)
 	{
-		auto min = *p_begin;
+		int min = 0;
 
 		while (index * 2 + 1 < size)
 		{
@@ -209,17 +210,17 @@ namespace lib_algo
 			{
 				if (*(p_begin + min) > *(p_begin + (index * 2 + 2)))
 					min = index * 2 + 2;
+			}
 
-				if (*(p_begin + index) < *(p_begin + min))
-					break;
-				else
-				{
-					auto temp = *(p_begin + index);
-					*(p_begin + index) = *(p_begin + min);
-					*(p_begin + min) = temp;
+			if (*(p_begin + index) < *(p_begin + min))
+				break;
+			else
+			{
+				auto temp = *(p_begin + index);
+				*(p_begin + index) = *(p_begin + min);
+				*(p_begin + min) = temp;
 
-					index = min;
-				}
+				index = min;
 			}
 		}
 	}
@@ -227,7 +228,7 @@ namespace lib_algo
 	template<typename t>
 	void _PercolateUp(t p_begin, int index , int size)
 	{
-		auto max = *p_begin;
+		int max = 0;
 
 		while (index * 2 + 1 < size)
 		{
@@ -258,7 +259,7 @@ namespace lib_algo
 	{
 		for (int n = (p_end.step() - p_begin.step()) / 2 - 1; n >= 0; --n)
 		{
-			if (compare(1 , 2) == 1)
+			if(compare(1,2) == 1)
 				_PercolateUp(p_begin , n , p_end.step() - p_begin.step());
 			else
 				_PercolateDown(p_begin , n , p_end.step() - p_begin.step());
@@ -271,7 +272,7 @@ namespace lib_algo
 				   typename t::TypeValue(*compare)(typename t::TypeValue , typename t::TypeValue) = less_compare)
 	{
 		int size = p_end.step() - p_begin.step();
-		_heap_built(p_begin,p_end);
+		_heap_built(p_begin,p_end,compare);
 
 		auto beg = p_begin;
 		auto cur = p_end - 1;
@@ -392,6 +393,34 @@ namespace lib_algo
 		return *p_end;
 	}
 
+	template<typename t>
+	auto _median3_max(t p_begin , t p_end)	//retrun pivot value of container
+	{
+		int middle = (p_end.step() - p_begin.step()) / 2;	//middle point
+
+		//keep left val min
+		if (*p_begin < *p_end)
+		{
+			auto temp = *p_begin;
+			*p_begin = *p_end;
+			*p_end = temp;
+		}
+		if (*(p_begin + middle) < *p_end)
+		{
+			auto temp = *(p_begin + middle);
+			*(p_begin + middle) = *p_end;
+			*p_end = temp;
+		}
+		if (*(p_begin + middle) < *p_begin)
+		{
+			auto temp = *(p_begin + middle);
+			*(p_begin + middle) = *p_begin;
+			*p_begin = temp;
+		}
+
+		return *p_end;
+	}
+
 	//quick_sort
 	template<typename t>
 	void _quick_sort(t p_begin , t p_end , int depth_limit , 
@@ -411,17 +440,22 @@ namespace lib_algo
 		}
 
 		depth_limit = (depth_limit >> 1) + (depth_limit >> 2);	//allow 1.5 log2(N) divisions
-
 		
-		auto key = _median3(p_begin , p_end - 1);	//find pivot by median3
+		auto key = *p_begin;	//find pivot by median3
+		if (compare(1 , 2) == 1)
+			key = _median3(p_begin , p_end - 1);
+		else
+			key = _median3_max(p_begin , p_end - 1);
 
 		auto _beg = p_begin;
 		auto _end = p_end-1;
 
+
 		if (compare(1 , 2) == 1)
-			_quick_sort_less(_beg , _end, key);
+			_quick_sort_less(_beg , _end , key);
 		else
-			_quick_sort_max(_beg , _end, key);
+			_quick_sort_max(_beg , _end , key);
+
 
 		*p_begin = *_beg;
 		*_beg = key;
