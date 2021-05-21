@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.2.0-alpha
+ * version : 1.2.1-alpha
  *
  * author : Mashiro
  *
@@ -92,11 +92,13 @@
 
 #pragma once
 #include<initializer_list>
+#include<assert.h>
+#include"memory.hpp"
 #include"iterator.hpp"
 
 using std::initializer_list;
 
-template<typename Ty,int default_size = 0>
+template<typename Ty,int default_size = 8>
 class list
 {
 	private:
@@ -104,8 +106,8 @@ class list
 		{
 			using TypeValue = Ty;
 
-			node* next;
-			node* last;
+			node* next = nullptr;
+			node* last = nullptr;
 			Ty data;
 
 			node() = default;
@@ -127,24 +129,31 @@ class list
 		using const_iterator = const_List_iterator<node>;
 
 	public:
-		list()
+		static_assert(default_size > 0 , "default size must bigger than 0");
+
+
+		list() noexcept
 		{
 			alloc(list_size);
 		}
 
-		list(size_t size)
+		list(const size_t& size)
 		{
+			assert(size > 0);
+
 			list_size = size;
 			alloc(list_size);
 		}
 
-		list(size_t size , Ty elem):list(size)
+		list(const size_t& size , const Ty& elem):list(size)
 		{
+			assert(size > 0);
+
 			for(int n=0;n<size;++n)
 				push_back(elem);
 		}
 
-		explicit list(const initializer_list<Ty>& list)
+		explicit list(const initializer_list<Ty>& list) noexcept
 		{
 			list_size = list.size();
 			alloc(list_size);
@@ -160,7 +169,7 @@ class list
 			}
 		}
 
-		explicit list(const list<Ty , default_size>& obj)
+		explicit list(const list<Ty , default_size>& obj) noexcept
 		{
 			list_size = obj.list_size;
 			alloc(list_size);
@@ -183,7 +192,7 @@ class list
 			}
 		}
 
-		~list()
+		~list() noexcept
 		{
 			destory();
 		}
@@ -191,12 +200,12 @@ class list
 
 		//push and pop operation
 
-		void insert(Ty elem)
+		[[noreturn]] void insert(const Ty& elem) noexcept
 		{
 			push_back(elem);
 		}
 
-		void push_back(Ty elem)
+		[[noreturn]] void push_back(const Ty& elem) noexcept
 		{
 			CurPtr->data = elem;
 
@@ -210,9 +219,11 @@ class list
 			CurPtr = CurPtr->next;
 
 			elem_count++;
+			while (elem_count >= list_size)
+				list_size++;
 		}
 
-		void push_front(Ty elem)
+		[[noreturn]] void push_front(const Ty& elem) noexcept
 		{
 			node* temp = new node(elem,Head,nullptr);
 
@@ -220,44 +231,56 @@ class list
 			Head = temp;
 
 			elem_count++;
+			while (elem_count >= list_size)
+				list_size++;
 		}
 
-		void pop_back()
+		[[noreturn]] void pop_back() noexcept
 		{	
-			node* ptr = CurPtr->last;
-			
-			CurPtr = CurPtr->last->last;
+			if (elem_count > 0)
+			{
+				memory::elem_destory(back());
 
-			delete ptr;
-			ptr = nullptr;
+				node* ptr = CurPtr->last;
 
-			node* temp = new node;
-			temp->last = CurPtr;
-			temp->next = nullptr;
+				CurPtr = CurPtr->last->last;
 
-			CurPtr->next = temp;
-			CurPtr = temp;
+				delete ptr;
+				ptr = nullptr;
 
-			elem_count--;
+				node* temp = new node;
+				temp->last = CurPtr;
+				temp->next = nullptr;
+
+				CurPtr->next = temp;
+				CurPtr = temp;
+
+				elem_count--;
+			}
 		}
 
-		void pop_front()
+		[[noreturn]] void pop_front() noexcept
 		{
-			node* ptr = Head;
+			if (elem_count > 0)
+			{
+				memory::elem_destory(front());
 
-			Head = Head->next;
-			Head->last = nullptr;
+				node* ptr = Head;
 
-			delete ptr;
-			ptr = nullptr;
+				Head = Head->next;
+				Head->last = nullptr;
 
-			elem_count--;
+				delete ptr;
+				ptr = nullptr;
+
+				elem_count--;
+			}
 		}
 
 
 		//erase and clear operation
 
-		void remove(Ty elem)
+		[[noreturn]] void remove(const Ty& elem) noexcept
 		{
 			node* ptr = new node;
 			ptr->next = Head;
@@ -279,6 +302,7 @@ class list
 					else
 					{
 						node* temp = ptr->next;
+						memory::elem_destory(temp->data);
 
 						ptr->next = ptr->next->next;
 						ptr->next->last = ptr;
@@ -295,12 +319,12 @@ class list
 			}
 		}
 
-		void erase(Ty elem)
+		[[noreturn]] void erase(const Ty& elem) noexcept
 		{
 			remove(elem);
 		}
 
-		iterator erase(iterator ptr)
+		_NODISCARD iterator erase(iterator ptr) noexcept
 		{
 			if (ptr == end())
 			{
@@ -314,7 +338,7 @@ class list
 			return find(next_val);
 		}
 
-		const_iterator erase(const_iterator ptr)
+		_NODISCARD const_iterator erase(const_iterator ptr) noexcept
 		{
 			if (ptr == cend())
 			{
@@ -328,7 +352,7 @@ class list
 			return cfind(next_val);
 		}
 
-		void erase(iterator p_begin , iterator p_end)
+		[[noreturn]] void erase(iterator p_begin , iterator p_end) noexcept
 		{
 			int begin = p_begin.step();
 			int end = p_end.step();
@@ -339,38 +363,36 @@ class list
 			}
 		}
 
-		void clear()
+		[[noreturn]] void clear() noexcept
 		{
-			node* ptr = Head;
-
-			while (ptr)
-			{
-				node* temp = ptr;
-				ptr = ptr->next;
-
-				delete temp;
-			}
-
-			Head = CurPtr = nullptr;
+			destory();
 			alloc(list_size);
-
-			elem_count = 0;
 		}
 
 
 		//other
 
-		Ty front() const
+		_NODISCARD const Ty& front() const noexcept
 		{
 			return Head->data;
 		}
 
-		Ty back() const
+		_NODISCARD const Ty& back() const noexcept
 		{
 			return CurPtr->last->data;
 		}
 
-		iterator find(Ty elem)
+		_NODISCARD Ty& front() noexcept
+		{
+			return Head->data;
+		}
+
+		_NODISCARD Ty& back() noexcept
+		{
+			return CurPtr->last->data;
+		}
+
+		_NODISCARD iterator find(const Ty& elem) const noexcept
 		{
 			auto p = begin();
 			for (; p != end(); ++p)
@@ -382,7 +404,7 @@ class list
 			return end();
 		}
 
-		const_iterator cfind(Ty elem) const
+		_NODISCARD const_iterator cfind(const Ty& elem) const noexcept
 		{
 			auto p = cbegin();
 			for (; p != cend(); ++p)
@@ -394,7 +416,7 @@ class list
 			return cend();
 		}
 
-		bool empty() const
+		_NODISCARD bool empty() const noexcept
 		{
 			if (elem_count == 0)
 				return true;
@@ -402,18 +424,20 @@ class list
 			return false;
 		}
 
-		int size() const
+		_NODISCARD int size() const noexcept
 		{
 			return elem_count;
 		}
 
-		size_t max_size() const
+		_NODISCARD size_t max_size() const noexcept
 		{
 			return list_size;
 		}
 
-		void resize(size_t size)
+		[[noreturn]] void resize(const size_t& size)
 		{
+			assert(size > 0);
+
 			if (size >= list_size)
 			{
 				node* ptr = CurPtr;
@@ -434,7 +458,7 @@ class list
 			list_size = size;
 		}
 
-		void swap(list<Ty , default_size>& obj)
+		[[noreturn]] void swap(list<Ty , default_size>& obj) noexcept
 		{
 			node* temp_head = Head;
 			node* temp_CurPtr = CurPtr;
@@ -458,22 +482,32 @@ class list
 
 
 		//iterator
-		iterator begin()
+		_NODISCARD iterator begin() noexcept
 		{
 			return iterator(Head,0);
 		}
 
-		iterator end()
+		_NODISCARD iterator end() noexcept
 		{
 			return iterator(CurPtr,elem_count);
 		}
 
-		const_iterator cbegin() const
+		_NODISCARD iterator begin() const noexcept
+		{
+			return iterator(Head , 0);
+		}
+
+		_NODISCARD iterator end() const noexcept
+		{
+			return iterator(CurPtr , elem_count);
+		}
+
+		_NODISCARD const_iterator cbegin() const noexcept
 		{
 			return const_iterator(Head,0);
 		}
 
-		const_iterator cend() const
+		_NODISCARD const_iterator cend() const noexcept
 		{
 			return const_iterator(CurPtr,elem_count);
 		}
@@ -483,7 +517,7 @@ class list
 
 		Ty operator[](int n) = delete;
 
-		bool operator==(const list<Ty , default_size>& obj) const
+		_NODISCARD bool operator==(const list<Ty , default_size>& obj) const noexcept
 		{
 			if (elem_count != obj.elem_count)
 				return false;
@@ -500,12 +534,12 @@ class list
 			return true;
 		}
 
-		bool operator!=(const list<Ty , default_size>& obj) const
+		_NODISCARD bool operator!=(const list<Ty , default_size>& obj) const noexcept
 		{
 			return !((*this) == obj);
 		}
 
-		bool operator>(const list<Ty , default_size>& obj) const
+		_NODISCARD bool operator>(const list<Ty , default_size>& obj) const noexcept
 		{
 			if (list_size > obj.list_size)
 				return true;
@@ -513,7 +547,7 @@ class list
 			return false;
 		}
 
-		bool operator<(const list<Ty , default_size>& obj) const
+		_NODISCARD bool operator<(const list<Ty , default_size>& obj) const noexcept
 		{
 			if (list_size < obj.list_size)
 				return true;
@@ -521,7 +555,7 @@ class list
 			return false;
 		}
 
-		bool operator>=(const list<Ty , default_size>& obj) const
+		_NODISCARD bool operator>=(const list<Ty , default_size>& obj) const noexcept
 		{
 			if (list_size >= obj.list_size)
 				return true;
@@ -529,7 +563,7 @@ class list
 			return false;
 		}
 
-		bool operator<=(const list<Ty , default_size>& obj) const
+		_NODISCARD bool operator<=(const list<Ty , default_size>& obj) const noexcept
 		{
 			if (list_size <= obj.list_size)
 				return true;
@@ -538,8 +572,10 @@ class list
 		}
 
 	private:
-		void alloc(size_t list_size)
+		[[noreturn]] void alloc(const size_t& list_size)
 		{
+			assert(list_size > 0);
+
 			//Head node alloc
 			CurPtr = new node;
 			CurPtr->last = nullptr;
@@ -558,13 +594,15 @@ class list
 			}ptr->next = nullptr;
 		}
 
-		void destory()
+		[[noreturn]] void destory() noexcept
 		{
 			node* ptr = Head;
 
 			while (ptr)
 			{
 				node* temp = ptr;
+				memory::elem_destory(temp->data);
+
 				ptr = ptr->next;
 
 				delete temp;

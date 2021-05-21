@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.2.0-alpha
+ * version : 1.2.1-alpha
  *
  * author : Mashiro
  *
@@ -96,12 +96,12 @@ class self_string
 		using const_iterator = const_Random_iterator<char>;
 
 	public:
-		self_string()
+		self_string() noexcept
 		{
 			arr = new char[arr_size];
 		}
 
-		self_string(const initializer_list<char>& list)
+		self_string(const initializer_list<char>& list) noexcept
 		{
 			arr_size = list.size();
 			arr = new char[arr_size];
@@ -112,7 +112,7 @@ class self_string
 			}
 		}
 
-		self_string(const char ptr[])
+		self_string(const char ptr[]) noexcept
 		{
 			int count = 0;
 			while (ptr[count])
@@ -129,7 +129,7 @@ class self_string
 			}
 		}
 
-		self_string(const self_string& obj)
+		self_string(const self_string& obj) noexcept
 		{
 			arr_size = obj.arr_size;
 			arr = new char[arr_size];
@@ -140,7 +140,7 @@ class self_string
 			}
 		}
 
-		~self_string()
+		~self_string() noexcept
 		{
 			delete[] arr;
 			arr = nullptr;
@@ -150,36 +150,39 @@ class self_string
 
 		//operations
 
-		void erase(char c)
+		[[noreturn]] void erase(const char& c) noexcept
 		{
-			for (int n = 0; n < elem_count; ++n)
+			if (elem_count > 0)
 			{
-				if (arr[n] == c)
+				for (int n = 0; n < elem_count; ++n)
 				{
-					char* temp = new char[(size_t)elem_count];
-
-					int count = 0;
-					for (int i = 0; i < elem_count; ++i)
+					if (arr[n] == c)
 					{
-						if (arr[i] != c)
-							temp[count++] = arr[i];
+						char* temp = new char[(size_t)elem_count];
+
+						int count = 0;
+						for (int i = 0; i < elem_count; ++i)
+						{
+							if (arr[i] != c)
+								temp[count++] = arr[i];
+						}
+
+						delete[] arr;
+						arr = new char[arr_size];
+
+						for (int i = 0; i < elem_count - 1; ++i)
+						{
+							arr[i] = temp[i];
+						}
+
+						elem_count--;
+						break;
 					}
-
-					delete[] arr;
-					arr = new char[arr_size];
-
-					for (int i = 0; i < elem_count - 1; ++i)
-					{
-						arr[i] = temp[i];
-					}
-
-					elem_count--;
-					break;
 				}
 			}
 		}
 
-		iterator erase(iterator ptr)
+		_NODISCARD iterator erase(iterator ptr) noexcept
 		{
 			char* temp = new char[(size_t)elem_count];
 
@@ -199,7 +202,7 @@ class self_string
 			delete[] arr;
 			arr = new char[arr_size];
 
-			for (int n = 0; n < elem_count - 1; ++n)
+			for (int n = 0; n < count; ++n)
 			{
 				arr[n] = temp[n];
 			}
@@ -207,12 +210,12 @@ class self_string
 			delete[] temp;
 			temp = nullptr;
 
-			elem_count--;
+			elem_count = count;
 
 			return iterator(&arr[del]);
 		}
 
-		const_iterator erase(const_iterator ptr)
+		_NODISCARD const_iterator erase(const_iterator ptr) noexcept
 		{
 			char* temp = new char[(size_t)elem_count];
 
@@ -232,7 +235,7 @@ class self_string
 			delete[] arr;
 			arr = new char[arr_size];
 
-			for (int n = 0; n < elem_count - 1; ++n)
+			for (int n = 0; n < count; ++n)
 			{
 				arr[n] = temp[n];
 			}
@@ -240,12 +243,12 @@ class self_string
 			delete[] temp;
 			temp = nullptr;
 
-			elem_count--;
+			elem_count = count;
 
 			return const_iterator(&arr[del]);
 		}
 
-		void erase(iterator p_begin , iterator p_end)
+		[[noreturn]] void erase(iterator p_begin , iterator p_end) noexcept
 		{
 			int begin = p_begin.step();
 			int end = p_end.step();
@@ -256,7 +259,7 @@ class self_string
 			}
 		}
 
-		void clear()
+		[[noreturn]] void clear() noexcept
 		{
 			delete[] arr;
 			arr = new char[arr_size];
@@ -264,37 +267,37 @@ class self_string
 			elem_count = 0;
 		}
 
-		char back()
+		_NODISCARD char back() const noexcept
 		{
 			return arr[elem_count - 1];
 		}
 
-		char* find(char elem)
+		_NODISCARD char find(const char& elem) const noexcept
 		{
 			char* temp = arr;
 
 			for (int n = 0; n < elem_count; ++n)
 			{
 				if ((*temp) == elem)
-					return temp;
+					return *temp;
 				else
 					temp++;
 			}
 
-			return nullptr;
+			return *temp;
 		}
 
-		int size()
+		_NODISCARD int size() const noexcept
 		{
 			return this->elem_count;
 		}
 
-		size_t max_size()
+		_NODISCARD size_t max_size() const noexcept
 		{
 			return this->arr_size;
 		}
 
-		bool empty()
+		_NODISCARD bool empty() const noexcept
 		{
 			if (elem_count == 0)
 				return true;
@@ -302,7 +305,7 @@ class self_string
 			return false;
 		}
 
-		void swap(self_string& obj)
+		[[noreturn]] void swap(self_string& obj) noexcept
 		{
 			char* temp = new char[(size_t)obj.elem_count];
 
@@ -346,22 +349,32 @@ class self_string
 
 		//iterator
 
-		iterator begin()
+		_NODISCARD iterator begin() noexcept
 		{
 			return iterator(arr , 0);
 		}
 
-		iterator end()
+		_NODISCARD iterator end() noexcept
 		{
 			return iterator(arr + elem_count , elem_count);
 		}
 
-		const_iterator cbegin() const
+		_NODISCARD iterator begin() const noexcept
+		{
+			return iterator(arr , 0);
+		}
+
+		_NODISCARD iterator end() const noexcept
+		{
+			return iterator(arr + elem_count , elem_count);
+		}
+
+		_NODISCARD const_iterator cbegin() const noexcept
 		{
 			return const_iterator(arr , 0);
 		}
 
-		const_iterator cend() const
+		_NODISCARD const_iterator cend() const noexcept
 		{
 			return const_iterator(arr + elem_count , elem_count);
 		}
@@ -371,12 +384,17 @@ class self_string
 
 		//operator overload
 
-		char& operator[](int n)
+		_NODISCARD char& operator[](int n) noexcept
 		{
 			return arr[n];
 		}
 
-		friend ostream& operator<<(ostream& out,const self_string& obj)
+		_NODISCARD const char& operator[](int n) const noexcept
+		{
+			return arr[n];
+		}
+
+		friend ostream& operator<<(ostream& out,const self_string& obj) noexcept
 		{	
 			auto p = obj.cbegin();
 			for (; p != obj.cend(); ++p)
@@ -387,18 +405,19 @@ class self_string
 			return out;
 		}
 
-		friend istream& operator>>(istream& input , self_string& obj)
+		friend istream& operator>>(istream& input , self_string& obj) noexcept
 		{
 			char* p = new char;
-			input >> p;
+			input.getline(p,100);
+			p += '\0';
 
 			int count = 0;
-			while (p[count])
+			while (p[count] != '\0')
 			{
 				count++;
 			}
 
-			while (obj.elem_count+count >= obj.arr_size)
+			while (obj.elem_count+count >= (int)obj.arr_size)
 			{
 				obj.arr_size = obj.arr_size * 2;
 				obj.MemoryExpand(obj.arr_size);
@@ -409,10 +428,11 @@ class self_string
 				obj.arr[obj.elem_count++] = p[n];
 			}
 
+		
 			return input;
 		}
 
-		self_string& operator+(const char ptr[])
+		self_string& operator+(const char ptr[]) noexcept
 		{
 			int count = 0;
 			while (ptr[count])
@@ -420,7 +440,7 @@ class self_string
 				count++;
 			}
 
-			while (elem_count + count >= arr_size)
+			while (elem_count + count >= (int)arr_size)
 			{
 				arr_size = arr_size * 2;
 				MemoryExpand(arr_size);
@@ -434,7 +454,7 @@ class self_string
 			return *this;
 		}
 
-		self_string& operator+=(const char ptr[])
+		self_string& operator+=(const char ptr[]) noexcept
 		{
 			int count = 0;
 			while (ptr[count])
@@ -442,7 +462,7 @@ class self_string
 				count++;
 			}
 
-			while (elem_count + count >= arr_size)
+			while (elem_count + count >= (int)arr_size)
 			{
 				arr_size = arr_size * 2;
 				MemoryExpand(arr_size);
@@ -456,7 +476,7 @@ class self_string
 			return *this;
 		}
 
-		self_string& operator=(const self_string& obj)
+		self_string& operator=(const self_string& obj) noexcept
 		{
 			delete[] arr;
 			arr = new char[obj.arr_size];
@@ -472,7 +492,7 @@ class self_string
 			return *this;
 		}
 
-		bool operator==(const self_string& obj) const
+		_NODISCARD bool operator==(const self_string& obj) const noexcept
 		{
 			if (elem_count != obj.elem_count)
 				return false;
@@ -486,30 +506,38 @@ class self_string
 			return true;
 		}
 
-		bool operator!=(const self_string& obj) const
+		_NODISCARD bool operator!=(const self_string& obj) const noexcept
 		{
 			return !((*this) == obj);
 		}
 
 	private:
-		void MemoryExpand(size_t resize)
+		[[noreturn]] void MemoryExpand(size_t resize) noexcept
 		{
-			char* temp = new char[elem_count];
-
-			for (int n = 0; n < elem_count; ++n)
+			if (elem_count > 0)
 			{
-				temp[n] = arr[n];
+				char* temp = new char[elem_count];
+
+				for (int n = 0; n < elem_count; ++n)
+				{
+					temp[n] = arr[n];
+				}
+
+				delete[] arr;
+				arr = new char[resize];
+
+				for (int n = 0; n < elem_count; ++n)
+				{
+					arr[n] = temp[n];
+				}
+
+				delete[] temp;
+				temp = nullptr;
 			}
-
-			delete[] arr;
-			arr = new char[resize];
-
-			for (int n = 0; n < elem_count; ++n)
+			else
 			{
-				arr[n] = temp[n];
+				delete[] arr;
+				arr = new char[resize];
 			}
-
-			delete[] temp;
-			temp = nullptr;
 		}
 };

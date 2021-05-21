@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.1.0-alpha
+ * version : 1.2.1-alpha
  *
  * author : Mashiro
  *
@@ -115,7 +115,7 @@ struct pair
 
 
 template<typename key,typename value>
-inline pair<key , value> make_pair(const key &k , const value &v)
+_NODISCARD inline pair<key , value> make_pair(const key &k , const value &v) noexcept
 {
 	return pair<key , value>(k , v);
 }

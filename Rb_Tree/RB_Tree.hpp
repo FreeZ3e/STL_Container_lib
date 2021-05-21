@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.2.0-alpha
+ * version : 1.2.1-alpha
  *
  * author : Mashiro
  *
@@ -79,9 +79,10 @@
 
 
 #pragma once
-#include"iterator.hpp"
 #include<initializer_list>
 #include<functional>
+#include"memory.hpp"
+#include"iterator.hpp"
 
 using std::initializer_list;
 using std::function;
@@ -112,7 +113,7 @@ class RB_Tree
 
 		TreeNode() = default;
 
-		TreeNode(T elem , TreeNode<T>* R = nullptr , TreeNode<T>* L = nullptr , TreeNode<T>* F = nullptr) :data(elem) , Rchild(R) , Lchild(L) , Father(F)
+		TreeNode(const T& elem , TreeNode<T>* R = nullptr , TreeNode<T>* L = nullptr , TreeNode<T>* F = nullptr) :data(elem) , Rchild(R) , Lchild(L) , Father(F)
 		{}
 	};
 
@@ -133,12 +134,12 @@ class RB_Tree
 		int NodeCount = 0;
 
 	public:
-		explicit RB_Tree(const RB_Tree<Ty , Compare_Class>& obj):RB_Tree()
+		explicit RB_Tree(const RB_Tree<Ty , Compare_Class>& obj) noexcept :RB_Tree()
 		{
 			TreeCopy(obj.head);
 		}
 
-		explicit RB_Tree(const initializer_list<Ty>& obj):RB_Tree()
+		explicit RB_Tree(const initializer_list<Ty>& obj) noexcept :RB_Tree()
 		{
 			for (auto p:obj)
 			{
@@ -146,7 +147,7 @@ class RB_Tree
 			}
 		}
 
-		RB_Tree(Ty elem)
+		RB_Tree(const Ty& elem) noexcept
 		{
 			header = new TreeNode<Ty>;
 			head = new TreeNode<Ty>(elem,nullptr,nullptr,header);
@@ -157,12 +158,12 @@ class RB_Tree
 			NodeCount++;
 		}
 
-		RB_Tree()
+		RB_Tree() noexcept
 		{	
 			header = new TreeNode<Ty>;
 		}
 
-		~RB_Tree()
+		~RB_Tree() noexcept
 		{
 			delete header;
 			header = nullptr;
@@ -175,13 +176,13 @@ class RB_Tree
 
 		//insert and erase operations
 
-		void Destory()
+		[[noreturn]] void Destory() noexcept
 		{
 			Self_Destory(head);
 			NodeCount = 0;
 		}
 
-		void Insert(Ty elem)
+		[[noreturn]] void Insert(const Ty& elem) noexcept
 		{
 			Self_Insert(elem , head);
 
@@ -189,7 +190,7 @@ class RB_Tree
 			header->Rchild = Maximum(head);
 		}
 
-		void DeleteNode(Ty elem)
+		[[noreturn]] void DeleteNode(const Ty& elem) noexcept
 		{
 			if (Self_Search(elem , head) != nullptr)
 			{
@@ -204,11 +205,12 @@ class RB_Tree
 			header->Rchild = Maximum(head);
 		}
 
-		iterator erase(iterator ptr)
+		_NODISCARD iterator erase(iterator ptr) noexcept
 		{
 			auto temp = ptr;
 
 			int step = ptr.step();
+			Ty cur_num = (*ptr);
 			Ty next_num = (*(++temp));
 
 			if (compare)
@@ -221,21 +223,22 @@ class RB_Tree
 
 			if (step == NodeCount-1)
 			{
-				DeleteNode((*ptr));
+				DeleteNode(cur_num);
 
 				return iterator(header , NodeCount);
 			}
 
-			DeleteNode((*ptr));
+			DeleteNode(cur_num);
 
 			return iterator(Self_Search(next_num , head),step);
 		}
 
-		const_iterator erase(const_iterator& ptr)
+		_NODISCARD const_iterator erase(const_iterator& ptr) noexcept
 		{
 			auto temp = ptr;
 
 			int step = ptr.step();
+			Ty cur_num = (*ptr);
 			Ty next_num = (*(++temp));
 
 			if (compare)
@@ -248,17 +251,17 @@ class RB_Tree
 
 			if (step == NodeCount - 1)
 			{
-				DeleteNode((*ptr));
+				DeleteNode(cur_num);
 
 				return const_iterator(header , NodeCount);
 			}
 
-			DeleteNode((*ptr));
+			DeleteNode(cur_num);
 
 			return const_iterator(Self_Search(next_num , head) , step);
 		}
 
-		void erase(iterator p_begin , iterator p_end)
+		[[noreturn]] void erase(iterator p_begin , iterator p_end) noexcept
 		{
 			int n = p_begin.step();
 			for (; n < p_end.step(); ++n)
@@ -270,7 +273,7 @@ class RB_Tree
 
 		//other
 
-		bool Search(Ty elem) const
+		_NODISCARD bool Search(const Ty& elem) const noexcept
 		{
 			if (Self_Search(elem , head) != nullptr)
 				return true;
@@ -278,7 +281,7 @@ class RB_Tree
 			return false;
 		}
 
-		int count(Ty elem)
+		_NODISCARD int count(const Ty& elem) const noexcept
 		{
 			int _count = 0;
 
@@ -292,12 +295,12 @@ class RB_Tree
 			return _count;
 		}
 
-		int size() const
+		_NODISCARD int size() const noexcept
 		{
 			return NodeCount;
 		}
 
-		void swap(RB_Tree<Ty , Compare_Class>& obj)
+		[[noreturn]] void swap(RB_Tree<Ty , Compare_Class>& obj) noexcept
 		{
 			TreeNode<Ty>* temp_head = head;
 			TreeNode<Ty>* obj_head = obj.head;
@@ -319,29 +322,39 @@ class RB_Tree
 
 
 		//iterator
-		iterator begin()
+		_NODISCARD iterator begin() noexcept
 		{
 			return iterator(header->Lchild,0);
 		}
 
-		iterator end()
+		_NODISCARD iterator end() noexcept
 		{
 			return iterator(header,NodeCount);
 		}
 
-		const_iterator cbegin() const
+		_NODISCARD iterator begin() const noexcept
+		{
+			return iterator(header->Lchild , 0);
+		}
+
+		_NODISCARD iterator end() const noexcept
+		{
+			return iterator(header , NodeCount);
+		}
+
+		_NODISCARD const_iterator cbegin() const noexcept
 		{
 			return const_iterator(header->Lchild,0);
 		}
 
-		const_iterator cend() const
+		_NODISCARD const_iterator cend() const noexcept
 		{
 			return const_iterator(header,NodeCount);
 		}
 
 
 		//operator overload
-		self& operator=(const RB_Tree<Ty , Compare_Class>& obj)
+		self& operator=(const RB_Tree<Ty , Compare_Class>& obj) noexcept
 		{
 			RB_Tree<Ty , Compare_Class>::const_iterator p = obj.cbegin();
 			for (; p != obj.cend(); ++p)
@@ -353,7 +366,7 @@ class RB_Tree
 			return *this;
 		}
 
-		bool operator==(const RB_Tree<Ty , Compare_Class>& obj) const
+		_NODISCARD bool operator==(const RB_Tree<Ty , Compare_Class>& obj) const noexcept
 		{
 			if (NodeCount != obj.NodeCount)
 				return false;
@@ -369,12 +382,12 @@ class RB_Tree
 			return true;
 		}
 
-		bool operator!=(const RB_Tree<Ty , Compare_Class>& obj) const
+		_NODISCARD bool operator!=(const RB_Tree<Ty , Compare_Class>& obj) const noexcept
 		{
 			return !((*this) == obj);
 		}
 
-		bool operator>(const RB_Tree<Ty , Compare_Class>& obj) const
+		_NODISCARD bool operator>(const RB_Tree<Ty , Compare_Class>& obj) const noexcept
 		{
 			if (NodeCount > obj.NodeCount)
 				return true;
@@ -382,7 +395,7 @@ class RB_Tree
 			return false;
 		}
 
-		bool operator<(const RB_Tree<Ty , Compare_Class>& obj) const
+		_NODISCARD bool operator<(const RB_Tree<Ty , Compare_Class>& obj) const noexcept
 		{
 			if (NodeCount < obj.NodeCount)
 				return true;
@@ -390,7 +403,7 @@ class RB_Tree
 			return false;
 		}
 
-		bool operator>=(const RB_Tree<Ty , Compare_Class>& obj) const
+		_NODISCARD bool operator>=(const RB_Tree<Ty , Compare_Class>& obj) const noexcept
 		{
 			if (NodeCount >= obj.NodeCount)
 				return true;
@@ -398,7 +411,7 @@ class RB_Tree
 			return false;
 		}
 
-		bool operator<=(const RB_Tree<Ty , Compare_Class>& obj) const
+		_NODISCARD bool operator<=(const RB_Tree<Ty , Compare_Class>& obj) const noexcept
 		{
 			if (NodeCount <= obj.NodeCount)
 				return true;
@@ -407,7 +420,7 @@ class RB_Tree
 		}
 
 	private:
-		TreeNode<Ty>* Self_Search(Ty elem , TreeNode<Ty>* ptr) const
+		TreeNode<Ty>* Self_Search(Ty elem , TreeNode<Ty>* ptr) const noexcept
 		{
 			if (ptr != nullptr)
 			{
@@ -428,7 +441,7 @@ class RB_Tree
 			return nullptr;
 		}
 
-		void Self_Destory(TreeNode<Ty>*& ptr)
+		[[noreturn]] void Self_Destory(TreeNode<Ty>*& ptr) noexcept
 		{
 			if (ptr)
 			{
@@ -436,12 +449,13 @@ class RB_Tree
 				Self_Destory(ptr->Rchild);
 				Self_Destory(ptr->Lchild);
 
+				memory::elem_destory(p->data);
 				delete p;
 				ptr = nullptr;
 			}
 		}
 
-		void Self_Insert(Ty elem , TreeNode<Ty>*& ptr , TreeNode<Ty>* father = nullptr)
+		[[noreturn]] void Self_Insert(const Ty& elem , TreeNode<Ty>*& ptr , TreeNode<Ty>* father = nullptr)
 		{
 			if (ptr == nullptr)
 			{
@@ -488,7 +502,7 @@ class RB_Tree
 			}
 		}
 		
-		void Self_Delete(Ty elem , TreeNode<Ty>*& ptr)
+		[[noreturn]] void Self_Delete(const Ty& elem , TreeNode<Ty>*& ptr)
 		{
 			if (ptr != nullptr)
 			{
@@ -518,6 +532,7 @@ class RB_Tree
 					else
 					{
 						TreeNode<Ty>* temp = ptr;
+						memory::elem_destory(ptr->data);
 
 						delete temp;
 						ptr = nullptr;
@@ -538,7 +553,7 @@ class RB_Tree
 			}
 		}
 
-		void Insert_FixUp(TreeNode<Ty>* ptr)
+		[[noreturn]] void Insert_FixUp(TreeNode<Ty>* ptr)
 		{
 			ptr->Color = Red;
 
@@ -602,7 +617,7 @@ class RB_Tree
 			this->head->Color = Black;
 		}
 		
-		void Delete_FixUp(TreeNode<Ty>* ptr)
+		[[noreturn]] void Delete_FixUp(TreeNode<Ty>* ptr)
 		{
 			TreeNode<Ty>* UnclePtr = FindUncle(ptr);
 
@@ -649,7 +664,7 @@ class RB_Tree
 			}
 		}
 		
-		void L_Rotate(TreeNode<Ty>* ptr)
+		[[noreturn]] void L_Rotate(TreeNode<Ty>* ptr) noexcept
 		{
 			if (ptr != nullptr)
 			{
@@ -679,7 +694,7 @@ class RB_Tree
 			}
 		}
 
-		void R_Rotate(TreeNode<Ty>* ptr)
+		[[noreturn]] void R_Rotate(TreeNode<Ty>* ptr) noexcept
 		{
 			if (ptr != nullptr)
 			{
@@ -709,7 +724,7 @@ class RB_Tree
 			}
 		}
 
-		void TreeCopy(TreeNode<Ty>* ptr)
+		[[noreturn]] void TreeCopy(TreeNode<Ty>* ptr) noexcept
 		{
 			if (ptr)
 			{
@@ -719,7 +734,7 @@ class RB_Tree
 			}
 		}
 
-		TreeNode<Ty>* FindUncle(TreeNode<Ty>* ptr)
+		TreeNode<Ty>* FindUncle(TreeNode<Ty>* ptr) const noexcept
 		{
 			if (ptr->Father != nullptr && ptr != this->head)
 			{
@@ -735,7 +750,7 @@ class RB_Tree
 			return nullptr;
 		}
 			
-		TreeNode<Ty>* Maximum(TreeNode<Ty>* ptr)
+		TreeNode<Ty>* Maximum(TreeNode<Ty>* ptr) const noexcept
 		{
 			if (ptr != nullptr)
 			{
@@ -750,7 +765,7 @@ class RB_Tree
 			return nullptr;
 		}
 
-		TreeNode<Ty>* Minimum(TreeNode<Ty>* ptr)
+		TreeNode<Ty>* Minimum(TreeNode<Ty>* ptr) const noexcept
 		{
 			if (ptr != nullptr)
 			{

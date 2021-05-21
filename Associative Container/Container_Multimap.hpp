@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.2.0-alpha
+ * version : 1.2.1-alpha
  *
  * author : Mashiro
  *
@@ -93,24 +93,24 @@ class Multimap
 		using const_iterator = const_RB_Tree_iterator<typename RB_Tree::NodeType>;
 
 	private:
-		RB_Tree* tree;
+		RB_Tree* tree = nullptr;
 
 		int elem_count = 0;
 
 	public:
-		Multimap()
+		Multimap() noexcept
 		{
 			tree = new RB_Tree();
 		}
 
-		explicit Multimap(const pair& obj)
+		explicit Multimap(const pair& obj) noexcept
 		{
 			tree = new RB_Tree(pair);
 
 			elem_count++;
 		}
 
-		explicit Multimap(const initializer_list<pair>& obj)
+		explicit Multimap(const initializer_list<pair>& obj) noexcept
 		{
 			tree = new RB_Tree();
 
@@ -121,7 +121,7 @@ class Multimap
 			}
 		}
 
-		explicit Multimap(const Multimap<key , value>& obj)
+		explicit Multimap(const Multimap<key , value>& obj) noexcept
 		{
 			tree = new RB_Tree();
 
@@ -134,7 +134,7 @@ class Multimap
 			this->elem_count = obj.elem_count;
 		}
 
-		~Multimap()
+		~Multimap() noexcept
 		{
 			tree->Destory();
 
@@ -146,20 +146,20 @@ class Multimap
 
 		//insert and erase operations
 
-		void insert(const pair& obj)
+		[[noreturn]] void insert(const pair& obj) noexcept
 		{
 			tree->Insert(obj);
 
 			elem_count++;
 		}
 
-		void insert(key k , value v)
+		[[noreturn]] void insert(const key& k , const value& v) noexcept
 		{
 			tree->Insert(make_pair(k , v));
 			elem_count++;
 		}
 
-		void insert(const initializer_list<pair>& obj)
+		[[noreturn]] void insert(const initializer_list<pair>& obj) noexcept
 		{
 			for (auto p : obj)
 			{
@@ -168,34 +168,37 @@ class Multimap
 			}
 		}
 
-		void erase(const pair& obj)
+		[[noreturn]] void erase(const pair& obj) noexcept
 		{
-			tree->DeleteNode(obj);
-			elem_count--;
-		}
-
-		void erase(key k)
-		{
-			while(tree->Search(make_pair(k , 0)))
+			while (tree->Search(obj))
 			{
-				tree->DeleteNode(make_pair(k , 0));
-				elem_count--;
+				elem_count = elem_count - tree->count(obj);
+				tree->DeleteNode(obj);
 			}
 		}
 
-		iterator erase(iterator ptr)
+		[[noreturn]] void erase(const key& k) noexcept
 		{
-			elem_count--;
+			while(tree->Search(make_pair(k , 0)))
+			{
+				elem_count = elem_count - tree->count(make_pair(k , 0));
+				tree->DeleteNode(make_pair(k , 0));
+			}
+		}
+
+		_NODISCARD iterator erase(iterator ptr) noexcept
+		{
+			elem_count = elem_count - tree->count(*ptr);
 			return tree->erase(ptr);
 		}
 
-		const_iterator erase(const_iterator& ptr)
+		_NODISCARD const_iterator erase(const_iterator& ptr) noexcept
 		{
-			elem_count--;
+			elem_count = elem_count - tree->count(*ptr);
 			return tree->erase(ptr);
 		}
 
-		void erase(iterator p_begin , iterator p_end)
+		[[noreturn]] void erase(iterator p_begin , iterator p_end) noexcept
 		{
 			int n = p_begin.step();
 			for (; n < p_end.step(); ++n)
@@ -204,7 +207,7 @@ class Multimap
 			}
 		}
 
-		void clear()
+		[[noreturn]] void clear() noexcept
 		{
 			tree->Destory();
 			elem_count = 0;
@@ -213,7 +216,7 @@ class Multimap
 
 		//other
 
-		bool empty() const
+		_NODISCARD bool empty() const noexcept
 		{
 			if (elem_count == 0)
 				return true;
@@ -221,27 +224,27 @@ class Multimap
 			return false;
 		}
 
-		int size() const
+		_NODISCARD int size() const noexcept
 		{
 			return this->elem_count;
 		}
 
-		bool find(const pair& elem)
+		_NODISCARD bool find(const pair& elem) const noexcept
 		{
 			return tree->Search(elem);
 		}
 
-		bool find(key k)
+		_NODISCARD bool find(const key& k) const noexcept
 		{
 			return tree->Search(make_pair(k , 0));
 		}
 
-		compare key_comp() const
+		_NODISCARD compare key_comp() const noexcept
 		{
 			return compare;
 		}
 
-		void swap(Multimap<key , value>& obj)
+		[[noreturn]] void swap(Multimap<key , value>& obj) noexcept
 		{
 			RB_Tree* temp_tree = tree;
 			RB_Tree* obj_tree = obj.tree;
@@ -257,22 +260,32 @@ class Multimap
 
 
 		//RB_Tree iterator
-		iterator begin()
+		_NODISCARD iterator begin() noexcept
 		{
 			return tree->begin();
 		}
 
-		iterator end()
+		_NODISCARD iterator end() noexcept
 		{
 			return tree->end();
 		}
 
-		const_iterator cbegin() const
+		_NODISCARD iterator begin() const noexcept
+		{
+			return tree->begin();
+		}
+
+		_NODISCARD iterator end() const noexcept
+		{
+			return tree->end();
+		}
+
+		_NODISCARD const_iterator cbegin() const noexcept
 		{
 			return tree->cbegin();
 		}
 
-		const_iterator cend() const
+		_NODISCARD const_iterator cend() const noexcept
 		{
 			return tree->cend();
 		}
@@ -280,7 +293,7 @@ class Multimap
 
 		//operator overload
 
-		self& operator=(const Multimap<key , value>& obj)
+		self& operator=(const Multimap<key , value>& obj) noexcept
 		{
 			clear();
 
@@ -293,7 +306,7 @@ class Multimap
 			return *this;
 		}
 
-		bool operator==(const Multimap<key , value>& obj) const
+		_NODISCARD bool operator==(const Multimap<key , value>& obj) const noexcept
 		{
 			if (elem_count != obj.elem_count)
 				return false;
@@ -309,12 +322,12 @@ class Multimap
 			return true;
 		}
 
-		bool operator!=(const Multimap<key , value>& obj) const
+		_NODISCARD bool operator!=(const Multimap<key , value>& obj) const noexcept
 		{
 			return !((*this) == obj);
 		}
 
-		bool operator>(const Multimap<key , value>& obj) const
+		_NODISCARD bool operator>(const Multimap<key , value>& obj) const noexcept
 		{
 			if (elem_count > obj.elem_count)
 				return true;
@@ -322,7 +335,7 @@ class Multimap
 			return false;
 		}
 
-		bool operator<(const Multimap<key , value>& obj) const
+		_NODISCARD bool operator<(const Multimap<key , value>& obj) const noexcept
 		{
 			if (elem_count < obj.elem_count)
 				return true;
@@ -330,7 +343,7 @@ class Multimap
 			return false;
 		}
 
-		bool operator>=(const Multimap<key , value>& obj) const
+		_NODISCARD bool operator>=(const Multimap<key , value>& obj) const noexcept
 		{
 			if (elem_count >= obj.elem_count)
 				return true;
@@ -338,7 +351,7 @@ class Multimap
 			return false;
 		}
 
-		bool operator<=(const Multimap<key , value>& obj) const
+		_NODISCARD bool operator<=(const Multimap<key , value>& obj) const noexcept
 		{
 			if (elem_count <= obj.elem_count)
 				return true;

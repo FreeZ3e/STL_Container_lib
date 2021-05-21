@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.2.0-alpha
+ * version : 1.2.1-alpha
  *
  * author : Mashiro
  *
@@ -16,7 +16,7 @@
  *
  *-------------------------------README------------------------------------
  *
- * template<typename Ty,size_t size = 10>
+ * template<typename Ty,size_t _size = 10>
  * class array
  * {
  *		//iterator : random_iterator
@@ -25,37 +25,38 @@
  *      //ctor
  *
  *      array(const initializer_list<Ty>& list)
- *      array(const array<Ty,size>& obj)
+ *      array(const array<Ty,_size>& obj)
  *      array(Ty num)--------------------------------initialized with num.
  *      array()
  *
  *      //operations
  *
  *      bool empty()---------------------------------if array is empty,return true.
+ *		int size()-----------------------------------call array_size.
  *      int array_size()-----------------------------return number of elem in array.
- *      size_t max_size()----------------------------return size of array.
+ *      size_t max_size()----------------------------return _size of array.
  *      Ty back()------------------------------------return last elem of array without check.
  *      Ty front()-----------------------------------return first elem of array without check.
  *      void fill(Ty elem)---------------------------fill array with elem.
- *      void swap(array<Ty,size>& obj)---------------make swap operation.
+ *      void swap(array<Ty,_size>& obj)---------------make swap operation.
  *
  *      //iterator
  *
  *      iterator begin()-----------------------------return the position of beginning.
  *      iterator end()-------------------------------return the position of ending.
- *      const_iterator cbegin()----------------------return const_iterator(begining).
+ *      const_iterator cbegin()----------------------return const_iterator(beginning).
  *      const_iterator cend()------------------------return const_iterator(ending).
  *
  *      //operator overload
  *
  *      decltype(auto) operator[](int n)
- *      self& operator=(const array<Ty,size>& obj)
- *      bool operator==(const array<Ty,size>& obj)
- *      bool operator!=(const array<Ty,size>& obj)
- *      bool operator>(const array<Ty,size>& obj)
- *      bool operator<(const array<Ty,size>& obj)
- *      bool operator>=(const array<Ty,size>& obj)
- *      bool operator<=(const array<Ty,size>& obj)
+ *      self& operator=(const array<Ty,_size>& obj)
+ *      bool operator==(const array<Ty,_size>& obj)
+ *      bool operator!=(const array<Ty,_size>& obj)
+ *      bool operator>(const array<Ty,_size>& obj)
+ *      bool operator<(const array<Ty,_size>& obj)
+ *      bool operator>=(const array<Ty,_size>& obj)
+ *      bool operator<=(const array<Ty,_size>& obj)
  * }
  * ----------------------------------------------------------------------------------------------
 */
@@ -65,31 +66,36 @@
 #include<initializer_list>
 #include<typeinfo>
 #include<string>
+#include<assert.h>
 #include"iterator.hpp"
 
 using std::initializer_list;
 using std::string;
 
 
-template<typename Ty , size_t size = 10>
+template<typename Ty , size_t _size = 8>
 class array
 {
 	private:
-		Ty* arr = new Ty[size];
+		Ty* arr = new Ty[_size];
 		int elem_count = 0;
 
 	public:
-		using self = array<Ty , size>;
+		using self = array<Ty , _size>;
 		using TypeValue = Ty;
 		using iterator = Random_iterator<Ty>;
 		using const_iterator = const_Random_iterator<Ty>;
 
 	public:
-		explicit array(const initializer_list<Ty>& list)
+		//array _size check
+		static_assert(_size > 0,"_size must bigger than 0");
+
+		
+		explicit array(const initializer_list<Ty>& list) noexcept
 		{
 			for (auto p : list)
 			{
-				if (elem_count < size)
+				if (elem_count < _size)
 				{
 					arr[elem_count] = p;
 					++elem_count;
@@ -100,15 +106,15 @@ class array
 
 			if (typeid(Ty) != typeid(string))
 			{
-				if (list.size() < size)
+				if (list.size() < _size)
 				{
-					for (int n = list.size(); n < size; ++n)
+					for (int n = (int)list.size(); n < _size; ++n)
 						arr[n] = (Ty)0;
 				}
 			}
 		}
 
-		explicit array(const array<Ty , size>& obj)
+		explicit array(const array<Ty , _size>& obj) noexcept
 		{
 			for (int i = 0; i < obj.elem_count; ++i)
 			{
@@ -118,23 +124,23 @@ class array
 			elem_count = obj.elem_count;
 		}
 
-		array(Ty num)
+		array(const Ty& num) noexcept
 		{
-			for (int i = 0;i<size;++i)
+			for (int i = 0;i<_size;++i)
 			{
 				arr[i] = num;
 			}
 
-			elem_count = size;
+			elem_count = _size;
 		}
 
-		array()
+		array() noexcept
 		{
-			for (int i = 0; i < size; ++i)
+			for (int i = 0; i < _size; ++i)
 				arr[i] = (Ty)0;
 		}
 
-		~array()
+		~array() noexcept
 		{
 			if(arr != nullptr)
 				delete[] arr;
@@ -144,7 +150,7 @@ class array
 
 
 
-		bool empty() const
+		_NODISCARD bool empty() const noexcept
 		{
 			if (elem_count == 0)
 				return true;
@@ -152,37 +158,52 @@ class array
 			return false;
 		}
 
-		int array_size() const
+		_NODISCARD int size() const noexcept
+		{
+			return array_size();
+		}
+
+		_NODISCARD int array_size() const noexcept
 		{
 			return elem_count;
 		}
 
-		size_t max_size() const
+		_NODISCARD size_t max_size() const noexcept
 		{
-			return size;
+			return _size;
 		}
 
-		Ty back() const
+		_NODISCARD Ty& back() noexcept
 		{
-			return arr[elem_count-1];
+			return arr[elem_count - 1];
 		}
 
-		Ty front() const
+		_NODISCARD const Ty& back() const noexcept
+		{
+			return arr[elem_count - 1];
+		}
+
+		_NODISCARD Ty& front() noexcept
 		{
 			return arr[0];
 		}
 
-		void fill(Ty elem)
+		_NODISCARD const Ty& front() const noexcept
 		{
-			for (int i = 0; i < size; ++i)
+			return arr[0];
+		}
+
+		[[noreturn]] void fill(const Ty& elem) noexcept
+		{
+			for (int i = 0; i < _size; ++i)
 			{
 				arr[i] = elem;
 			}
 
-			elem_count = size;
+			elem_count = _size;
 		}
 
-		void swap(array<Ty , size>& obj)
+		[[noreturn]] void swap(array<Ty , _size>& obj) noexcept
 		{
 			Ty* self_ptr = this->arr;
 			Ty* obj_ptr = obj.arr;
@@ -197,22 +218,32 @@ class array
 
 
 		//iterator
-		iterator begin()
+		_NODISCARD iterator begin() noexcept
 		{
-			return iterator(arr,0);
+			return iterator(arr , 0);
 		}
 
-		iterator end()
+		_NODISCARD iterator end() noexcept
 		{
-			return iterator(arr+elem_count,elem_count);
+			return iterator(arr + elem_count , elem_count);
 		}
 
-		const_iterator cbegin() const
+		_NODISCARD iterator begin() const noexcept
+		{
+			return iterator(arr , 0);
+		}
+
+		_NODISCARD iterator end() const noexcept
+		{
+			return iterator(arr + elem_count , elem_count);
+		}
+
+		_NODISCARD const_iterator cbegin() const noexcept
 		{
 			return const_iterator(arr,0);
 		}
 
-		const_iterator cend() const
+		_NODISCARD const_iterator cend() const noexcept
 		{
 			return const_iterator(arr + elem_count,elem_count);
 		}
@@ -220,12 +251,21 @@ class array
 
 		//operator overload
 
-		decltype(auto) operator[](int n)
+		_NODISCARD const Ty& operator[](int n) const noexcept
 		{
+			assert(n < elem_count);//range limit
+
 			return this->arr[n];
 		}
 
-		self& operator=(const array<Ty , size>& obj)
+		_NODISCARD Ty& operator[](int n) noexcept
+		{
+			assert(n < elem_count);
+
+			return this->arr[n];
+		}
+
+		self& operator=(const array<Ty , _size>& obj) noexcept
 		{
 			for (int n = 0; n < obj.elem_count; ++n)
 			{
@@ -237,7 +277,7 @@ class array
 			return *this;
 		}
 
-		bool operator==(const array<Ty , size>& obj) const
+		_NODISCARD bool operator==(const array<Ty , _size>& obj) const noexcept
 		{
 			if (this->elem_count != obj.elem_count)
 				return false;
@@ -251,38 +291,38 @@ class array
 			return true;
 		}
 
-		bool operator!=(const array<Ty , size>& obj) const
+		_NODISCARD bool operator!=(const array<Ty , _size>& obj) const noexcept
 		{
 			return !((*this) == obj);
 		}
 
-		bool operator>(const array<Ty , size>& obj) const
+		_NODISCARD bool operator>(const array<Ty , _size>& obj) const noexcept
 		{
-			if (size > obj.size)
+			if (elem_count > obj.elem_count)
 				return true;
 
 			return false;
 		}
 
-		bool operator<(const array<Ty , size>& obj) const
+		_NODISCARD bool operator<(const array<Ty , _size>& obj) const noexcept
 		{
-			if (size < obj.size)
+			if (elem_count < obj.elem_count)
 				return true;
 
 			return false;
 		}
 
-		bool operator<=(const array<Ty , size>& obj) const
+		_NODISCARD bool operator<=(const array<Ty , _size>& obj) const noexcept
 		{
-			if (size <= obj.size)
+			if (elem_count <= obj.elem_count)
 				return true;
 
 			return false;
 		}
 
-		bool operator>=(const array<Ty , size>& obj) const
-		{
-			if (size >= obj.size)
+		_NODISCARD bool operator>=(const array<Ty , _size>& obj) const noexcept
+		{ 
+			if (elem_count >= obj.elem_count)
 				return true;
 
 			return false;

@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.2.0-alpha
+ * version : 1.2.1-alpha
  *
  * author : Mashiro
  *
@@ -56,9 +56,9 @@
 
 
 #pragma once
+#include<initializer_list>
 #include"iterator.hpp"
 #include"Container_Deque.hpp"
-#include<initializer_list>
 
 using std::initializer_list;
 
@@ -75,7 +75,7 @@ class stack
 		using const_iterator = const_Random_iterator<Ty>;
 
 	public:
-		stack()
+		stack() noexcept
 		{
 			arr = new deque<Ty>;
 		}
@@ -88,8 +88,9 @@ class stack
 			}
 		}
 
-		~stack()
+		~stack() noexcept
 		{
+			arr->~deque();
 			delete arr;
 			arr = nullptr;
 		}
@@ -97,27 +98,27 @@ class stack
 
 		//operations 
 
-		void push(Ty elem)
+		[[noreturn]] void push(const Ty& elem) noexcept
 		{
 			arr->push_back(elem);
 		}
 
-		void pop()
+		[[noreturn]] void pop() noexcept
 		{
 			arr->pop_back();
 		}
 
-		void clear()
+		[[noreturn]] void clear() noexcept
 		{
 			arr->clear();
 		}
 
-		Ty top()
+		_NODISCARD Ty top() const noexcept
 		{
 			return arr->back();
 		}
 
-		bool empty()
+		_NODISCARD bool empty() const noexcept
 		{
 			if (arr->empty())
 				return true;
@@ -125,17 +126,17 @@ class stack
 			return false;
 		}
 
-		int size()
+		_NODISCARD int size() const noexcept
 		{
 			return arr->size();
 		}
 
-		size_t max_size()
+		_NODISCARD size_t max_size() const noexcept
 		{
 			return arr->max_size();
 		}
 
-		void swap(stack<Ty>& obj)
+		[[noreturn]] void swap(stack<Ty>& obj) noexcept
 		{
 			deque<Ty>* temp = new deque<Ty>(obj.size());
 
@@ -161,22 +162,32 @@ class stack
 
 
 		//iterator
-		iterator begin()
+		_NODISCARD iterator begin() noexcept
 		{
 			return arr->begin();
 		}
 
-		iterator end()
+		_NODISCARD iterator end() noexcept
 		{
 			return arr->end();
 		}
 
-		const_iterator cbegin() const
+		_NODISCARD iterator begin() const noexcept
+		{
+			return arr->begin();
+		}
+
+		_NODISCARD iterator end() const noexcept
+		{
+			return arr->end();
+		}
+
+		_NODISCARD const_iterator cbegin() const noexcept
 		{
 			return arr->cbegin();
 		}
 
-		const_iterator cend() const
+		_NODISCARD const_iterator cend() const noexcept
 		{
 			return arr->cend();
 		}
@@ -184,7 +195,7 @@ class stack
 
 		//operator overload
 
-		stack<Ty>& operator=(const stack<Ty>& obj)
+		stack<Ty>& operator=(const stack<Ty>& obj) noexcept
 		{
 			this->clear();
 
@@ -197,7 +208,7 @@ class stack
 			return *this;
 		}
 
-		bool operator==(const stack<Ty>& obj) const
+		_NODISCARD bool operator==(const stack<Ty>& obj) const noexcept
 		{
 			if (this->size() != obj.size())
 				return false;
@@ -214,7 +225,7 @@ class stack
 			return true;
 		}
 
-		bool operator!=(const stack<Ty>& obj) const
+		_NODISCARD bool operator!=(const stack<Ty>& obj) const noexcept
 		{
 			return !((*this) == obj);
 		}

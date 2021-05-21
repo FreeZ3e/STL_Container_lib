@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.2.0-alpha
+ * version : 1.2.1-alpha
  *
  * author : Mashiro
  *
@@ -101,9 +101,11 @@
 
 
 #pragma once
+#include<functional>
+#include<assert.h>
+#include"memory.hpp"
 #include"iterator.hpp"
 #include"Hash_Function.hpp"
-#include<functional>
 
 using std::function;
 
@@ -149,7 +151,7 @@ class hash_table
 		key_compare compare_func = Compare_Class::Compare;
 		hash_func hasher = Hash_Class::hash;
 
-		hash_node<Ty>** buckets;
+		hash_node<Ty>** buckets = nullptr;
 
 		int elem_count = 0;
 		size_t bucket_size = 0;
@@ -158,15 +160,17 @@ class hash_table
 		hash_table() = delete;
 
 		//ctor
-		hash_table(size_t size)
+		hash_table(const size_t& size)
 		{
+			assert(size > 0);
+
 			buckets = new hash_node<Ty>*[size * 2];
 			this->bucket_size = size * 2;
 
 			init_bucket(bucket_size);
 		}
 
-		~hash_table()
+		~hash_table() noexcept
 		{
 			clear();
 			buckets = nullptr;
@@ -176,7 +180,7 @@ class hash_table
 
 		//insert and erase operations
 
-		void insert(Ty elem)
+		[[noreturn]] void insert(const Ty& elem) noexcept
 		{
 			size_t key = hasher(elem);
 			
@@ -208,9 +212,9 @@ class hash_table
 			}
 		}
 
-		void erase(Ty elem)
+		[[noreturn]] void erase(const Ty& elem) noexcept
 		{
-			int key = hasher(elem);
+			int key = (int)hasher(elem);
 
 			hash_node<Ty>* ptr = new hash_node<Ty>;
 			ptr->next = buckets[key];
@@ -236,6 +240,8 @@ class hash_table
 					}
 
 					elem_count--;
+
+					memory::elem_destory(temp->val);
 					delete temp;
 					temp = nullptr;
 				}
@@ -246,7 +252,7 @@ class hash_table
 			}
 		}
 
-		iterator erase(iterator p)
+		_NODISCARD iterator erase(iterator p) noexcept
 		{
 			auto temp = p;
 			int step = p.step();
@@ -264,7 +270,7 @@ class hash_table
 			return iterator(find(elem) , this , bucket_size , step);
 		}
 
-		const_iterator erase(const_iterator p)
+		_NODISCARD const_iterator erase(const_iterator p) noexcept
 		{
 			auto temp = p;
 			int step = p.step();
@@ -282,7 +288,7 @@ class hash_table
 			return const_iterator(find(elem) , this , bucket_size , step);
 		}
 
-		void erase(iterator p_begin , iterator p_end)
+		[[noreturn]] void erase(iterator p_begin , iterator p_end) noexcept
 		{
 			int n = p_begin.step();
 			for (; n < p_end.step(); ++n)
@@ -291,7 +297,7 @@ class hash_table
 			}
 		}
 
-		void clear()
+		[[noreturn]] void clear() noexcept
 		{
 			delete[] buckets;
 			buckets = new hash_node<Ty>*[bucket_size];
@@ -303,7 +309,7 @@ class hash_table
 		
 		//other
 
-		hash_node<Ty>* find(Ty elem)
+		_NODISCARD hash_node<Ty>* find(const Ty& elem) const noexcept
 		{
 			for (int n = 0; n < (int)bucket_size; ++n)
 			{
@@ -324,8 +330,10 @@ class hash_table
 			return nullptr;
 		}
 
-		void resize(size_t size) 
+		[[noreturn]] void resize(const size_t& size)
 		{
+			assert(size > 0);
+
 			MemoryExpand(size);
 
 			if(size >= bucket_size)
@@ -337,17 +345,17 @@ class hash_table
 			}
 		}
 
-		int size() const
+		_NODISCARD int size() const noexcept
 		{
 			return this->elem_count;
 		}
 
-		size_t buckets_count() const
+		_NODISCARD size_t buckets_count() const noexcept
 		{
 			return this->bucket_size;
 		}
 
-		bool empty() const
+		_NODISCARD bool empty() const noexcept
 		{
 			if (elem_count == 0)
 				return true;
@@ -355,12 +363,12 @@ class hash_table
 			return false;
 		}
 
-		size_t get_key(Ty elem) const
+		_NODISCARD size_t get_key(const Ty& elem) const noexcept
 		{
 			return hasher(elem);
 		}
 
-		void rehash(hash_func new_hasher)
+		[[noreturn]] void rehash(hash_func new_hasher) noexcept
 		{
 			hasher = new_hasher;
 
@@ -375,7 +383,7 @@ class hash_table
 			}
 		}
 
-		void swap(self& obj)
+		[[noreturn]] void swap(self& obj) noexcept
 		{
 			hash_node<Ty>** temp_ptr = buckets;
 			hash_node<Ty>** obj_ptr = obj.buckets;
@@ -396,22 +404,22 @@ class hash_table
 
 		//iterator
 
-		iterator begin()
+		_NODISCARD iterator begin() noexcept
 		{
 			return iterator(buckets[0],this,bucket_size,0);
 		}
 
-		iterator end()
+		_NODISCARD iterator end() noexcept
 		{
 			return iterator(nullptr,this,bucket_size,elem_count);
 		}
 
-		const_iterator cbegin()
+		_NODISCARD const_iterator cbegin() noexcept
 		{
 			return const_iterator(buckets[0] , this , bucket_size,0);
 		}
 
-		const_iterator cend()
+		_NODISCARD const_iterator cend() noexcept
 		{
 			return const_iterator(nullptr , this , bucket_size,elem_count);
 		}
@@ -419,12 +427,17 @@ class hash_table
 
 		//operator overload
 
-		hash_node<Ty>*& operator[](size_t key)
+		_NODISCARD hash_node<Ty>*& operator[](const size_t& key) noexcept
 		{
 			return buckets[key];
 		}
 
-		self& operator=(const self& obj)
+		_NODISCARD const hash_node<Ty>*& operator[](const size_t& key) const noexcept
+		{
+			return buckets[key];
+		}
+
+		self& operator=(const self& obj) noexcept
 		{
 			delete[] buckets;
 			buckets = new hash_node<Ty>*[obj.bucket_size];
@@ -441,7 +454,7 @@ class hash_table
 			return *this;
 		}
 
-		bool operator==(const self& obj) const
+		_NODISCARD bool operator==(const self& obj) const noexcept
 		{
 			if (elem_count != obj.elem_count || bucket_size != obj.bucket_size)
 				return false;
@@ -455,12 +468,12 @@ class hash_table
 			return true;
 		}
 
-		bool operator!=(const self& obj) const
+		_NODISCARD bool operator!=(const self& obj) const noexcept
 		{
 			return !((*this) == obj);
 		}
 
-		bool operator>(const self& obj) const
+		_NODISCARD bool operator>(const self& obj) const noexcept
 		{
 			if (elem_count > obj.elem_count)
 				return true;
@@ -468,7 +481,7 @@ class hash_table
 			return false;
 		}
 
-		bool operator<(const self& obj) const
+		_NODISCARD bool operator<(const self& obj) const noexcept
 		{
 			if (elem_count < obj.elem_count)
 				return true;
@@ -476,15 +489,15 @@ class hash_table
 			return false;
 		}
 
-		bool operator>=(const self& obj) const
+		_NODISCARD bool operator>=(const self& obj) const noexcept
 		{
 			if (elem_count >= obj.elem_count)
 				return true;
 
 			return false;
 		}
-
-		bool operator<=(const self& obj) const
+		 
+		_NODISCARD bool operator<=(const self& obj) const noexcept
 		{
 			if (elem_count <= obj.elem_count)
 				return true;
@@ -493,8 +506,10 @@ class hash_table
 		}
 
 	private:
-		void MemoryExpand(size_t resize)
+		[[noreturn]] void MemoryExpand(const size_t& resize)
 		{
+			assert(resize > 0);
+
 			hash_node<Ty>** temp = new hash_node<Ty>*[bucket_size];
 
 			//keep old data
@@ -536,7 +551,7 @@ class hash_table
 			temp = nullptr;
 		}
 
-		void init_bucket(size_t size)
+		[[noreturn]] void init_bucket(const size_t& size) const noexcept
 		{
 			for (int n = 0; n < (int)size; ++n)
 			{
@@ -544,7 +559,7 @@ class hash_table
 			}
 		}
 
-		int elem_count_find()
+		_NODISCARD int elem_count_find() const noexcept
 		{
 			int count = 0;
 

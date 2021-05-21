@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.2.0-alpha
+ * version : 1.2.1-alpha
  *
  * author : Mashiro
  *
@@ -75,8 +75,9 @@
 
 
 #pragma once
-#include"HashTable.hpp"
 #include<initializer_list>
+#include<assert.h>
+#include"HashTable.hpp"
 
 using std::initializer_list;
 
@@ -94,17 +95,19 @@ class Unordered_Map
 		using const_iterator = const_hash_table_iterator<typename hash_table::NodeType* , hash_table>;
 
 	private:
-		hash_table* ptr;
+		hash_table* ptr = nullptr;
 
 	public:
 		Unordered_Map() = delete;
 
-		Unordered_Map(size_t size)
+		Unordered_Map(const size_t& size)
 		{
+			assert(size > 0);
+
 			ptr = new hash_table(size);
 		}
 
-		explicit Unordered_Map(const initializer_list<pair>& list)
+		explicit Unordered_Map(const initializer_list<pair>& list) noexcept
 		{
 			size_t size = list.size();
 			ptr = new hash_table(size);
@@ -115,7 +118,7 @@ class Unordered_Map
 			}
 		}
 
-		explicit Unordered_Map(const Unordered_Map<key , value>& obj)
+		explicit Unordered_Map(const Unordered_Map<key , value>& obj) noexcept
 		{
 			size_t size = obj.ptr->buckets_count();
 			ptr = new hash_table(size);
@@ -127,8 +130,9 @@ class Unordered_Map
 			}
 		}
 
-		~Unordered_Map()
+		~Unordered_Map() noexcept
 		{
+			ptr->~hash_table();
 			delete ptr;
 			ptr = nullptr;
 		}
@@ -137,42 +141,42 @@ class Unordered_Map
 
 		//insert and erase operations
 
-		void insert(const pair& obj)
+		[[noreturn]] void insert(const pair& obj) noexcept
 		{
 			ptr->insert(obj);
 		}
 
-		void insert(key k , value v)
+		[[noreturn]] void insert(const key& k , const value& v) noexcept
 		{
 			ptr->insert(make_pair(k , v));
 		}
 
-		void erase(const pair& obj)
+		[[noreturn]] void erase(const pair& obj) noexcept
 		{
 			ptr->erase(obj);
 		}
 
-		void erase(key k)
+		[[noreturn]] void erase(const key& k) noexcept
 		{
 			ptr->erase(make_pair(k , 0));
 		}
 
-		iterator erase(iterator p)
+		_NODISCARD iterator erase(iterator p) noexcept
 		{
 			return ptr->erase(p);
 		}
 
-		const_iterator erase(const_iterator p)
+		_NODISCARD const_iterator erase(const_iterator p) noexcept
 		{
 			return ptr->erase(p);
 		}
 
-		void erase(iterator p_begin , iterator p_end)
+		[[noreturn]] void erase(iterator p_begin , iterator p_end) noexcept
 		{
 			ptr->erase(p_begin,p_end);
 		}
 
-		void clear()
+		[[noreturn]] void clear() noexcept
 		{
 			ptr->clear();
 		}
@@ -180,22 +184,22 @@ class Unordered_Map
 
 		//other
 
-		bool empty() const
+		_NODISCARD bool empty() const noexcept
 		{
 			return ptr->empty();
 		}
 
-		int size() const
+		_NODISCARD int size() const noexcept
 		{
 			return ptr->size();
 		}
 
-		size_t buckets_count() const
+		_NODISCARD size_t buckets_count() const noexcept
 		{
 			return ptr->buckets_count();
 		}
 
-		int count(const pair& obj) const
+		_NODISCARD int count(const pair& obj) const noexcept
 		{
 			int count = 0;
 
@@ -210,7 +214,7 @@ class Unordered_Map
 			return count;
 		}
 
-		int count(key k) const
+		_NODISCARD int count(const key& k) const noexcept
 		{
 			int count = 0;
 
@@ -225,22 +229,22 @@ class Unordered_Map
 			return count;
 		}
 
-		bool find(const pair& obj)
+		_NODISCARD bool find(const pair& obj) const noexcept
 		{
 			return ptr->find(obj);
 		}
 
-		bool find(key k)
+		_NODISCARD bool find(const key& k) const noexcept
 		{
 			return ptr->find(make_pair(k , 0));
 		}
 
-		compare key_comp() const
+		_NODISCARD compare key_comp() const noexcept
 		{
 			return compare;
 		}
 
-		void swap(Unordered_Map<key , value>& obj)
+		[[noreturn]] void swap(Unordered_Map<key , value>& obj) noexcept
 		{
 			hash_table* temp_ptr = ptr;
 			hash_table* obj_ptr = obj.ptr;
@@ -252,22 +256,32 @@ class Unordered_Map
 
 		//hash_table iterator
 
-		iterator begin()
+		_NODISCARD iterator begin() noexcept
 		{
 			return ptr->begin();
 		}
 
-		iterator end()
+		_NODISCARD iterator end() noexcept
 		{
 			return ptr->end();
 		}
 
-		const_iterator cbegin() const
+		_NODISCARD iterator begin() const noexcept
+		{
+			return ptr->begin();
+		}
+
+		_NODISCARD iterator end() const noexcept
+		{
+			return ptr->end();
+		}
+
+		_NODISCARD const_iterator cbegin() const noexcept
 		{
 			return ptr->cbegin();
 		}
 
-		const_iterator cend() const
+		_NODISCARD const_iterator cend() const noexcept
 		{
 			return ptr->cend();
 		}
@@ -275,7 +289,7 @@ class Unordered_Map
 
 		//operator overload
 
-		self& operator=(const Unordered_Map<key,value>& obj)
+		self& operator=(const Unordered_Map<key,value>& obj) noexcept
 		{
 			clear();
 
@@ -288,7 +302,7 @@ class Unordered_Map
 			return *this;
 		}
 
-		bool operator==(const Unordered_Map<key,value>& obj) const
+		_NODISCARD bool operator==(const Unordered_Map<key,value>& obj) const noexcept
 		{
 			if (size() != obj.size() || buckets_count() != obj.buckets_count())
 				return false;
@@ -304,12 +318,12 @@ class Unordered_Map
 			return true;
 		}
 
-		bool operator!=(const Unordered_Map<key,value>& obj) const
+		_NODISCARD bool operator!=(const Unordered_Map<key,value>& obj) const noexcept
 		{
 			return !((*this) == obj);
 		}
 
-		bool operator>(const Unordered_Map<key,value>& obj) const
+		_NODISCARD bool operator>(const Unordered_Map<key,value>& obj) const noexcept
 		{
 			if (size() > obj.size())
 				return true;
@@ -317,7 +331,7 @@ class Unordered_Map
 			return false;
 		}
 
-		bool operator<(const Unordered_Map<key,value>& obj) const
+		_NODISCARD bool operator<(const Unordered_Map<key,value>& obj) const noexcept
 		{
 			if (size() < obj.size())
 				return true;
@@ -325,7 +339,7 @@ class Unordered_Map
 			return false;
 		}
 
-		bool operator>=(const Unordered_Map<key,value>& obj) const
+		_NODISCARD bool operator>=(const Unordered_Map<key,value>& obj) const noexcept
 		{
 			if (size() >= obj.size())
 				return true;
@@ -333,7 +347,7 @@ class Unordered_Map
 			return false;
 		}
 
-		bool operator<=(const Unordered_Map<key,value>& obj) const
+		_NODISCARD bool operator<=(const Unordered_Map<key,value>& obj) const noexcept
 		{
 			if (size() <= obj.size())
 				return true;

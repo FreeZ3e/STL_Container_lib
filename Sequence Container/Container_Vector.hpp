@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.2.0-alpha
+ * version : 1.2.1-alpha
  *
  * author : Mashiro
  *
@@ -78,6 +78,8 @@
 
 #pragma once
 #include<initializer_list>
+#include<assert.h>
+#include"memory.hpp"
 #include"iterator.hpp"
 
 using std::initializer_list;
@@ -98,19 +100,24 @@ class vector
 		using const_iterator = const_Random_iterator<Ty>;
 
 	public:
-		vector()
+
+		vector() noexcept
 		{
 			arr = new Ty[arr_size];
 		}
 
-		vector(size_t size)
+		vector(const size_t& size)
 		{
+			assert(size > 0);
+
 			arr_size = size;
 			arr = new Ty[arr_size];
 		}
 
-		vector(size_t size , Ty elem):vector(size)
+		vector(const size_t& size , const Ty& elem):vector(size)
 		{
+			assert(size > 0);
+
 			for (int n = 0; n < arr_size; ++n)
 			{
 				arr[n] = elem;
@@ -119,7 +126,7 @@ class vector
 			elem_count = arr_size;
 		}
 
-		explicit vector(const initializer_list<Ty>& list)
+		explicit vector(const initializer_list<Ty>& list) noexcept
 		{
 			arr_size = list.size();
 			arr = new Ty[arr_size];
@@ -128,13 +135,10 @@ class vector
 			{
 				arr[elem_count] = (*p);
 				elem_count++;
-
-				if (elem_count == arr_size)
-					break;
 			}
 		}
 
-		explicit vector(const vector<Ty>& obj)
+		explicit vector(const vector<Ty>& obj) noexcept
 		{
 			arr_size = obj.arr_size;
 			arr = new Ty[arr_size];
@@ -147,29 +151,32 @@ class vector
 			elem_count = obj.elem_count;
 		}
 
-		~vector()
+		~vector() noexcept
 		{
-			delete[] arr;
-			arr = nullptr;
+			if (arr != nullptr)
+			{
+				delete[] arr;
+				arr = nullptr;
+			}
 		}
 
 
 		//push and pop operation
 
-		void insert(Ty elem)
+		[[noreturn]] void insert(const Ty& elem) noexcept
 		{
 			push_back(elem);
 		}
 
-		void insert(iterator pos , Ty elem)
+		[[noreturn]] void insert(const iterator& pos , const Ty& elem) noexcept
 		{
-			if (pos != begin())
+			if (pos > begin())
 			{
 				*(pos-1) = elem;
 			}
 		}
 
-		void push_back(Ty elem)
+		[[noreturn]] void push_back(const Ty elem) noexcept
 		{
 			if (elem_count == arr_size)
 			{
@@ -181,7 +188,7 @@ class vector
 			elem_count++;
 		}
 
-		void emplace_back(const Ty &elem)
+		[[noreturn]] void emplace_back(const Ty& elem) noexcept
 		{
 			if (elem_count == arr_size)
 			{   
@@ -193,33 +200,38 @@ class vector
 			elem_count++;
 		}
 
-		void pop_back()
+		[[noreturn]] void pop_back() noexcept
 		{
-			elem_count--;
-
-			Ty* Temp = new Ty[elem_count];
-
-			for (int n = 0; n < elem_count; ++n)
+			if (elem_count > 0)
 			{
-				Temp[n] = arr[n];
+				memory::elem_destory(back());
+
+				elem_count--;
+
+				Ty* Temp = new Ty[elem_count];
+
+				for (int n = 0; n < elem_count; ++n)
+				{
+					Temp[n] = arr[n];
+				}
+
+				delete[] arr;
+				arr = new Ty[arr_size];
+
+				for (int n = 0; n < elem_count; ++n)
+				{
+					arr[n] = Temp[n];
+				}
+
+				delete[] Temp;
+				Temp = nullptr;
 			}
-
-			delete[] arr;
-			arr = new Ty[arr_size];
-
-			for (int n = 0; n < elem_count; ++n)
-			{
-				arr[n] = Temp[n];
-			}
-
-			delete[] Temp;
-			Temp = nullptr;
 		}
 
 
 		//erase and clear operation
 
-		iterator erase(iterator ptr)
+		_NODISCARD iterator erase(iterator ptr) noexcept
 		{
 			Ty* temp = new Ty[(size_t)elem_count];
 
@@ -238,6 +250,7 @@ class vector
 
 			delete[] arr;
 			arr = new Ty[arr_size];
+			memory::elem_destory(*ptr);
 
 			for (int n = 0; n < count; ++n)	//reset data
 			{
@@ -252,7 +265,7 @@ class vector
 			return iterator(&arr[del] , del);
 		}
 
-		const_iterator erase(const_iterator ptr)
+		_NODISCARD const_iterator erase(const_iterator ptr) noexcept
 		{
 			Ty* temp = new Ty[(size_t)elem_count];
 
@@ -271,6 +284,7 @@ class vector
 
 			delete[] arr;
 			arr = new Ty[arr_size];
+			memory::elem_destory(*ptr);
 
 			for (int n = 0; n < count; ++n)
 			{
@@ -286,7 +300,7 @@ class vector
 
 		}
 
-		void erase(iterator p_begin , iterator p_end)
+		[[noreturn]] void erase(iterator p_begin , iterator p_end) noexcept
 		{
 			int begin = p_begin.step();
 			int end = p_end.step();
@@ -297,7 +311,7 @@ class vector
 			}
 		}
 
-		void clear()
+		[[noreturn]] void clear() noexcept
 		{
 			delete[] arr;
 			arr = new Ty[arr_size];
@@ -308,18 +322,30 @@ class vector
 
 		//other
 
-		Ty back() const
+		_NODISCARD const Ty& back() const noexcept
 		{
-			return arr[elem_count-1];
+			return arr[elem_count - 1];
 		}
 
-		Ty front() const
+		_NODISCARD Ty& back() noexcept
+		{
+			return arr[elem_count - 1];
+		}
+
+		_NODISCARD const Ty& front() const noexcept
 		{
 			return arr[0];
 		}
 
-		void resize(size_t resize)
+		_NODISCARD Ty& front() noexcept
 		{
+			return arr[0];
+		}
+
+		[[noreturn]] void resize(size_t resize)
+		{
+			assert(resize > 0);
+
 			MemoryExpand(resize);
 
 			if (elem_count > resize)
@@ -328,17 +354,17 @@ class vector
 			arr_size = resize;
 		}
 
-		size_t max_size() const
+		_NODISCARD size_t max_size() const noexcept
 		{
 			return this->arr_size;
 		}
 
-		int size() const
+		_NODISCARD int size() const noexcept
 		{
 			return elem_count;
 		}
 
-		bool empty() const
+		_NODISCARD bool empty() const noexcept
 		{
 			if (elem_count == 0)
 				return true;
@@ -346,12 +372,12 @@ class vector
 			return false;
 		}
 
-		int capacity() const
+		_NODISCARD int capacity() const noexcept
 		{
 			return (int)arr_size - elem_count;
 		}
 
-		void swap(vector<Ty>& obj)
+		[[noreturn]] void swap(vector<Ty>& obj) noexcept
 		{
 			Ty* temp_ptr = arr;
 			Ty* obj_ptr = obj.arr;
@@ -371,22 +397,32 @@ class vector
 
 
 		//iterator
-		iterator begin()
+		_NODISCARD iterator begin() noexcept
 		{
 			return iterator(arr,0);
 		}
 
-		iterator end()
+		_NODISCARD iterator end() noexcept
 		{
 			return iterator(arr + elem_count, elem_count);
 		}
 
-		const_iterator cbegin() const
+		_NODISCARD iterator begin() const noexcept
+		{
+			return iterator(arr , 0);
+		}
+
+		_NODISCARD iterator end() const noexcept
+		{
+			return iterator(arr + elem_count , elem_count);
+		}
+
+		_NODISCARD const_iterator cbegin() const noexcept
 		{
 			return const_iterator(arr,0);
 		}
 
-		const_iterator cend() const
+		_NODISCARD const_iterator cend() const noexcept
 		{
 			return const_iterator(arr + elem_count, elem_count);
 		}
@@ -394,12 +430,21 @@ class vector
 
 		//operator overload
 
-		decltype(auto) operator[](int n)
+		_NODISCARD const Ty& operator[](int n) const
 		{
+			assert(n < elem_count);
+
 			return arr[n];
 		}
 
-		self& operator=(const vector<Ty>& obj)
+		_NODISCARD Ty& operator[](int n)
+		{
+			assert(n < elem_count);
+
+			return arr[n];
+		}
+
+		self& operator=(const vector<Ty>& obj) noexcept
 		{
 			if (arr_size < obj.arr_size)
 			{
@@ -417,7 +462,7 @@ class vector
 			return *this;
 		}
 
-		bool operator==(const vector<Ty>& obj) const
+		_NODISCARD bool operator==(const vector<Ty>& obj) const noexcept
 		{
 			if (elem_count != obj.elem_count)
 				return false;
@@ -431,12 +476,12 @@ class vector
 			return true;
 		}
 
-		bool operator!=(const vector<Ty>& obj) const
+		_NODISCARD bool operator!=(const vector<Ty>& obj) const noexcept
 		{
 			return !((*this) == obj);
 		}
 
-		bool operator>(const vector<Ty>& obj) const
+		_NODISCARD bool operator>(const vector<Ty>& obj) const noexcept
 		{
 			if (arr_size > obj.arr_size)
 				return true;
@@ -444,7 +489,7 @@ class vector
 			return false;
 		}
 
-		bool operator<(const vector<Ty>& obj) const
+		_NODISCARD bool operator<(const vector<Ty>& obj) const noexcept
 		{
 			if (arr_size < obj.arr_size)
 				return true;
@@ -452,7 +497,7 @@ class vector
 			return false;
 		}
 
-		bool operator<=(const vector<Ty>& obj) const
+		_NODISCARD bool operator<=(const vector<Ty>& obj) const noexcept
 		{
 			if (arr_size <= obj.arr_size)
 				return true;
@@ -460,7 +505,7 @@ class vector
 			return false;
 		}
 
-		bool operator>=(const vector<Ty>& obj) const
+		_NODISCARD bool operator>=(const vector<Ty>& obj) const noexcept
 		{
 			if (arr_size >= obj.arr_size)
 				return true;
@@ -469,8 +514,9 @@ class vector
 		}
 
 	private:
-		void MemoryExpand(size_t resize)
+		[[noreturn]] void MemoryExpand(size_t resize)
 		{
+			assert(resize > 0);
 
 			if (elem_count != 0)
 			{

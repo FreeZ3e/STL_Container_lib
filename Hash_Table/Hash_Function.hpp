@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.2.0-alpha
+ * version : 1.2.1-alpha
  *
  * author : Mashiro
  *
@@ -17,25 +17,58 @@
 
 
 #pragma once
-#include"Pair.hpp"
 #include<string>
+#include"Pair.hpp"
+#include"type_traits.hpp"
 
 using std::string;
+using namespace lib_type;
 
 //hash function
 template<typename Ty>
 struct hash_function
 {
-	static size_t hash(Ty elem)
+
+	//is pointer
+	static _NODISCARD inline size_t _is_ptr_hash(const Ty& elem , true_type_tag) noexcept
 	{
-		return (size_t)elem;
+		unsigned long h = (*elem > 0) ? (*elem) : -(*elem);
+		return (size_t)h;
+	}
+
+	//non pointer
+	static _NODISCARD inline size_t _is_ptr_hash(const Ty& elem , false_type_tag) noexcept
+	{
+		unsigned long h = elem > 0 ? elem : -elem;
+		return (size_t)h;
+	}
+
+	//pod type handle
+	static _NODISCARD inline size_t _hash(const Ty& elem , true_type_tag) noexcept
+	{
+		typename is_pointer<Ty>::type type_tag;
+		return _is_ptr_hash(elem , type_tag);
+	}
+
+	//non-pod type handle
+	static _NODISCARD inline size_t _hash(const Ty& elem , false_type_tag) noexcept
+	{
+		unsigned long h = sizeof(elem);
+		return (size_t)h;
+	}
+
+	//hash function
+	static _NODISCARD inline size_t hash(const Ty& elem) noexcept
+	{
+		typename is_pod<Ty>::type type_tag;
+		return _hash(elem , type_tag);
 	}
 };
 
 template<>
 struct hash_function<string>
 {
-	static size_t hash(string elem)
+	static _NODISCARD size_t hash(const string& elem) noexcept
 	{
 		unsigned long h = 0;
 
@@ -51,7 +84,7 @@ struct hash_function<string>
 template<>
 struct hash_function<char*>
 {
-	static size_t hash(char* elem)
+	static _NODISCARD size_t hash(const char*& elem) noexcept
 	{
 		unsigned long h = 0;
 
@@ -69,16 +102,46 @@ struct hash_function<char*>
 template<typename key , typename value>
 struct pair_hash
 {
-	static size_t hash(const pair<key , value>& obj)
+	//is pointer
+	static _NODISCARD inline size_t _is_ptr_hash(const key& elem , true_type_tag) noexcept
 	{
-		return (size_t)obj.key;
+		unsigned long h = (*elem > 0) ? (*elem) : -(*elem);
+		return (size_t)h;
+	}
+
+	//non pointer
+	static _NODISCARD inline size_t _is_ptr_hash(const key& elem , false_type_tag) noexcept
+	{
+		unsigned long h = elem > 0 ? elem : -elem;
+		return (size_t)h;
+	}
+
+	//pod type handle
+	static _NODISCARD inline size_t _hash(const key& elem , true_type_tag) noexcept
+	{
+		typename is_pointer<key>::type type_tag;
+		return _is_ptr_hash(elem , type_tag);
+	}
+
+	//non-pod type handle
+	static _NODISCARD inline size_t _hash(const key& elem , false_type_tag) noexcept
+	{
+		unsigned long h = sizeof(elem);
+		return (size_t)h;
+	}
+
+	//hash function
+	static _NODISCARD inline size_t hash(const pair<key , value>& obj) noexcept
+	{
+		typename is_pod<key>::type type_tag;
+		return _hash(obj.key , type_tag);
 	}
 };
 
 template<typename value>
 struct pair_hash<string , value>
 {
-	static size_t hash(const pair<string , value>& obj)
+	static _NODISCARD size_t hash(const pair<string , value>& obj) noexcept
 	{
 		unsigned long h = 0;
 
@@ -94,7 +157,7 @@ struct pair_hash<string , value>
 template<typename value>
 struct pair_hash<char* , value>
 {
-	static size_t hash(const pair<char* , value>& obj)
+	static _NODISCARD size_t hash(const pair<char* , value>& obj) noexcept
 	{
 		unsigned long h = 0;
 

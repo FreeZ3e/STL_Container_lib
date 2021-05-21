@@ -4,7 +4,7 @@
 * 
 * This File is part of CONTAINER LIBRARY project.
 * 
-* version : 1.2.0-alpha
+* version : 1.2.1-alpha
 * 
 * author : Mashiro
 * 
@@ -107,7 +107,7 @@ namespace lib_algo
 	//equal---------------------------------------------------------
 
 	template<typename t>
-	bool equal(const t& obj)
+	_NODISCARD bool equal(const t& obj) noexcept
 	{
 		auto p = obj.cbegin();
 		auto elem = *p;
@@ -122,7 +122,7 @@ namespace lib_algo
 	}
 
 	template<typename t1,typename t2>
-	bool equal(const t1& obj1 , const t2& obj2)
+	_NODISCARD bool equal(const t1& obj1 , const t2& obj2) noexcept
 	{
 		if (obj1.size() != obj2.size())
 			return false;
@@ -140,7 +140,7 @@ namespace lib_algo
 	}
 
 	template<typename t>
-	bool equal(t p_begin , t p_end)
+	_NODISCARD bool equal(t p_begin , t p_end) noexcept
 	{
 		auto elem = *(p_begin);
 
@@ -159,7 +159,7 @@ namespace lib_algo
 	//fill----------------------------------------------------------
 
 	template<typename t,typename any>
-	inline void fill(t& obj,any elem)
+	inline void fill(t& obj,any elem) noexcept
 	{
 		auto p = obj.begin();
 		for (; p != obj.end(); ++p)
@@ -169,7 +169,7 @@ namespace lib_algo
 	}
 
 	template<typename t,typename any>
-	inline void fill(t p_begin , t p_end,any elem)
+	inline void fill(t p_begin , t p_end,any elem) noexcept
 	{
 		int step = p_end.step() - p_begin.step();
 
@@ -189,7 +189,7 @@ namespace lib_algo
 
 	//default sort compare function
 	template<typename t>
-	static inline t less_compare(t elem1 , t elem2)
+	static inline t less_compare(t elem1 , t elem2) noexcept
 	{
 		return elem1 < elem2 ? elem1 : elem2;
 	}
@@ -197,7 +197,7 @@ namespace lib_algo
 
 
 	template<typename t>
-	void _PercolateDown(t p_begin , int index , int size)
+	void _PercolateDown(t p_begin , int index , int size) noexcept
 	{
 		int min = 0;
 
@@ -225,7 +225,7 @@ namespace lib_algo
 	}
 
 	template<typename t>
-	void _PercolateUp(t p_begin, int index , int size)
+	void _PercolateUp(t p_begin, int index , int size) noexcept
 	{
 		int max = 0;
 
@@ -254,7 +254,7 @@ namespace lib_algo
 
 	template<typename t>
 	void _heap_built(t p_begin , t p_end,
-					 typename t::TypeValue(*compare)(typename t::TypeValue , typename t::TypeValue) = less_compare)
+					 typename t::TypeValue(*compare)(typename t::TypeValue , typename t::TypeValue) = less_compare) noexcept
 	{
 		for (int n = (p_end.step() - p_begin.step()) / 2 - 1; n >= 0; --n)
 		{
@@ -268,7 +268,7 @@ namespace lib_algo
 	//heap_sort
 	template<typename t>
 	void _heap_sort(t p_begin , t p_end,
-				   typename t::TypeValue(*compare)(typename t::TypeValue , typename t::TypeValue) = less_compare)
+				   typename t::TypeValue(*compare)(typename t::TypeValue , typename t::TypeValue) = less_compare) noexcept
 	{
 		int size = p_end.step() - p_begin.step();
 		_heap_built(p_begin,p_end,compare);
@@ -295,7 +295,7 @@ namespace lib_algo
 	//insert sort
 	template<typename t>
 	void _insert_sort(t p_begin , t p_end ,
-					  typename t::TypeValue(*compare)(typename t::TypeValue , typename t::TypeValue) = less_compare)
+					  typename t::TypeValue(*compare)(typename t::TypeValue , typename t::TypeValue) = less_compare) noexcept
 	{
 		int step = p_end.step() - p_begin.step();
 		auto beg = p_begin;
@@ -321,11 +321,11 @@ namespace lib_algo
 			p_begin++;
 		}
 	}
-	
+
 
 	//quick_sort_helper
 	template<typename t,typename value>
-	void _quick_sort_less(t& beg , t& end , const value& key)
+	void _quick_sort_less(t& beg , t& end , const value& key) noexcept
 	{
 		while (beg < end)
 		{
@@ -344,7 +344,7 @@ namespace lib_algo
 	}
 
 	template<typename t,typename value>
-	void _quick_sort_max(t& beg , t& end , const value& key)
+	void _quick_sort_max(t& beg , t& end , const value& key) noexcept
 	{
 		while (beg < end)
 		{
@@ -365,7 +365,7 @@ namespace lib_algo
 
 	//median3 pivot
 	template<typename t>
-	auto _median3(t p_begin , t p_end)	//retrun pivot value of container
+	auto _median3(t p_begin , t p_end) noexcept	//retrun pivot value of container
 	{
 		int middle = (p_end.step() - p_begin.step()) / 2;	//middle point
 
@@ -393,7 +393,7 @@ namespace lib_algo
 	}
 
 	template<typename t>
-	auto _median3_max(t p_begin , t p_end)	//retrun pivot value of container
+	auto _median3_max(t p_begin , t p_end) noexcept	//retrun pivot value of container
 	{
 		int middle = (p_end.step() - p_begin.step()) / 2;	//middle point
 
@@ -423,7 +423,7 @@ namespace lib_algo
 	//quick_sort
 	template<typename t>
 	void _quick_sort(t p_begin , t p_end , int depth_limit , 
-					 typename t::TypeValue(*compare)(typename t::TypeValue , typename t::TypeValue) = less_compare)
+					 typename t::TypeValue(*compare)(typename t::TypeValue , typename t::TypeValue) = less_compare) noexcept
 	{
 		if (p_end.step() - p_begin.step() <= 32)	//threshold = 32
 		{
@@ -470,8 +470,8 @@ namespace lib_algo
 
 
 	//quick sort depth limit
-	inline int limit(int n)
-	{
+	inline int limit(int n) noexcept
+	{ 
 		int res = 0;
 		for (; n > 1; n >>= 1)
 			++res;
@@ -483,7 +483,7 @@ namespace lib_algo
 	//sort
 	template<typename t>
 	void sort(t p_begin , t p_end ,
-			   typename t::TypeValue(*compare)(typename t::TypeValue , typename t::TypeValue) = less_compare)
+			   typename t::TypeValue(*compare)(typename t::TypeValue , typename t::TypeValue) = less_compare) noexcept
 	{
 		if (p_begin != p_end)
 		{
@@ -499,7 +499,7 @@ namespace lib_algo
 
 	template<typename t>
 	void sort(t& obj ,
-			   typename t::TypeValue(*compare)(typename t::TypeValue , typename t::TypeValue) = less_compare)
+			   typename t::TypeValue(*compare)(typename t::TypeValue , typename t::TypeValue) = less_compare) noexcept
 	{
 		if (!obj.empty())
 		{
@@ -519,7 +519,7 @@ namespace lib_algo
 
 	//find by obj
 	template<typename t,typename any>
-	inline decltype(auto) find(const t& obj,any elem) noexcept
+	_NODISCARD inline decltype(auto) find(const t& obj,any elem) noexcept
 	{	
 		auto p = obj.cbegin();
 		for (;p != obj.cend();++p)
@@ -533,7 +533,7 @@ namespace lib_algo
 
 	//find by iterator range
 	template<typename t,typename any>
-	inline decltype(auto) find(t p_begin , t p_end , any elem) noexcept
+	_NODISCARD inline decltype(auto) find(t p_begin , t p_end , any elem) noexcept
 	{
 		while (p_begin != p_end)
 		{
@@ -552,7 +552,7 @@ namespace lib_algo
 	//find_if----------------------------------------------------------
 
 	template<typename t>
-	inline decltype(auto) find_if(const t& obj , bool(*pred)(typename t::TypeValue))
+	_NODISCARD inline decltype(auto) find_if(const t& obj , bool(*pred)(typename t::TypeValue)) noexcept
 	{
 		auto p = obj.cbegin();
 		for (; p != obj.cend(); ++p)
@@ -565,7 +565,7 @@ namespace lib_algo
 	}
 
 	template<typename t>
-	inline decltype(auto) find_if(t p_begin , t p_end , bool(*pred)(typename t::TypeValue))
+	_NODISCARD inline decltype(auto) find_if(t p_begin , t p_end , bool(*pred)(typename t::TypeValue)) noexcept
 	{
 		while (p_begin != p_end)
 		{
@@ -585,7 +585,7 @@ namespace lib_algo
 
 	//count by obj
 	template<typename t,typename any>
-	inline int count(const t& obj , any elem)
+	_NODISCARD inline int count(const t& obj , any elem) noexcept
 	{
 		int count = 0;
 
@@ -601,7 +601,7 @@ namespace lib_algo
 
 	//count by iterator range
 	template<typename t,typename any>
-	inline int count(t p_begin , t p_end , any elem)
+	_NODISCARD inline int count(t p_begin , t p_end , any elem) noexcept
 	{
 		int count = 0;
 
@@ -622,7 +622,7 @@ namespace lib_algo
 	//count_if---------------------------------------------------------
 
 	template<typename t>
-	inline int count_if(const t& obj , bool(*function)(typename t::TypeValue))
+	_NODISCARD inline int count_if(const t& obj , bool(*function)(typename t::TypeValue)) noexcept
 	{
 		int count = 0;
 
@@ -637,7 +637,7 @@ namespace lib_algo
 	}
 
 	template<typename t>
-	inline int count_if(t p_begin , t p_end , bool(*function)(typename t::TypeValue))
+	_NODISCARD inline int count_if(t p_begin , t p_end , bool(*function)(typename t::TypeValue)) noexcept
 	{
 		int count = 0;
 		int step = p_end.step() - p_begin.step();
@@ -659,7 +659,7 @@ namespace lib_algo
 	//search-----------------------------------------------------------
 
 	template<typename t,typename any>
-	inline bool search(const t& obj , any elem)
+	_NODISCARD inline bool search(const t& obj , any elem) noexcept
 	{
 		auto p = obj.cbegin();
 		for (; p != obj.cend(); ++p)
@@ -672,7 +672,7 @@ namespace lib_algo
 	}
 
 	template<typename t,typename any>
-	inline bool search(t p_begin , t p_end , any elem)
+	_NODISCARD inline bool search(t p_begin , t p_end , any elem) noexcept
 	{
 		while (p_begin != p_end)
 		{
@@ -691,7 +691,7 @@ namespace lib_algo
 	//search_n---------------------------------------------------------
 
 	template<typename t,typename arg>
-	auto search_n(const t& obj , const arg& elem , int n)
+	_NODISCARD auto search_n(const t& obj , const arg& elem , int n) noexcept
 	{
 		if (n <= 0)
 			return obj.cbegin();
@@ -720,7 +720,7 @@ namespace lib_algo
 	}
 
 	template<typename t,typename arg>
-	auto search_n(t p_begin , t p_end , const arg& elem , int n)
+	_NODISCARD auto search_n(t p_begin , t p_end , const arg& elem , int n) noexcept
 	{
 		if (n <= 0)
 			return p_begin;
@@ -756,7 +756,7 @@ namespace lib_algo
 	//inside functions
 
 	template<typename t1,typename t2>//not pod type
-	void __swap(t1& obj1 , t2& obj2,false_type_tag)
+	void __swap(t1& obj1 , t2& obj2,false_type_tag) noexcept
 	{
 		int arr1_size = obj1.size();
 		int arr2_size = obj2.size();
@@ -797,21 +797,21 @@ namespace lib_algo
 	}
 
 	template<typename t1,typename t2>//is pod type
-	inline void __swap(t1& obj1 , t2& obj2 , true_type_tag)
+	inline void __swap(t1& obj1 , t2& obj2 , true_type_tag) noexcept
 	{
 		auto temp = obj1;
 		obj1 = (t1)obj2;
 		obj2 = (t2)temp;
 	}
 
-	template<typename t>
-	inline void __swap(t& obj1 , t& obj2,false_type_tag)
+	template<typename t>//swap of container
+	inline void __swap(t& obj1 , t& obj2,false_type_tag) noexcept
 	{
 		obj1.swap(obj2);
 	}
 
 	template<typename t>
-	inline void __swap(t& obj1 , t& obj2 , true_type_tag)
+	inline void __swap(t& obj1 , t& obj2 , true_type_tag) noexcept
 	{
 		t temp = obj1;
 		obj1 = obj2;
@@ -822,14 +822,14 @@ namespace lib_algo
 	//warrper
 
 	template<typename t1 , typename t2>
-	inline void swap(t1& obj1 , t2& obj2)
+	inline void swap(t1& obj1 , t2& obj2) noexcept
 	{
 		typename is_pod<t1>::type type_tag;
 		__swap(obj1 , obj2 , type_tag);
 	}
 
 	template<typename t>
-	inline void swap(t& obj1 , t& obj2)
+	inline void swap(t& obj1 , t& obj2) noexcept
 	{
 		typename is_pod<t>::type type_tag;
 		__swap(obj1 , obj2 , type_tag);
@@ -841,7 +841,7 @@ namespace lib_algo
 	//reverse----------------------------------------------------------
 
 	template<typename t>
-	inline void reverse(t& obj)
+	inline void reverse(t& obj) noexcept
 	{
 		auto p_begin = obj.begin();
 		auto p_end = obj.end()-1;
@@ -858,7 +858,7 @@ namespace lib_algo
 	}
 
 	template<typename t>
-	inline void reverse(t p_begin , t p_end)
+	inline void reverse(t p_begin , t p_end) noexcept
 	{
 		int step = (p_end.step() - p_begin.step()) / 2;
 		p_end--;
@@ -878,7 +878,7 @@ namespace lib_algo
 	//min--------------------------------------------------------------
 
 	template<typename t>
-	inline decltype(auto) min_element(const t& obj)
+	_NODISCARD inline decltype(auto) min_element(const t& obj) noexcept
 	{
 		auto p = obj.cbegin();
 		auto res = *(obj.cbegin());
@@ -895,7 +895,7 @@ namespace lib_algo
 	}
 
 	template<typename t>
-	inline decltype(auto) min_element(t p_begin , t p_end)
+	_NODISCARD inline decltype(auto) min_element(t p_begin , t p_end) noexcept
 	{
 		auto res = *(p_begin);
 		int step = p_end.step() - p_begin.step();
@@ -917,7 +917,7 @@ namespace lib_algo
 	//max--------------------------------------------------------------
 
 	template<typename t>
-	inline decltype(auto) max_element(const t& obj)
+	_NODISCARD inline decltype(auto) max_element(const t& obj) noexcept
 	{
 		auto p = obj.cbegin();
 		auto res = *(obj.cbegin());
@@ -934,7 +934,7 @@ namespace lib_algo
 	}
 
 	template<typename t>
-	inline decltype(auto) max_element(t p_begin , t p_end)
+	_NODISCARD inline decltype(auto) max_element(t p_begin , t p_end) noexcept
 	{
 		auto res = *(p_begin);
 		int step = p_end.step() - p_begin.step();
@@ -956,13 +956,13 @@ namespace lib_algo
 	//max---------------------------------------------------------------
 
 	template<typename t>
-	inline const t& max(const t& obj1 , const t& obj2)
+	_NODISCARD inline const t& max(const t& obj1 , const t& obj2) noexcept
 	{
 		return obj1 > obj2 ? obj1 : obj2;
 	}
 
 	template<typename t,typename compare>
-	inline const t& max(const t& obj1 , const t& obj2 , compare comp)
+	_NODISCARD inline const t& max(const t& obj1 , const t& obj2 , compare comp) noexcept
 	{
 		return comp(obj1 , obj2) ? obj1 : obj2;
 	}
@@ -973,13 +973,13 @@ namespace lib_algo
 	//min---------------------------------------------------------------
 
 	template<typename t>
-	inline const t& min(const t& obj1 , const t& obj2)
+	_NODISCARD inline const t& min(const t& obj1 , const t& obj2) noexcept
 	{
 		return obj1 < obj2 ? obj1 : obj2;
 	}
 
 	template<typename t,typename compare>
-	inline const t& min(const t& obj1 , const t& obj2 , compare comp)
+	_NODISCARD inline const t& min(const t& obj1 , const t& obj2 , compare comp) noexcept
 	{
 		return comp(obj1 , obj2) ? obj1 : obj2;
 	}
@@ -989,7 +989,7 @@ namespace lib_algo
 	//lower_bound-------------------------------------------------------
 
 	template<typename t,typename any>
-	decltype(auto) lower_bound(const t& obj , any elem)
+	_NODISCARD decltype(auto) lower_bound(const t& obj , any elem) noexcept
 	{
 		auto min_val = min(obj);
 
@@ -1014,7 +1014,7 @@ namespace lib_algo
 	}
 
 	template<typename t,typename any>
-	decltype(auto) lower_bound(t p_begin , t p_end , any elem)
+	_NODISCARD decltype(auto) lower_bound(t p_begin , t p_end , any elem) noexcept
 	{
 		auto min_val = min(p_begin , p_end);
 
@@ -1044,7 +1044,7 @@ namespace lib_algo
 	//upper_bound-------------------------------------------------------
 
 	template<typename t,typename any>
-	decltype(auto) upper_bound(const t& obj , any elem)
+	_NODISCARD decltype(auto) upper_bound(const t& obj , any elem) noexcept
 	{
 		auto max_val = max(obj);
 
@@ -1069,7 +1069,7 @@ namespace lib_algo
 	}
 
 	template<typename t,typename any>
-	decltype(auto) upper_bound(t p_begin , t p_end , any elem)
+	_NODISCARD decltype(auto) upper_bound(t p_begin , t p_end , any elem) noexcept
 	{
 		auto max_val = max(p_begin , p_end);
 
@@ -1099,7 +1099,7 @@ namespace lib_algo
 	//replace-----------------------------------------------------------
 
 	template<typename t,typename any>
-	inline void replace(t& obj , any elem)
+	inline void replace(t& obj , any elem) noexcept
 	{
 		auto p = obj.begin();
 
@@ -1110,7 +1110,7 @@ namespace lib_algo
 	}
 
 	template<typename t,typename any>
-	inline void replace(t p_begin , t p_end , any elem)
+	inline void replace(t p_begin , t p_end , any elem) noexcept
 	{
 		int step = p_end.step() - p_begin.step();
 
@@ -1127,7 +1127,7 @@ namespace lib_algo
 	//unique------------------------------------------------------------
 
 	template<typename t>
-	void unique(t& obj)
+	void unique(t& obj) noexcept
 	{
 		typename t::TypeValue* arr = new typename t::TypeValue[obj.size()];
 		int count = 0;
@@ -1161,7 +1161,7 @@ namespace lib_algo
 	//return first diff elem iterator position in same container
 
 	template<typename t>
-	auto mismatch_element(const t& obj)
+	_NODISCARD auto mismatch_element(const t& obj) noexcept
 	{
 		auto p = obj.cbegin();
 
@@ -1179,7 +1179,7 @@ namespace lib_algo
 	}
 
 	template<typename t>
-	t mismatch_element(t p_begin,t p_end)
+	_NODISCARD t mismatch_element(t p_begin,t p_end) noexcept
 	{
 		int step = p_end.step() - p_begin.step();
 
@@ -1203,8 +1203,8 @@ namespace lib_algo
 	//return first diff elem between two different containers
 
 	template<typename t1,typename t2>
-	auto mismatch(const t1& obj1 , const t2& obj2)//obj1:greater range  obj2:less range
-	{											  //return less range container's iterator
+	_NODISCARD auto mismatch(const t1& obj1 , const t2& obj2)  noexcept	//obj1:greater range  obj2:less range
+	{																	//return less range container's iterator
 		auto p1 = obj1.cbegin();
 		auto p2 = obj2.cbegin();
 
@@ -1218,8 +1218,8 @@ namespace lib_algo
 	}
 
 	template<typename t1,typename t2>
-	auto mismatch(t1 p_begin1 , t1 p_end1,// greater range
-				  t2 p_begin2 , t2 p_end2)// less range
+	_NODISCARD auto mismatch(t1 p_begin1 , t1 p_end1,			// greater range
+							t2 p_begin2 , t2 p_end2)  noexcept	// less range
 	{
 		for (; p_begin1 != p_end1 , p_begin2 != p_end2; ++p_begin1 , ++p_begin2)
 		{
@@ -1237,7 +1237,7 @@ namespace lib_algo
 
 
 	template<typename t1,typename t2>
-	void _range_greater(t1 p_begin , t1 p_end , t2& obj)
+	void _range_greater(t1 p_begin , t1 p_end , t2& obj) noexcept
 	{
 		for (auto p = obj.begin(); p != obj.end(); ++p,++p_begin)
 		{
@@ -1252,7 +1252,7 @@ namespace lib_algo
 	}
 
 	template<typename t1,typename t2>
-	inline void _range_equal(t1 p_begin , t1 p_end , t2& obj)
+	inline void _range_equal(t1 p_begin , t1 p_end , t2& obj) noexcept
 	{
 		for (auto p = obj.begin(); p != obj.end(),p_begin != p_end; ++p , ++p_begin)
 		{
@@ -1261,7 +1261,7 @@ namespace lib_algo
 	}
 
 	template<typename t1,typename t2>
-	inline void _range_less(t1 p_begin , t1 p_end , t2& obj)
+	inline void _range_less(t1 p_begin , t1 p_end , t2& obj) noexcept
 	{
 		obj.clear();
 
@@ -1274,7 +1274,7 @@ namespace lib_algo
 
 
 	template<typename t1,typename t2>
-	inline void copy(t1 p_begin , t1 p_end , t2& obj)
+	inline void copy(t1 p_begin , t1 p_end , t2& obj) noexcept
 	{
 		if (p_end.step() - p_begin.step() == obj.size())
 			_range_equal(p_begin , p_end , obj);
@@ -1286,7 +1286,7 @@ namespace lib_algo
 
 	//not pod type
 	template<typename t1,typename t2>
-	inline void _copy(const t1& copy_from , t2& obj , false_type_tag)
+	inline void _copy(const t1& copy_from , t2& obj , false_type_tag) noexcept
 	{
 		if (copy_from.size() == obj.size())
 			_range_equal(copy_from.cbegin() , copy_from.cend() , obj);
@@ -1298,13 +1298,13 @@ namespace lib_algo
 
 	//is pod type
 	template<typename t1,typename t2>
-	inline void _copy(const t1& copy_from , t2& obj , true_type_tag)
+	inline void _copy(const t1& copy_from , t2& obj , true_type_tag) noexcept
 	{
 		obj = (t2)copy_from;
 	}
 
 	template<typename t1,typename t2>
-	inline void copy(const t1& copy_from , t2& obj)
+	inline void copy(const t1& copy_from , t2& obj) noexcept
 	{
 		typename is_pod<t1>::type type_tag;
 		_copy(copy_from , obj , type_tag);
@@ -1317,7 +1317,7 @@ namespace lib_algo
 	//find equal adjacent elements in range.
 
 	template<typename t>
-	auto adjacent_find(const t& obj)
+	_NODISCARD auto adjacent_find(const t& obj) noexcept
 	{
 		auto p = obj.cbegin();
 
@@ -1334,7 +1334,7 @@ namespace lib_algo
 	}
 
 	template<typename t>
-	auto adjacent_find(t p_begin , t p_end)
+	_NODISCARD auto adjacent_find(t p_begin , t p_end) noexcept
 	{
 		int step = p_end.step() - p_begin.step();
 
@@ -1357,7 +1357,7 @@ namespace lib_algo
 	//if obj1 includes obj2,return true.
 
 	template<typename t1,typename t2>
-	bool includes(const t1& obj1 , const t2& obj2)//obj1 : greater range  obj2 : less range
+	_NODISCARD bool includes(const t1& obj1 , const t2& obj2) noexcept	//obj1 : greater range  obj2 : less range
 	{
 		if (obj1.size() < obj2.size())
 			return false;
@@ -1381,7 +1381,7 @@ namespace lib_algo
 	//for_each----------------------------------------------------------
 
 	template<typename t>
-	inline void for_each(t& obj , void(*function)(typename t::TypeValue))
+	inline void for_each(t& obj , void(*function)(typename t::TypeValue)) noexcept
 	{
 		auto p = obj.begin();
 
@@ -1392,7 +1392,7 @@ namespace lib_algo
 	}
 
 	template<typename t>
-	inline void for_each(t& obj , typename t::TypeValue(*function)(typename t::TypeValue))
+	inline void for_each(t& obj , typename t::TypeValue(*function)(typename t::TypeValue)) noexcept
 	{
 		auto p = obj.begin();
 
@@ -1403,7 +1403,7 @@ namespace lib_algo
 	}
 
 	template<typename t>
-	inline void for_each(t& p_begin , t& p_end , void(*function)(typename t::TypeValue))
+	inline void for_each(t& p_begin , t& p_end , void(*function)(typename t::TypeValue)) noexcept
 	{
 		int step = p_end.step() - p_begin.step();
 
@@ -1414,7 +1414,7 @@ namespace lib_algo
 	}
 
 	template<typename t>
-	inline void for_each(t p_begin , t p_end , typename t::TypeValue(*function)(typename t::TypeValue))
+	inline void for_each(t p_begin , t p_end , typename t::TypeValue(*function)(typename t::TypeValue)) noexcept
 	{
 		int step = p_end.step() - p_begin.step();
 
@@ -1430,7 +1430,7 @@ namespace lib_algo
 	//remove_if---------------------------------------------------------
 
 	template<typename t>
-	inline void remove_if(t& obj , bool(*function)(typename t::TypeValue))
+	inline void remove_if(t& obj , bool(*function)(typename t::TypeValue)) noexcept
 	{
 		auto p = obj.begin();
 		for (; p != obj.end();)
@@ -1449,7 +1449,7 @@ namespace lib_algo
 	//support different type containers
 
 	template<typename t1,typename t2,typename t3>
-	auto merge(const t1& obj1 , const t2& obj2 , t3& result)
+	_NODISCARD auto merge(const t1& obj1 , const t2& obj2 , t3& result) noexcept
 	{
 		auto p1 = obj1.cbegin();
 		auto p2 = obj2.cbegin();
@@ -1490,8 +1490,8 @@ namespace lib_algo
 
 	
 	template<typename t1,typename t2,typename t3>
-	auto merge(t1 p_begin1 , t1 p_end1 ,
-			   t2 p_begin2 , t2 p_end2 , t3& result)
+	_NODISCARD auto merge(t1 p_begin1 , t1 p_end1 ,
+			   t2 p_begin2 , t2 p_end2 , t3& result) noexcept
 	{
 		while (p_begin1 != p_end1 && p_begin2 != p_end2)
 		{

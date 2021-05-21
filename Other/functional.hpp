@@ -4,7 +4,7 @@
 * 
 * This File is part of CONTAINER LIBRARY project.
 * 
-* version : 1.2.0-alpha
+* version : 1.2.1-alpha
 * 
 * author : Mashiro
 * 
@@ -84,7 +84,7 @@ struct bianry_function
 template<typename T>
 struct plus:public bianry_function<T,T,T>
 {
-	T operator()(const T& a , const T& b) const
+	_NODISCARD T operator()(const T& a , const T& b) const noexcept
 	{
 		return a + b;
 	}
@@ -94,7 +94,7 @@ struct plus:public bianry_function<T,T,T>
 template<typename T>
 struct minus :public bianry_function<T , T , T>
 {
-	T operator()(const T& a , const T& b) const
+	_NODISCARD T operator()(const T& a , const T& b) const noexcept
 	{
 		return a - b;
 	}
@@ -104,7 +104,7 @@ struct minus :public bianry_function<T , T , T>
 template<typename T>
 struct multiplies :public bianry_function<T , T , T>
 {
-	T operator()(const T& a , const T& b) const
+	_NODISCARD T operator()(const T& a , const T& b) const noexcept
 	{
 		return a * b;
 	}
@@ -114,7 +114,7 @@ struct multiplies :public bianry_function<T , T , T>
 template<typename T>
 struct divides :public bianry_function<T , T , T>
 {
-	T operator()(const T& a , const T& b) const
+	_NODISCARD T operator()(const T& a , const T& b) const noexcept
 	{
 		return a / b;
 	}
@@ -124,7 +124,7 @@ struct divides :public bianry_function<T , T , T>
 template<typename T>
 struct modulus :public bianry_function<T , T , T>
 {
-	T operator()(const T& a , const T& b) const
+	_NODISCARD T operator()(const T& a , const T& b) const noexcept
 	{
 		return a % b;
 	}
@@ -134,7 +134,7 @@ struct modulus :public bianry_function<T , T , T>
 template<typename T>
 struct negate :public unary_function<T , T>
 {
-	T operator()(const T& a) const
+	_NODISCARD T operator()(const T& a) const noexcept
 	{
 		return -a;
 	}
@@ -145,13 +145,13 @@ struct negate :public unary_function<T , T>
 //identity element
 
 template<typename T>
-inline T identity_element(plus<T>)
+_NODISCARD inline T identity_element(plus<T>) noexcept
 {
 	return T(0);
 }
 
 template<typename T>
-inline T identity_element(multiplies<T>)
+_NODISCARD inline T identity_element(multiplies<T>) noexcept
 {
 	return T(1);
 }
@@ -164,7 +164,7 @@ inline T identity_element(multiplies<T>)
 template<typename T>
 struct equal_to :public bianry_function<T , T , bool>
 {
-	bool operator()(const T& a , const T& b) const
+	_NODISCARD bool operator()(const T& a , const T& b) const noexcept
 	{
 		return a == b;
 	}
@@ -174,7 +174,7 @@ struct equal_to :public bianry_function<T , T , bool>
 template<typename T>
 struct not_equal_to :public bianry_function<T , T , bool>
 {
-	bool operator()(const T& a , const T& b) const
+	_NODISCARD bool operator()(const T& a , const T& b) const noexcept
 	{
 		return a != b;
 	}
@@ -184,7 +184,7 @@ struct not_equal_to :public bianry_function<T , T , bool>
 template<typename T>
 struct greater :public bianry_function<T , T , bool>
 {
-	bool operator()(const T& a , const T& b) const
+	_NODISCARD bool operator()(const T& a , const T& b) const noexcept
 	{
 		return a > b;
 	}
@@ -194,7 +194,7 @@ struct greater :public bianry_function<T , T , bool>
 template<typename T>
 struct greater_equal :public bianry_function<T , T , bool>
 {
-	bool operator()(const T& a , const T& b) const
+	_NODISCARD bool operator()(const T& a , const T& b) const noexcept
 	{
 		return a >= b;
 	}
@@ -204,7 +204,7 @@ struct greater_equal :public bianry_function<T , T , bool>
 template<typename T>
 struct less :public bianry_function<T , T , bool>
 {
-	bool operator()(const T& a , const T& b) const
+	_NODISCARD bool operator()(const T& a , const T& b) const noexcept
 	{
 		return a < b;
 	}
@@ -214,7 +214,7 @@ struct less :public bianry_function<T , T , bool>
 template<typename T>
 struct less_equal :public bianry_function<T , T , bool>
 {
-	bool operator()(const T& a , const T& b) const
+	_NODISCARD bool operator()(const T& a , const T& b) const noexcept
 	{
 		return a <= b;
 	}
@@ -228,7 +228,7 @@ struct less_equal :public bianry_function<T , T , bool>
 template<typename T>
 struct logical_add :public bianry_function<T , T , bool>
 {
-	bool operator()(const T& a , const T& b) const
+	_NODISCARD bool operator()(const T& a , const T& b) const noexcept
 	{
 		return a && b;
 	}
@@ -238,7 +238,7 @@ struct logical_add :public bianry_function<T , T , bool>
 template<typename T>
 struct logical_or :public bianry_function<T , T , bool>
 {
-	bool operator()(const T& a , const T& b) const
+	_NODISCARD bool operator()(const T& a , const T& b) const noexcept
 	{
 		return a || b;
 	}
@@ -248,7 +248,7 @@ struct logical_or :public bianry_function<T , T , bool>
 template<typename T>
 struct logical_not :public unary_function<T , bool>
 {
-	bool operator()(const T& a) const
+	_NODISCARD bool operator()(const T& a) const noexcept
 	{
 		return !a;
 	}
@@ -272,7 +272,7 @@ struct unary_negate :public unary_function<typename functor::argument_type , boo
 		explicit unary_negate(const functor& obj) :func(obj)
 		{}
 
-		bool operator()(const typename functor::argument_type& arg) const
+		_NODISCARD bool operator()(const typename functor::argument_type& arg) const noexcept
 		{
 			return !func(arg);
 		}
@@ -280,7 +280,7 @@ struct unary_negate :public unary_function<typename functor::argument_type , boo
 
 //helper function
 template<typename functor>
-inline unary_negate<functor> not1(const functor& obj)
+_NODISCARD inline unary_negate<functor> not1(const functor& obj) noexcept
 {
 	return unary_negate<functor>(obj);
 }
@@ -300,15 +300,15 @@ struct bianry_negate :
 		explicit bianry_negate(const functor& obj) :func(obj)
 		{}
 
-		bool operator()(const typename functor::first_argument_type& arg1 ,
-						const typename functor::second_argument_type& arg2) const
+		_NODISCARD bool operator()(const typename functor::first_argument_type& arg1 ,
+						const typename functor::second_argument_type& arg2) const noexcept
 		{
 			return !func(arg1 , arg2);
 		}
 };
 
 template<typename functor>
-inline bianry_negate<functor> not2(const functor& obj)
+_NODISCARD inline bianry_negate<functor> not2(const functor& obj) noexcept
 {
 	return bianry_negate<functor>(obj);
 }
@@ -328,14 +328,14 @@ struct binder1st:public unary_function<typename operation::second_argument_type,
 		binder1st(const operation& obj,const typename operation::first_argument_type& x):op(obj),value(x)
 		{ }
 
-		typename operation::result_type operator()(const typename operation::second_argument_type& x) const
+		_NODISCARD typename operation::result_type operator()(const typename operation::second_argument_type& x) const noexcept
 		{
 			return op(value,x);
 		}
 };
 
 template<typename operation,typename t>
-inline binder1st<operation> bind1st(const operation& op , const t& x)
+_NODISCARD inline binder1st<operation> bind1st(const operation& op , const t& x) noexcept
 {
 	using arg1_type = typename operation::first_argument_type;
 	return binder1st<operation>(op , (arg1_type)x);
@@ -356,7 +356,7 @@ struct binder2nd :public unary_function<typename operation::first_argument_type 
 		binder2nd(const operation& obj,const typename operation::second_argument_type& x):op(obj),value(x)
 		{ }
 
-		typename operation::result_type operator()(const typename operation::first_argument_type& x) const
+		_NODISCARD typename operation::result_type operator()(const typename operation::first_argument_type& x) const noexcept
 		{
 			return op(x , value);
 		}
@@ -364,7 +364,7 @@ struct binder2nd :public unary_function<typename operation::first_argument_type 
 
 
 template<typename operation,typename t>
-inline binder2nd<operation> bind2nd(const operation& obj , const t& x)
+_NODISCARD inline binder2nd<operation> bind2nd(const operation& obj , const t& x) noexcept
 {
 	using arg2_type = typename operation::second_argument_type;
 	return binder2nd<operation>(obj , (arg2_type)(x));
@@ -387,14 +387,14 @@ struct unary_compose :public unary_function<typename operation2::argument_type ,
 		unary_compose(const operation1& x,const operation2& y):op1(x),op2(y)
 		{ }
 
-		typename operation1::result_type operator()(const typename operation2::argument_type& x) const
+		_NODISCARD typename operation1::result_type operator()(const typename operation2::argument_type& x) const noexcept
 		{
 			return op1(op2(x));
 		}
 };
 
 template<typename operation1,typename operation2>
-inline unary_compose<operation1 , operation2> compose1(const operation1& op1 , const operation2& op2)
+_NODISCARD inline unary_compose<operation1 , operation2> compose1(const operation1& op1 , const operation2& op2) noexcept
 {
 	return unary_compose<operation1 , operation2>(op1 , op2);
 }
@@ -416,7 +416,7 @@ struct bianry_compose :public unary_function<typename operation2::argument_type 
 		bianry_compose(const operation1& x,const operation2& y,const operation3& z):op1(x),op2(y),op3(z)
 		{ }
 
-		typename operation1::result_type operator()(const typename operation2::argument_type& x) const
+		_NODISCARD typename operation1::result_type operator()(const typename operation2::argument_type& x) const noexcept
 		{
 			return op1(op2(x) , op3(x));
 		}
@@ -424,8 +424,8 @@ struct bianry_compose :public unary_function<typename operation2::argument_type 
 
 
 template<typename operation1,typename operation2,typename operation3>
-inline bianry_compose<operation1 , operation2 , operation3> compose2(const operation1& op1 , const operation2& op2 ,
-																	 const operation3& op3)
+_NODISCARD inline bianry_compose<operation1 , operation2 , operation3> compose2
+											(const operation1& op1 , const operation2& op2 , const operation3& op3) noexcept
 {
 	return bianry_compose<operation1 , operation2 , operation3>(op1 , op2 , op3);
 }
@@ -447,7 +447,7 @@ struct pointer_to_unary_function :public unary_function<Arg , Result>
 		explicit pointer_to_unary_function(Result (*x)(Arg)):ptr(x)
 		{ }
 
-		Result operator()(Arg x) const
+		_NODISCARD Result operator()(Arg x) const noexcept
 		{
 			return ptr(x);
 		}
@@ -467,8 +467,8 @@ struct pointer_to_bianry_function :public bianry_function<Arg1 , Arg2 , Result>
 		explicit pointer_to_bianry_function(Result(*x)(Arg1 , Arg2)):ptr(x)
 		{}
 
-		Result operator()(Arg1 x , Arg2 y) const
-		{
+		_NODISCARD Result operator()(Arg1 x , Arg2 y) const noexcept
+		{ 
 			return ptr(x , y);
 		}
 };
@@ -477,13 +477,13 @@ struct pointer_to_bianry_function :public bianry_function<Arg1 , Arg2 , Result>
 //helper functions
 
 template<typename Arg,typename Result>
-inline pointer_to_unary_function<Arg , Result> ptr_fun(Result (*x)(Arg))
+_NODISCARD inline pointer_to_unary_function<Arg , Result> ptr_fun(Result (*x)(Arg)) noexcept
 {
 	return pointer_to_unary_function<Arg , Result>(x);
 }
 
 template<typename Arg1,typename Arg2,typename Result>
-inline pointer_to_bianry_function<Arg1 , Arg2 , Result> ptr_fun(Result (*x)(Arg1 , Arg2))
+_NODISCARD inline pointer_to_bianry_function<Arg1 , Arg2 , Result> ptr_fun(Result (*x)(Arg1 , Arg2)) noexcept
 {
 	return pointer_to_bianry_function<Arg1 , Arg2 , Result>(x);
 }
@@ -506,7 +506,7 @@ struct mem_fun_t : public unary_function<t* , s>
 		explicit mem_fun_t(s (t::*pf)()):f(pf)
 		{ }
 
-		s operator()(t* p) const
+		_NODISCARD s operator()(t* p) const noexcept
 		{
 			return (p->*f)();
 		}
@@ -526,7 +526,7 @@ struct const_mem_fun_t :public unary_function<const t* , s>
 		explicit const_mem_fun_t(s (t::* pf)() const) :f(pf)
 		{}
 
-		s operator()(const t* p) const
+		_NODISCARD s operator()(const t* p) const noexcept
 		{
 			return (p->*f)();
 		}
@@ -546,7 +546,7 @@ struct mem_fun_ref_t :public unary_function<t , s>
 		explicit mem_fun_ref_t(s (t::* pf)()) :f(pf)
 		{}
 
-		s operator ()(t& r) const
+		_NODISCARD s operator ()(t& r) const noexcept
 		{
 			return(r.*f)();
 		}
@@ -566,7 +566,7 @@ class const_mem_fun_ref_t :public unary_function<t , s>
 		explicit const_mem_fun_ref_t(s (t::*pf)() const):f(pf)
 		{ }
 
-		s operator()(const t& r) const
+		_NODISCARD s operator()(const t& r) const noexcept
 		{
 			return (r.*f)();
 		}
@@ -586,7 +586,7 @@ struct mem_fun1_t :public bianry_function<t* , a , s>
 		explicit mem_fun1_t(s (t::* pf)(a)) :f(pf)
 		{}
 
-		s operator()(t* p , a x) const
+		_NODISCARD s operator()(t* p , a x) const noexcept
 		{
 			return (p->*f)(x);
 		}
@@ -606,7 +606,7 @@ struct const_mem_fun1_t :public bianry_function<const t* , a , s>
 		explicit const_mem_fun1_t(s (t::*pf)(a) const):f(pf)
 		{ }
 
-		s operator()(const t* p , a x) const
+		_NODISCARD s operator()(const t* p , a x) const noexcept
 		{
 			return (p->*f)(x);
 		}
@@ -626,7 +626,7 @@ struct mem_fun1_ref_t :public bianry_function<t , a , s>
 		explicit mem_fun1_ref_t(s (t::*pf)(a)):f(pf)
 		{ }
 
-		s operator()(t& r , a x) const
+		_NODISCARD s operator()(t& r , a x) const noexcept
 		{
 			return (r.*f)(x);
 		}
@@ -646,7 +646,7 @@ struct const_mem_fun1_ref_t :public bianry_function<t , a , s>
 		explicit const_mem_fun1_ref_t(s(t::* pf)(a) const) :f(pf)
 		{}
 
-		s operator()(const t& r , a x) const
+		_NODISCARD s operator()(const t& r , a x) const noexcept
 		{
 			return (r.*f)(x);
 		}
@@ -657,50 +657,50 @@ struct const_mem_fun1_ref_t :public bianry_function<t , a , s>
 
 //without argument
 template<typename s,typename t>
-inline mem_fun_t<s , t> mem_fun(s (t::* f)())
+_NODISCARD inline mem_fun_t<s , t> mem_fun(s (t::* f)()) noexcept
 {
 	return mem_fun_t<s , t>(f);
 }
 
 template<typename s,typename t>
-inline const_mem_fun_t<s , t> mem_fun(s (t::* f)() const)
+_NODISCARD inline const_mem_fun_t<s , t> mem_fun(s (t::* f)() const) noexcept
 {
 	return const_mem_fun_t<s , t>(f);
 }
 
 template<typename s,typename t>
-inline mem_fun_ref_t<s , t> mem_fun_ref(s (t::* f)())
+_NODISCARD inline mem_fun_ref_t<s , t> mem_fun_ref(s (t::* f)()) noexcept
 {
 	return mem_fun_ref_t<s , t>(f);
 }
 
 template<typename s,typename t>
-inline const_mem_fun_ref_t<s , t> mem_fun_ref(s (t::* f)() const)
+_NODISCARD inline const_mem_fun_ref_t<s , t> mem_fun_ref(s (t::* f)() const) noexcept
 {
 	return const_mem_fun_ref_t<s , t>(f);
 }
 
 //accept a argument
 template<typename s,typename t,typename a>
-inline mem_fun1_t<s , t , a> mem_fun(s (t::* f)(a))
+_NODISCARD inline mem_fun1_t<s , t , a> mem_fun(s (t::* f)(a)) noexcept
 {
 	return mem_fun1_t<s , t , a>(f);
 }
 
 template<typename s,typename t,typename a>
-inline const_mem_fun1_t<s , t , a> mem_fun(s (t::* f)(a) const)
+_NODISCARD inline const_mem_fun1_t<s , t , a> mem_fun(s (t::* f)(a) const) noexcept
 {
 	return const_mem_fun1_t<s , t , a>(f);
 }
 
 template<typename s,typename t,typename a>
-inline mem_fun1_ref_t<s , t , a> mem_fun_ref(s (t::* f)(a))
+_NODISCARD inline mem_fun1_ref_t<s , t , a> mem_fun_ref(s (t::* f)(a)) noexcept
 {
 	return mem_fun1_ref_t<s , t , a>(f);
 }
 
 template<typename s,typename t,typename a>
-inline const_mem_fun1_ref_t<s , t , a> mem_fun_ref(s (t::* f)(a) const)
+_NODISCARD inline const_mem_fun1_ref_t<s , t , a> mem_fun_ref(s (t::* f)(a) const) noexcept
 {
 	return const_mem_fun1_ref_t<s , t , a>(f);
 }

@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.2.0-alpha
+ * version : 1.2.1-alpha
  *
  * author : Mashiro
  *
@@ -87,23 +87,23 @@ class Multiset
 		using const_iterator = const_RB_Tree_iterator<typename RB_Tree::NodeType>;
 		
 	private:
-		RB_Tree* tree;
+		RB_Tree* tree = nullptr;
 
 		int elem_count = 0;
 
 	public:
-		Multiset()
+		Multiset() noexcept
 		{
 			tree = new RB_Tree();
 		}
 
-		Multiset(Ty elem)
+		Multiset(const Ty& elem) noexcept
 		{
 			tree = new RB_Tree(elem);
 			elem_count++;
 		}
 
-		explicit Multiset(const initializer_list<Ty>& list)
+		explicit Multiset(const initializer_list<Ty>& list) noexcept
 		{
 			tree = new RB_Tree();
 
@@ -114,7 +114,7 @@ class Multiset
 			}
 		}
 
-		explicit Multiset(const Multiset<Ty>& obj)
+		explicit Multiset(const Multiset<Ty>& obj) noexcept
 		{
 			tree = new RB_Tree();
 
@@ -127,7 +127,7 @@ class Multiset
 			this->elem_count = obj.elem_count;
 		}
 
-		~Multiset()
+		~Multiset() noexcept
 		{
 			tree->Destory();
 
@@ -139,14 +139,14 @@ class Multiset
 
 		//insert and erase operations
 
-		void insert(Ty elem)
+		[[noreturn]] void insert(const Ty& elem) noexcept
 		{
 			tree->Insert(elem);
 
 			elem_count++;
 		}
 
-		void insert(const initializer_list<Ty>& obj)
+		[[noreturn]] void insert(const initializer_list<Ty>& obj) noexcept
 		{
 			for (auto p : obj)
 			{
@@ -155,32 +155,28 @@ class Multiset
 			}
 		}
 
-		void erase(Ty elem)
+		[[noreturn]] void erase(const Ty& elem) noexcept
 		{
 			while (tree->Search(elem))
 			{
+				elem_count = elem_count - tree->count(elem);
 				tree->DeleteNode(elem);
-				elem_count--;
 			}
 		}
 
-		iterator erase(iterator ptr)
+		_NODISCARD iterator erase(iterator ptr) noexcept
 		{
-			for (int n = 0; n < tree->count(*ptr); ++n)
-				elem_count--;
-
+			elem_count = elem_count - tree->count(*ptr);
 			return tree->erase(ptr);
 		}
 
-		const_iterator erase(const_iterator& ptr)
+		_NODISCARD const_iterator erase(const_iterator& ptr) noexcept
 		{
-			for (int n = 0; n < tree->count(*ptr); ++n)
-				elem_count--;
-
+			elem_count = elem_count - tree->count(*ptr);
 			return tree->erase(ptr);
 		}
 
-		void erase(iterator p_begin , iterator p_end)
+		[[noreturn]] void erase(iterator p_begin , iterator p_end) noexcept
 		{
 			int n = p_begin.step();
 			for (; n < p_end.step(); ++n)
@@ -189,7 +185,7 @@ class Multiset
 			}
 		}
 
-		void clear()
+		[[noreturn]] void clear() noexcept
 		{
 			tree->Destory();
 			elem_count = 0;
@@ -198,7 +194,7 @@ class Multiset
 
 		//other
 
-		bool empty() const
+		_NODISCARD bool empty() const noexcept
 		{
 			if (elem_count == 0)
 				return true;
@@ -206,22 +202,22 @@ class Multiset
 			return false;
 		}
 
-		int size() const
+		_NODISCARD int size() const noexcept
 		{
 			return this->elem_count;
 		}
 
-		bool find(Ty elem)
+		_NODISCARD bool find(const Ty& elem) const noexcept
 		{
 			return tree->Search(elem);
 		}
 
-		compare key_comp() const
+		_NODISCARD compare key_comp() const noexcept
 		{
 			return compare;
 		}
 
-		void swap(Multiset<Ty>& obj)
+		[[noreturn]] void swap(Multiset<Ty>& obj) noexcept
 		{
 			RB_Tree* temp_tree = tree;
 			RB_Tree* obj_tree = obj.tree;
@@ -237,22 +233,32 @@ class Multiset
 
 
 		//RB_Tree iterator
-		iterator begin()
+		_NODISCARD iterator begin() noexcept
 		{
 			return tree->begin();
 		}
 
-		iterator end()
+		_NODISCARD iterator end() noexcept
 		{
 			return tree->end();
 		}
 
-		const_iterator cbegin() const
+		_NODISCARD iterator begin() const noexcept
+		{
+			return tree->begin();
+		}
+
+		_NODISCARD iterator end() const noexcept
+		{
+			return tree->end();
+		}
+
+		_NODISCARD const_iterator cbegin() const noexcept
 		{
 			return tree->cbegin();
 		}
 
-		const_iterator cend() const
+		_NODISCARD const_iterator cend() const noexcept
 		{
 			return tree->cend();
 		}
@@ -260,7 +266,7 @@ class Multiset
 
 		//operator overload
 
-		self& operator=(const Multiset<Ty>& obj)
+		self& operator=(const Multiset<Ty>& obj) noexcept
 		{
 			clear();
 
@@ -273,7 +279,7 @@ class Multiset
 			return *this;
 		}
 
-		bool operator==(const Multiset<Ty>& obj) const
+		_NODISCARD bool operator==(const Multiset<Ty>& obj) const noexcept
 		{
 			if (elem_count != obj.elem_count)
 				return false;
@@ -289,12 +295,12 @@ class Multiset
 			return true;
 		}
 
-		bool operator!=(const Multiset<Ty>& obj) const
+		_NODISCARD bool operator!=(const Multiset<Ty>& obj) const noexcept
 		{
 			return !((*this) == obj);
 		}
 
-		bool operator>(const Multiset<Ty>& obj) const
+		_NODISCARD bool operator>(const Multiset<Ty>& obj) const noexcept
 		{
 			if (elem_count > obj.elem_count)
 				return true;
@@ -302,7 +308,7 @@ class Multiset
 			return false;
 		}
 
-		bool operator<(const Multiset<Ty>& obj) const
+		_NODISCARD bool operator<(const Multiset<Ty>& obj) const noexcept
 		{
 			if (elem_count < obj.elem_count)
 				return true;
@@ -310,7 +316,7 @@ class Multiset
 			return false;
 		}
 
-		bool operator>=(const Multiset<Ty>& obj) const
+		_NODISCARD bool operator>=(const Multiset<Ty>& obj) const noexcept
 		{
 			if (elem_count >= obj.elem_count)
 				return true;
@@ -318,7 +324,7 @@ class Multiset
 			return false;
 		}
 
-		bool operator<=(const Multiset<Ty>& obj) const
+		_NODISCARD bool operator<=(const Multiset<Ty>& obj) const noexcept
 		{
 			if (elem_count <= obj.elem_count)
 				return true;

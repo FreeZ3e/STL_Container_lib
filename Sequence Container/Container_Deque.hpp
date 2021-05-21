@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.2.0-alpha
+ * version : 1.2.1-alpha
  *
  * author : Mashiro
  *
@@ -84,6 +84,8 @@
 
 #pragma once
 #include<initializer_list>
+#include<assert.h>
+#include"memory.hpp"
 #include"iterator.hpp"
 
 using std::initializer_list;
@@ -98,10 +100,10 @@ class deque
 		size_t body_size = 10;
 		size_t buffer_size = 8;
 
-		int last_flag = 0;
-		int head_flag = 0;
-		int last_insert = 0;
-		int head_insert = (int)body_size - 1;
+		int last_flag = 0;						//last buffer flag
+		int head_flag = 0;						//head buffer flag
+		int last_insert = 0;					//last insert flag
+		int head_insert = (int)body_size - 1;   //head insert flag
 
 		int elem_count = 0;
 		int buffer_distance = 1;
@@ -113,19 +115,23 @@ class deque
 		using const_iterator = const_deque_iterator<Ty>;
 
 	public:
-		deque()
+		deque() noexcept
 		{
 			alloc();
 		}
 
-		deque(size_t size)
+		deque(const size_t& size)
 		{
+			assert(size > 0);
+
 			buffer_size = size;
 			alloc();
 		}
 
-		deque(size_t size , Ty elem)
+		deque(const size_t& size , const Ty& elem)
 		{
+			assert(size > 0);
+
 			buffer_size = size;
 			alloc();
 
@@ -138,7 +144,7 @@ class deque
 			last_insert = body_size;
 		}
 
-		explicit deque(const initializer_list<Ty>& list)
+		explicit deque(const initializer_list<Ty>& list) noexcept
 		{
 			body_size = list.size();
 			head_insert = (int)body_size - 1;
@@ -153,7 +159,7 @@ class deque
 			last_insert = (int)body_size;
 		}
 
-		explicit deque(const deque<Ty>& obj)
+		explicit deque(const deque<Ty>& obj) noexcept
 		{
 			elem_count = obj.elem_count;
 			buffer_distance = obj.buffer_distance;
@@ -183,7 +189,7 @@ class deque
 			}
 		}
 
-		~deque()
+		~deque() noexcept
 		{
 			destory();
 		}
@@ -191,12 +197,12 @@ class deque
 
 		//push and pop operation
 
-		void insert(Ty elem)
+		[[noreturn]] void insert(const Ty& elem) noexcept
 		{
 			push_back(elem);
 		}
 
-		void push_back(Ty elem)
+		[[noreturn]] void push_back(const Ty& elem) noexcept
 		{
 			if (last_insert == body_size)
 			{
@@ -215,7 +221,7 @@ class deque
 			elem_count++;
 		}
 
-		void push_front(Ty elem)
+		[[noreturn]] void push_front(const Ty& elem) noexcept
 		{
 			if (head_insert == -1)
 			{
@@ -234,44 +240,54 @@ class deque
 			elem_count++;
 		}
 
-		void pop_back()
-		{
-			if (last_insert == 0)
+		[[noreturn]] void pop_back() noexcept
+		{	
+			if (elem_count > 0)
 			{
-				last_flag--;
-				last_insert = body_size - 1;
+				memory::elem_destory(back());
 
-				buffer_distance--;
-			}
-			else
-			{
-				last_insert--;
-			}
+				if (last_insert == 0)
+				{
+					last_flag--;
+					last_insert = body_size - 1;
 
-			elem_count--;
+					buffer_distance--;
+				}
+				else
+				{
+					last_insert--;
+				}
+
+				elem_count--;
+			}
 		}
 
-		void pop_front()
+		[[noreturn]] void pop_front() noexcept
 		{
-			if (head_insert == body_size-1)
+			if (elem_count > 0)
 			{
-				head_flag++;
-				head_insert = 0;
+				memory::elem_destory(front());
 
-				buffer_distance--;
-			}
-			else
-			{
-				head_insert++;
-			}
+				if (head_insert == body_size - 1)
+				{
+					head_flag++;
+					head_insert = 0;
 
-			elem_count--;
+					buffer_distance--;
+				}
+				else
+				{
+					head_insert++;
+				}
+
+				elem_count--;
+			}
 		}
 
 
 		//erase and clear operation
 
-		iterator erase(iterator ptr)
+		_NODISCARD iterator erase(iterator ptr) noexcept
 		{
 			Ty next_val;
 
@@ -280,6 +296,7 @@ class deque
 			else
 				next_val = *(ptr + 1);
 
+			memory::elem_destory(*ptr);
 
 			//save data
 			Ty* arr = new Ty[elem_count];
@@ -307,7 +324,7 @@ class deque
 			return find(next_val);
 		}
 
-		const_iterator erase(const_iterator ptr)
+		_NODISCARD const_iterator erase(const_iterator ptr) noexcept
 		{
 			Ty next_val;
 
@@ -316,6 +333,7 @@ class deque
 			else
 				next_val = *(ptr + 1);
 
+			memory::elem_destory(*ptr);
 
 			//save data
 			Ty* arr = new Ty[elem_count];
@@ -344,7 +362,7 @@ class deque
 			return cfind(next_val);
 		}
 
-		void erase(iterator p_begin , iterator p_end)
+		[[noreturn]] void erase(iterator p_begin , iterator p_end) noexcept
 		{
 			int begin = p_begin.step();
 			int end = p_end.step();
@@ -355,7 +373,7 @@ class deque
 			}
 		}
 
-		void clear()
+		[[noreturn]] void clear() noexcept
 		{
 			destory();
 			alloc();
@@ -369,7 +387,7 @@ class deque
 
 		//other
 
-		Ty front() const
+		_NODISCARD Ty& front() noexcept
 		{
 			if (head_insert == body_size - 1)
 				return map_ptr[last_flag][0];
@@ -377,12 +395,25 @@ class deque
 				return map_ptr[head_flag][head_insert+1];
 		}
 
-		Ty back() const
+		_NODISCARD const Ty& front() const noexcept
+		{
+			if (head_insert == body_size - 1)
+				return map_ptr[last_flag][0];
+			else
+				return map_ptr[head_flag][head_insert + 1];
+		}
+
+		_NODISCARD Ty& back() noexcept
 		{
 			return map_ptr[last_flag][last_insert-1];
 		}
 
-		bool search(Ty elem) const
+		_NODISCARD const Ty& back() const noexcept
+		{
+			return map_ptr[last_flag][last_insert - 1];
+		}
+
+		_NODISCARD bool search(const Ty& elem) const noexcept
 		{
 			auto p = begin();
 			for (; p != end(); ++p)
@@ -394,7 +425,7 @@ class deque
 			return false;
 		}
 
-		iterator find(Ty elem)
+		_NODISCARD iterator find(const Ty& elem) noexcept
 		{
 			auto p = begin();
 			for (; p != end(); ++p)
@@ -406,7 +437,7 @@ class deque
 			return end();
 		}
 
-		const_iterator cfind(Ty elem) const
+		_NODISCARD const_iterator cfind(const Ty& elem) const noexcept
 		{
 			auto p = cbegin();
 			for (; p != cend(); ++p)
@@ -418,42 +449,54 @@ class deque
 			return cend();
 		}
 
-		void resize(size_t size)
+		[[noreturn]] void resize(size_t size)
 		{
-			MemoryExpand(size);
+			assert(size > 0);
 
-			if ((int)(size * body_size) < elem_count)
-				elem_count = (int)(size * body_size);
+			if ((int)(size * body_size) == elem_count)
+				return;
+
+			if ((int)(size * body_size) < elem_count)	//smaller
+			{
+				while (size * body_size < elem_count)
+				{
+					pop_back();
+				}
+			}
+			else                                        //bigger
+			{
+				MemoryExpand(size);
+			}
 
 			buffer_size = size;
 		}
 
-		int size() const
+		_NODISCARD int size() const noexcept
 		{
 			return elem_count;
 		}
 
-		size_t buffers() const
+		_NODISCARD size_t buffers() const noexcept
 		{
 			return buffer_size;
 		}
 
-		size_t bodys() const
+		_NODISCARD size_t bodys() const noexcept
 		{
 			return body_size;
 		}
 
-		size_t max_size() const
+		_NODISCARD size_t max_size() const noexcept
 		{
 			return (buffer_size * body_size);
 		}
 
-		bool empty() const
+		_NODISCARD bool empty() const noexcept
 		{
 			return (elem_count == 0);
 		}
 
-		void swap(deque<Ty>& obj)
+		[[noreturn]] void swap(deque<Ty>& obj) noexcept
 		{
 			Ty** temp_arr = map_ptr;
 			Ty** obj_arr = obj.map_ptr;
@@ -502,7 +545,7 @@ class deque
 
 		//iterator
 
-		iterator begin()
+		_NODISCARD iterator begin() noexcept
 		{
 			if (head_insert == body_size - 1)
 				return iterator(map_ptr , 0 , head_flag + 1 , (int)body_size , 0);
@@ -510,12 +553,25 @@ class deque
 				return iterator(map_ptr , head_insert+1 , head_flag , (int)body_size , 0);
 		}
 
-		iterator end()
+		_NODISCARD iterator begin() const noexcept
+		{
+			if (head_insert == body_size - 1)
+				return iterator(map_ptr , 0 , head_flag + 1 , (int)body_size , 0);
+			else
+				return iterator(map_ptr , head_insert + 1 , head_flag , (int)body_size , 0);
+		}
+
+		_NODISCARD iterator end() noexcept
 		{
 			return iterator(map_ptr , last_insert , last_flag , (int)body_size , elem_count);
 		}
 
-		const_iterator cbegin() const
+		_NODISCARD iterator end() const noexcept
+		{
+			return iterator(map_ptr , last_insert , last_flag , (int)body_size , elem_count);
+		}
+
+		_NODISCARD const_iterator cbegin() const noexcept
 		{
 			if (head_insert == body_size - 1)
 				return const_iterator(map_ptr , 0 , head_flag + 1 , (int)body_size , 0);
@@ -523,7 +579,7 @@ class deque
 				return const_iterator(map_ptr , head_insert + 1 , head_flag , (int)body_size , 0);
 		}
 
-		const_iterator cend() const
+		_NODISCARD const_iterator cend() const noexcept
 		{
 			return const_iterator(map_ptr , last_insert , last_flag , (int)body_size , elem_count);
 		}
@@ -532,12 +588,21 @@ class deque
 
 		//opeartor overload
 
-		decltype(auto) operator[](int n)
+		_NODISCARD const Ty*& operator[](int n) const
 		{
+			assert(n < elem_count);
+
 			return map_ptr[n];
 		}
 
-		self& operator=(const deque<Ty>& obj)
+		_NODISCARD Ty*& operator[](int n)
+		{
+			assert(n < elem_count);
+
+			return map_ptr[n];
+		}
+
+		self& operator=(const deque<Ty>& obj) noexcept
 		{
 			clear();
 
@@ -550,7 +615,7 @@ class deque
 			return *this;
 		}
 
-		bool operator==(const deque<Ty>& obj) const
+		_NODISCARD bool operator==(const deque<Ty>& obj) const noexcept
 		{
 			if (elem_count != obj.elem_count)
 				return false;
@@ -567,33 +632,33 @@ class deque
 			return true;
 		}
 
-		bool operator!=(const deque<Ty>& obj) const
+		_NODISCARD bool operator!=(const deque<Ty>& obj) const noexcept
 		{ 
 			return !((*this) == obj);
 		}
 
-		bool operator>(const deque<Ty>& obj) const
+		_NODISCARD bool operator>(const deque<Ty>& obj) const noexcept
 		{
 			return (max_size() > obj.max_size());
 		}
 
-		bool operator>=(const deque<Ty>& obj) const
+		_NODISCARD bool operator>=(const deque<Ty>& obj) const noexcept
 		{
 			return (max_size() >= obj.max_size());
 		}
 
-		bool operator<(const deque<Ty>& obj) const
+		_NODISCARD bool operator<(const deque<Ty>& obj) const noexcept
 		{
 			return (max_size() < obj.max_size());
 		}
 
-		bool operator<=(const deque<Ty>& obj) const
+		_NODISCARD bool operator<=(const deque<Ty>& obj) const noexcept
 		{
 			return (max_size() <= obj.max_size());
 		}
 
 	private:
-		void alloc()
+		[[noreturn]] void alloc() noexcept
 		{
 			map_ptr = new Ty * [buffer_size];
 
@@ -609,7 +674,7 @@ class deque
 			map_ptr[head_flag] = new Ty[body_size];
 		}
 
-		void ptr_alloc(Ty** &ptr,int size)
+		[[noreturn]] void ptr_alloc(Ty** &ptr,int size) noexcept
 		{
 			for (int n = 0; n < size; ++n)
 			{
@@ -617,7 +682,7 @@ class deque
 			}
 		}
 
-		void destory()
+		[[noreturn]] void destory() noexcept
 		{
 			if (map_ptr != nullptr)
 			{
@@ -631,99 +696,55 @@ class deque
 			}
 		}
 
-		void MemoryExpand(size_t size)
+		[[noreturn]] void MemoryExpand(size_t size)
 		{
+			assert(size > 0);
+
 			if (elem_count != 0) //deque not empty
 			{
-				if ((int)size < buffer_distance + 1) //size < buffers
-				{									//copy begin at head buffer
+				Ty** temp_arr = new Ty * [size];
+				ptr_alloc(temp_arr , (int)size);
 
-					Ty** temp_arr = new Ty * [size];
-					ptr_alloc(temp_arr , (int)size);
-
-
-					int count = 0;
-					for (int n = head_flag; n < head_flag + (int)size; ++n) // save data
-					{
-						temp_arr[count] = new Ty[body_size];
-
-						for (int i = 0; i < body_size; ++i)
-						{
-							temp_arr[count][i] = map_ptr[n][i];
-						}
-
-						count++;
-					}
-
-					delete[] map_ptr;
-					map_ptr = new Ty * [size];
-					ptr_alloc(map_ptr , (int)size);
-
-					for (int n = 0; n < size; ++n)						//copy
-					{
-						map_ptr[n] = new Ty[body_size];
-
-						for (int i = 0; i < body_size; ++i)
-						{
-							map_ptr[n][i] = temp_arr[n][i];
-						}
-					}
-
-					//reset flags
-
-					head_flag = 0;
-					last_flag = size - 1;
-					buffer_distance = size - 1;
-
-					delete[] temp_arr;
-					temp_arr = nullptr;
-				}
-				else                            //full copy
+				int count = 0;
+				for (int n = head_flag; n <= last_flag ; ++n) // save data
 				{
-					Ty** temp_arr = new Ty * [size];
-					ptr_alloc(temp_arr , (int)size);
+					temp_arr[count] = new Ty[body_size];
 
-					int count = 0;
-					for (int n = head_flag; n <= last_flag ; ++n) // save data
+					for (int i = 0; i < body_size; ++i)
 					{
-						temp_arr[count] = new Ty[body_size];
+						temp_arr[count][i] = map_ptr[n][i];
+					}
+
+					count++;
+				}
+
+				delete[] map_ptr;
+				map_ptr = new Ty * [size];
+				ptr_alloc(map_ptr , (int)size);
+
+				int map_count = (int)size / 2 - 1;
+				for (int n = 0; n < size; ++n)				       //copy
+				{
+					if (temp_arr[n] != nullptr)
+					{
+						map_ptr[map_count] = new Ty[body_size];
 
 						for (int i = 0; i < body_size; ++i)
 						{
-							temp_arr[count][i] = map_ptr[n][i];
+							map_ptr[map_count][i] = temp_arr[n][i];
 						}
 
-						count++;
+						map_count++;
 					}
-
-					delete[] map_ptr;
-					map_ptr = new Ty * [size];
-					ptr_alloc(map_ptr , (int)size);
-
-					int map_count = (int)size / 2 - 1;
-					for (int n = 0; n < size; ++n)				       //copy
-					{
-						if (temp_arr[n] != nullptr)
-						{
-							map_ptr[map_count] = new Ty[body_size];
-
-							for (int i = 0; i < body_size; ++i)
-							{
-								map_ptr[map_count][i] = temp_arr[n][i];
-							}
-
-							map_count++;
-						}
-					}
-
-
-					//reset flags;
-					head_flag = size / 2-1;
-					last_flag = head_flag + buffer_distance;
-
-					delete[] temp_arr;
-					temp_arr = nullptr;
 				}
+
+
+				//reset flags;
+				head_flag = size / 2-1;
+				last_flag = head_flag + buffer_distance;
+
+				delete[] temp_arr;
+				temp_arr = nullptr;
 			}
 			else               //deque is empty
 			{

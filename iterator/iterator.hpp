@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.2.0-alpha
+ * version : 1.2.1-alpha
  *
  * author : Mashiro
  *
@@ -20,14 +20,14 @@
 //compare struct
 struct Compare_Method
 {
-	static bool Compare()
+	_NODISCARD static bool Compare() noexcept
 	{
 	}
 };
 
 struct Equal_Compare :public Compare_Method
 {
-	static bool Compare()
+	_NODISCARD static bool Compare() noexcept
 	{
 		return true;
 	}
@@ -35,7 +35,7 @@ struct Equal_Compare :public Compare_Method
 
 struct Unique_Compare :public Compare_Method
 {
-	static bool Compare()
+	_NODISCARD static bool Compare() noexcept
 	{
 		return false;
 	}
@@ -70,7 +70,7 @@ class insert_iterator
 			ptr = nullptr;
 		}
 
-		self& operator()(const TypeValue& elem)
+		self& operator()(const TypeValue& elem) noexcept
 		{
 			ptr->insert(elem);
 			return *this;
@@ -112,7 +112,7 @@ class back_insert_iterator
 			ptr = nullptr;
 		}
 
-		self& operator()(const TypeValue& elem)
+		self& operator()(const TypeValue& elem) noexcept
 		{
 			ptr->push_back(elem);
 			return *this;
@@ -153,7 +153,7 @@ class front_insert_iterator
 			ptr = nullptr;
 		}
 
-		self& operator()(const TypeValue& elem)
+		self& operator()(const TypeValue& elem) noexcept
 		{
 			ptr->push_front(elem);
 			return *this;
@@ -195,19 +195,25 @@ class reverse_iterator
 			return iter;
 		}
 
-		auto operator*()
+		_NODISCARD TypeValue& operator*() noexcept
 		{
 			iterator_t temp = iter;
 			return *--temp;
 		}
 
-		self& operator++()
+		_NODISCARD const TypeValue& operator*() const noexcept
+		{
+			iterator_t temp = iter;
+			return *--temp;
+		}
+
+		self& operator++() noexcept
 		{
 			--iter;
 			return *this;
 		}
 
-		self operator++(int)
+		self operator++(int) noexcept
 		{
 			self temp = *this;
 
@@ -215,7 +221,7 @@ class reverse_iterator
 			return temp;
 		}
 
-		self& operator+(int n)
+		_NODISCARD self& operator+(int n) noexcept
 		{
 			for (int i = 0; i < n; ++i)
 			{
@@ -225,13 +231,13 @@ class reverse_iterator
 			return *this;
 		}
 
-		self& operator--()
+		self& operator--() noexcept
 		{
 			++iter;
 			return *this;
 		}
 
-		self operator--(int)
+		self operator--(int) noexcept
 		{
 			self temp = *this;
 
@@ -239,7 +245,7 @@ class reverse_iterator
 			return temp;
 		}
 
-		self& operator-(int n)
+		_NODISCARD self& operator-(int n) noexcept
 		{
 			for (int i = 0; i < n; ++i)
 			{
@@ -250,12 +256,12 @@ class reverse_iterator
 		}
 
 	private:
-		friend bool operator!=(const self& Lhs , const self& Rhs)
+		friend bool operator!=(const self& Lhs , const self& Rhs) noexcept
 		{
 			return Lhs.iter != Rhs.iter;
 		}
 
-		friend bool operator==(const self& Lhs , const self& Rhs)
+		friend bool operator==(const self& Lhs , const self& Rhs) noexcept
 		{
 			return Lhs.iter == Rhs.iter;
 		}
@@ -264,25 +270,25 @@ class reverse_iterator
 
 //helper function
 template<typename container>
-inline insert_iterator<container> inserter(container& obj)
+_NODISCARD inline insert_iterator<container> inserter(container& obj) noexcept
 {
 	return insert_iterator<container>(obj);
 }
 
 template<typename container>
-inline front_insert_iterator<container> front_inserter(container& obj)
+_NODISCARD inline front_insert_iterator<container> front_inserter(container& obj) noexcept
 {
 	return front_insert_iterator<container>(obj);
 }
 
 template<typename container>
-inline back_insert_iterator<container> back_inserter(container& obj)
+_NODISCARD inline back_insert_iterator<container> back_inserter(container& obj) noexcept
 {
 	return back_insert_iterator<container>(obj);
 }
 
 template<typename iterator_t>
-inline reverse_iterator<iterator_t> reverser(iterator_t obj)
+_NODISCARD inline reverse_iterator<iterator_t> reverser(iterator_t obj) noexcept
 {
 	return reverse_iterator<iterator_t>(obj);
 }
@@ -316,12 +322,17 @@ struct input_iterator
 			ptr = nullptr;
 		}
 
-		Ty& operator*()
+		_NODISCARD Ty& operator*() noexcept
 		{
 			return *ptr;
 		}
 
-		self& operator=(const self& obj)
+		_NODISCARD const Ty& operator*() const noexcept
+		{
+			return *ptr;
+		}
+
+		self& operator=(const self& obj) noexcept
 		{
 			auto temp = obj.ptr;
 			ptr = temp;
@@ -330,12 +341,12 @@ struct input_iterator
 		}
 
 	protected:
-		friend bool operator!=(const self& Lhs , const self& Rhs)
+		friend bool operator!=(const self& Lhs , const self& Rhs) noexcept
 		{
 			return Lhs.ptr != Rhs.ptr;
 		}
 
-		friend bool operator==(const self& Lhs , const self& Rhs)
+		friend bool operator==(const self& Lhs , const self& Rhs) noexcept
 		{
 			return Lhs.ptr == Rhs.ptr;
 		}
@@ -366,23 +377,28 @@ struct forward_iterator
 		}
 
 
-		Ty& operator*()
+		_NODISCARD Ty& operator*() noexcept
 		{
 			return *ptr;
 		}
 
-		self operator+(int n)
+		_NODISCARD const Ty& operator*() const noexcept
+		{
+			return *ptr;
+		}
+
+		_NODISCARD self operator+(int n) const noexcept
 		{
 			return self(ptr + n);
 		}
 
-		self& operator++()
+		self& operator++() noexcept
 		{
 			++ptr;
 			return *this;
 		}
 
-		self operator++(int)
+		self operator++(int) noexcept
 		{
 			auto temp = *this;
 			++ptr;
@@ -390,7 +406,7 @@ struct forward_iterator
 			return temp;
 		}
 
-		self& operator=(const self& obj)
+		self& operator=(const self& obj) noexcept
 		{
 			auto temp = obj.ptr;
 			ptr = temp;
@@ -399,12 +415,12 @@ struct forward_iterator
 		}
 
 	protected:
-		friend bool operator!=(const self& Lhs , const self& Rhs)
+		friend bool operator!=(const self& Lhs , const self& Rhs) noexcept
 		{
 			return Lhs.ptr != Rhs.ptr;
 		}
 
-		friend bool operator==(const self& Lhs , const self& Rhs)
+		friend bool operator==(const self& Lhs , const self& Rhs) noexcept
 		{
 			return Lhs.ptr == Rhs.ptr;
 		}
@@ -434,28 +450,33 @@ struct Bid_iterator
 			ptr = nullptr;
 		}
 
-		Ty& operator*()
+		_NODISCARD Ty& operator*() noexcept
 		{
 			return *ptr;
 		}
 
-		self operator+(int n)
+		_NODISCARD const Ty& operator*() const noexcept
+		{
+			return *ptr;
+		}
+
+		_NODISCARD self operator+(int n) const noexcept
 		{
 			return self(ptr + n);
 		}
 
-		self operator-(int n)
+		_NODISCARD self operator-(int n) const noexcept
 		{
 			return self(ptr - n);
 		}
 
-		self& operator--()
+		self& operator--() noexcept
 		{
 			--ptr;
 			return *this;
 		}
 
-		self operator--(int)
+		self operator--(int) noexcept
 		{
 			auto temp = *this;
 			--ptr;
@@ -463,13 +484,13 @@ struct Bid_iterator
 			return temp;
 		}
 
-		self& operator++()
+		self& operator++() noexcept
 		{
 			++ptr;
 			return *this;
 		}
 
-		self operator++(int)
+		self operator++(int) noexcept
 		{
 			auto temp = *this;
 			++ptr;
@@ -477,7 +498,7 @@ struct Bid_iterator
 			return temp;
 		}
 
-		self& operator=(const self& obj)
+		self& operator=(const self& obj) noexcept
 		{
 			auto temp = obj.ptr;
 			ptr = temp;
@@ -486,12 +507,12 @@ struct Bid_iterator
 		}
 
 	protected:
-		friend bool operator!=(const self& Lhs , const self& Rhs)
+		friend bool operator!=(const self& Lhs , const self& Rhs) noexcept
 		{
 			return Lhs.ptr != Rhs.ptr;
 		}
 
-		friend bool operator==(const self& Lhs , const self& Rhs)
+		friend bool operator==(const self& Lhs , const self& Rhs) noexcept
 		{
 			return Lhs.ptr == Rhs.ptr;
 		}
@@ -521,32 +542,37 @@ struct Random_iterator
 		Random_iterator(const self& obj) :ptr(obj.ptr),step_count(obj.step_count)
 		{ }
 
-		~Random_iterator()
+		~Random_iterator() noexcept
 		{
 			ptr = nullptr;
 		}
 
-		Ty& operator*()
+		_NODISCARD Ty& operator*() noexcept
 		{
 			return *ptr;
 		}
 
-		int step()
+		_NODISCARD const Ty& operator*() const noexcept
+		{
+			return *ptr;
+		}
+
+		_NODISCARD int step() const noexcept
 		{
 			return step_count;
 		}
 
-		self operator+(int n)
+		_NODISCARD self operator+(int n) const noexcept
 		{
 			return self(ptr + n , step_count + n);
 		}
 
-		self operator-(int n)
+		_NODISCARD self operator-(int n) const noexcept
 		{
 			return self(ptr - n , step_count - n);
 		}
 
-		self& operator--()
+		self& operator--() noexcept
 		{
 			--ptr;
 			step_count--;
@@ -554,7 +580,7 @@ struct Random_iterator
 			return *this;
 		}
 
-		self operator--(int)
+		self operator--(int) noexcept
 		{
 			auto temp = *this;
 			--ptr;
@@ -563,7 +589,7 @@ struct Random_iterator
 			return temp;
 		}
 
-		self& operator++()
+		self& operator++() noexcept
 		{
 			++ptr;
 			step_count++;
@@ -571,7 +597,7 @@ struct Random_iterator
 			return *this;
 		}
 
-		self operator++(int)
+		self operator++(int) noexcept
 		{
 			auto temp = *this;
 			++ptr;
@@ -580,7 +606,7 @@ struct Random_iterator
 			return temp;
 		}
 
-		self& operator=(const self& obj)
+		self& operator=(const self& obj) noexcept
 		{
 			auto temp = obj.ptr;
 			ptr = temp;
@@ -589,7 +615,7 @@ struct Random_iterator
 			return *this;
 		}
 
-		bool operator>(const self& obj)
+		bool operator>(const self& obj) const noexcept
 		{
 			if (step_count > obj.step_count)
 				return true;
@@ -597,7 +623,7 @@ struct Random_iterator
 			return false;
 		}
 
-		bool operator<(const self& obj)
+		bool operator<(const self& obj) const noexcept
 		{
 			if (step_count < obj.step_count)
 				return true;
@@ -605,7 +631,7 @@ struct Random_iterator
 			return false;
 		}
 
-		bool operator>=(const self& obj)
+		bool operator>=(const self& obj) const noexcept
 		{
 			if (step_count >= obj.step_count)
 				return true;
@@ -613,7 +639,7 @@ struct Random_iterator
 			return false;
 		}
 
-		bool operator<=(const self& obj)
+		bool operator<=(const self& obj) const noexcept
 		{
 			if (step_count <= obj.step_count)
 				return true;
@@ -622,12 +648,12 @@ struct Random_iterator
 		}
 
 	protected:
-		friend bool operator!=(const self& Lhs , const self& Rhs)
+		friend bool operator!=(const self& Lhs , const self& Rhs) noexcept
 		{
 			return Lhs.ptr != Rhs.ptr;
 		}
 
-		friend bool operator==(const self& Lhs , const self& Rhs)
+		friend bool operator==(const self& Lhs , const self& Rhs) noexcept
 		{
 			return Lhs.ptr == Rhs.ptr;
 		}
@@ -659,18 +685,19 @@ struct const_input_iterator
 			ptr = nullptr;
 		}
 
-		Ty operator*() const
+
+		_NODISCARD const Ty& operator*() const noexcept
 		{
 			return *ptr;
 		}
 
 	protected:
-		friend bool operator!=(const self& Lhs , const self& Rhs)
+		friend bool operator!=(const self& Lhs , const self& Rhs) noexcept
 		{
 			return Lhs.ptr != Rhs.ptr;
 		}
 
-		friend bool operator==(const self& Lhs , const self& Rhs)
+		friend bool operator==(const self& Lhs , const self& Rhs) noexcept
 		{
 			return Lhs.ptr == Rhs.ptr;
 		}
@@ -700,23 +727,24 @@ struct const_forward_iterator
 			ptr = nullptr;
 		}
 
-		Ty operator*() const
+
+		_NODISCARD const Ty& operator*() const noexcept
 		{
 			return *ptr;
 		}
 
-		self operator+(int n)
+		_NODISCARD self operator+(int n) const noexcept
 		{
 			return self(ptr + n);
 		}
 
-		self& operator++()
+		self& operator++() noexcept
 		{
 			++ptr;
 			return *this;
 		}
 
-		self operator++(int)
+		self operator++(int) noexcept
 		{
 			auto temp = *this;
 			++ptr;
@@ -725,12 +753,12 @@ struct const_forward_iterator
 		}
 
 	protected:
-		friend bool operator!=(const self& Lhs , const self& Rhs)
+		friend bool operator!=(const self& Lhs , const self& Rhs) noexcept
 		{
 			return Lhs.ptr != Rhs.ptr;
 		}
 
-		friend bool operator==(const self& Lhs , const self& Rhs)
+		friend bool operator==(const self& Lhs , const self& Rhs) noexcept
 		{
 			return Lhs.ptr == Rhs.ptr;
 		}
@@ -760,28 +788,29 @@ struct const_Bid_iterator
 			ptr = nullptr;
 		}
 
-		Ty operator*() const
+
+		_NODISCARD const Ty& operator*() const noexcept
 		{
 			return *ptr;
 		}
 
-		self operator+(int n)
+		_NODISCARD self operator+(int n) const noexcept
 		{
 			return self(ptr + n);
 		}
 
-		self operator-(int n)
+		_NODISCARD self operator-(int n) const noexcept
 		{
 			return self(ptr - n);
 		}
 
-		self& operator--()
+		self& operator--() noexcept
 		{
 			--ptr;
 			return *this;
 		}
 
-		self operator--(int)
+		self operator--(int) noexcept
 		{
 			auto temp = *this;
 			--ptr;
@@ -789,13 +818,13 @@ struct const_Bid_iterator
 			return temp;
 		}
 
-		self& operator++()
+		self& operator++() noexcept
 		{
 			++ptr;
 			return *this;
 		}
 
-		self operator++(int)
+		self operator++(int) noexcept
 		{
 			auto temp = *this;
 			++ptr;
@@ -804,12 +833,12 @@ struct const_Bid_iterator
 		}
 
 	protected:
-		friend bool operator!=(const self& Lhs , const self& Rhs)
+		friend bool operator!=(const self& Lhs , const self& Rhs) noexcept
 		{
 			return Lhs.ptr != Rhs.ptr;
 		}
 
-		friend bool operator==(const self& Lhs , const self& Rhs)
+		friend bool operator==(const self& Lhs , const self& Rhs) noexcept
 		{
 			return Lhs.ptr == Rhs.ptr;
 		}
@@ -845,22 +874,22 @@ struct const_Random_iterator
 			ptr = nullptr;
 		}
 
-		Ty operator*() const
+		_NODISCARD const Ty& operator*() const noexcept
 		{
 			return *ptr;
 		}
 
-		self operator+(int n)
+		_NODISCARD self operator+(int n) const noexcept
 		{
 			return self(ptr + n , step_count + n);
 		}
 
-		self operator-(int n)
+		_NODISCARD self operator-(int n) const noexcept
 		{
 			return self(ptr - n , step_count - n);
 		}
 
-		self& operator--()
+		self& operator--() noexcept
 		{
 			--ptr;
 			step_count--;
@@ -868,7 +897,7 @@ struct const_Random_iterator
 			return *this;
 		}
 
-		self operator--(int)
+		self operator--(int) noexcept
 		{
 			auto temp = *this;
 			--ptr;
@@ -877,7 +906,7 @@ struct const_Random_iterator
 			return temp;
 		}
 
-		self& operator++()
+		self& operator++() noexcept
 		{
 			++ptr;
 			step_count++;
@@ -885,7 +914,7 @@ struct const_Random_iterator
 			return *this;
 		}
 
-		self operator++(int)
+		self operator++(int) noexcept
 		{
 			auto temp = *this;
 			++ptr;
@@ -894,7 +923,7 @@ struct const_Random_iterator
 			return temp;
 		}
 
-		bool operator>(const self& obj)
+		bool operator>(const self& obj) const noexcept
 		{
 			if (step_count > obj.step_count)
 				return true;
@@ -902,7 +931,7 @@ struct const_Random_iterator
 			return false;
 		}
 
-		bool operator<(const self& obj)
+		bool operator<(const self& obj) const noexcept
 		{
 			if (step_count < obj.step_count)
 				return true;
@@ -910,7 +939,7 @@ struct const_Random_iterator
 			return false;
 		}
 
-		bool operator>=(const self& obj)
+		bool operator>=(const self& obj) const noexcept
 		{
 			if (step_count >= obj.step_count)
 				return true;
@@ -918,7 +947,7 @@ struct const_Random_iterator
 			return false;
 		}
 
-		bool operator<=(const self& obj)
+		bool operator<=(const self& obj) const noexcept
 		{
 			if (step_count <= obj.step_count)
 				return true;
@@ -927,12 +956,12 @@ struct const_Random_iterator
 		}
 
 	protected:
-		friend bool operator!=(const self& Lhs , const self& Rhs)
+		friend bool operator!=(const self& Lhs , const self& Rhs) noexcept
 		{
 			return Lhs.ptr != Rhs.ptr;
 		}
 
-		friend bool operator==(const self& Lhs , const self& Rhs)
+		friend bool operator==(const self& Lhs , const self& Rhs) noexcept
 		{
 			return Lhs.ptr == Rhs.ptr;
 		}
@@ -970,17 +999,22 @@ struct List_iterator
 			ptr = nullptr;
 		}
 
-		decltype(ptr->data)& operator*()
+		_NODISCARD TypeValue& operator*() noexcept
 		{
 			return ptr->data;
 		}
 
-		int step()
+		_NODISCARD const TypeValue& operator*() const noexcept
+		{
+			return ptr->data;
+		}
+
+		_NODISCARD int step() const noexcept
 		{
 			return step_count;
 		}
 
-		self operator+(int n)
+		_NODISCARD self operator+(int n) const noexcept
 		{
 			Ty* temp = ptr;
 
@@ -997,7 +1031,7 @@ struct List_iterator
 			return self(temp , step_count + count);
 		}
 
-		self operator-(int n)
+		_NODISCARD self operator-(int n) const noexcept
 		{
 			Ty* temp = ptr;
 
@@ -1014,7 +1048,7 @@ struct List_iterator
 			return self(temp , step_count - count);
 		}
 
-		self& operator++()
+		self& operator++() noexcept
 		{
 			if (ptr->next)
 			{
@@ -1024,7 +1058,7 @@ struct List_iterator
 			return *this;
 		}
 
-		self operator++(int)
+		self operator++(int) noexcept
 		{
 			auto temp = *this;
 
@@ -1036,7 +1070,7 @@ struct List_iterator
 			return temp;
 		}
 
-		self& operator--()
+		self& operator--() noexcept
 		{
 			if (ptr->last)
 			{
@@ -1046,7 +1080,7 @@ struct List_iterator
 			return *this;
 		}
 
-		self operator--(int)
+		self operator--(int) noexcept
 		{
 			auto temp = *this;
 
@@ -1058,7 +1092,7 @@ struct List_iterator
 			return temp;
 		}
 
-		self& operator=(const self& obj)
+		self& operator=(const self& obj) noexcept
 		{
 			auto temp = obj.ptr;
 
@@ -1068,7 +1102,7 @@ struct List_iterator
 			return *this;
 		}
 
-		bool operator>(const self& obj)
+		bool operator>(const self& obj) const noexcept
 		{
 			if (step_count > obj.step_count)
 				return true;
@@ -1076,7 +1110,7 @@ struct List_iterator
 			return false;
 		}
 
-		bool operator<(const self& obj)
+		bool operator<(const self& obj) const noexcept
 		{
 			if (step_count < obj.step_count)
 				return true;
@@ -1084,7 +1118,7 @@ struct List_iterator
 			return false;
 		}
 
-		bool operator>=(const self& obj)
+		bool operator>=(const self& obj) const noexcept
 		{
 			if (step_count >= obj.step_count)
 				return true;
@@ -1092,7 +1126,7 @@ struct List_iterator
 			return false;
 		}
 
-		bool operator<=(const self& obj)
+		bool operator<=(const self& obj) const noexcept
 		{
 			if (step_count <= obj.step_count)
 				return true;
@@ -1101,12 +1135,12 @@ struct List_iterator
 		}
 
 	private:
-		friend bool operator!=(const self& Lhs , const self& Rhs)
+		friend bool operator!=(const self& Lhs , const self& Rhs) noexcept
 		{
 			return Lhs.step_count != Rhs.step_count;
 		}
 
-		friend bool operator==(const self& Lhs , const self& Rhs)
+		friend bool operator==(const self& Lhs , const self& Rhs) noexcept
 		{
 			return Lhs.step_count == Rhs.step_count;
 		}
@@ -1144,12 +1178,12 @@ struct const_List_iterator
 		}
 
 
-		decltype(ptr->data) operator*() const
+		_NODISCARD const TypeValue& operator*() const noexcept
 		{
 			return ptr->data;
 		}
 
-		self operator+(int n)
+		_NODISCARD self operator+(int n) const noexcept
 		{
 			Ty* temp = ptr;
 
@@ -1166,7 +1200,7 @@ struct const_List_iterator
 			return self(temp , step_count + count);
 		}
 
-		self operator-(int n)
+		_NODISCARD self operator-(int n) const noexcept
 		{
 			Ty* temp = ptr;
 
@@ -1183,7 +1217,7 @@ struct const_List_iterator
 			return self(temp , step_count - count);
 		}
 
-		self& operator++()
+		self& operator++() noexcept
 		{
 			if (ptr->next)
 			{
@@ -1193,7 +1227,7 @@ struct const_List_iterator
 			return *this;
 		}
 
-		self operator++(int)
+		self operator++(int) noexcept
 		{
 			auto temp = *this;
 
@@ -1205,7 +1239,7 @@ struct const_List_iterator
 			return temp;
 		}
 
-		self& operator--()
+		self& operator--() noexcept
 		{
 			if (ptr->last)
 			{
@@ -1215,7 +1249,7 @@ struct const_List_iterator
 			return *this;
 		}
 
-		self operator--(int)
+		self operator--(int) noexcept
 		{
 			auto temp = *this;
 
@@ -1227,7 +1261,7 @@ struct const_List_iterator
 			return temp;
 		}
 
-		bool operator>(const self& obj)
+		bool operator>(const self& obj) const noexcept
 		{
 			if (step_count > obj.step_count)
 				return true;
@@ -1235,7 +1269,7 @@ struct const_List_iterator
 			return false;
 		}
 
-		bool operator<(const self& obj)
+		bool operator<(const self& obj) const noexcept
 		{
 			if (step_count < obj.step_count)
 				return true;
@@ -1243,7 +1277,7 @@ struct const_List_iterator
 			return false;
 		}
 
-		bool operator>=(const self& obj)
+		bool operator>=(const self& obj) const noexcept
 		{
 			if (step_count >= obj.step_count)
 				return true;
@@ -1251,7 +1285,7 @@ struct const_List_iterator
 			return false;
 		}
 
-		bool operator<=(const self& obj)
+		bool operator<=(const self& obj) const noexcept
 		{
 			if (step_count <= obj.step_count)
 				return true;
@@ -1260,12 +1294,12 @@ struct const_List_iterator
 		}
 
 	private:
-		friend bool operator!=(const self& Lhs , const self& Rhs)
+		friend bool operator!=(const self& Lhs , const self& Rhs) noexcept
 		{
 			return Lhs.step_count != Rhs.step_count;
 		}
 
-		friend bool operator==(const self& Lhs , const self& Rhs)
+		friend bool operator==(const self& Lhs , const self& Rhs) noexcept
 		{
 			return Lhs.step_count == Rhs.step_count;
 		}
@@ -1303,17 +1337,22 @@ struct RB_Tree_iterator
 			ptr = nullptr;
 		}
 
-		decltype(ptr->data)& operator*()
+		_NODISCARD TypeValue& operator*() noexcept
 		{
 			return ptr->data;
 		}
 
-		int step()
+		_NODISCARD const TypeValue& operator*() const noexcept
+		{
+			return ptr->data;
+		}
+
+		_NODISCARD int step() const noexcept
 		{
 			return step_count;
 		}
 
-		self operator+(int n)
+		_NODISCARD self operator+(int n) noexcept
 		{
 			auto cur_ptr_save = ptr;
 
@@ -1328,7 +1367,7 @@ struct RB_Tree_iterator
 			return self(return_ptr , step_count + n);
 		}
 
-		self operator-(int n)
+		_NODISCARD self operator-(int n) noexcept
 		{
 			auto cur_ptr_save = ptr;
 
@@ -1343,7 +1382,7 @@ struct RB_Tree_iterator
 			return self(return_ptr , step_count - n);
 		}
 
-		self& operator++()
+		self& operator++() noexcept
 		{
 			increment();
 			step_count++;
@@ -1351,7 +1390,7 @@ struct RB_Tree_iterator
 			return *this;
 		}
 
-		self operator++(int)
+		self operator++(int) noexcept
 		{
 			auto temp = *this;
 			increment();
@@ -1360,7 +1399,7 @@ struct RB_Tree_iterator
 			return temp;
 		}
 
-		self& operator--()
+		self& operator--() noexcept
 		{
 			decrement();
 			step_count--;
@@ -1368,7 +1407,7 @@ struct RB_Tree_iterator
 			return *this;
 		}
 
-		self operator--(int)
+		self operator--(int) noexcept
 		{
 			auto temp = *this;
 			decrement();
@@ -1377,7 +1416,7 @@ struct RB_Tree_iterator
 			return temp;
 		}
 
-		self& operator=(const self& obj)
+		self& operator=(const self& obj) noexcept
 		{
 			auto temp = obj.ptr;
 			this->ptr = temp;
@@ -1386,7 +1425,7 @@ struct RB_Tree_iterator
 			return *this;
 		}
 
-		bool operator<(const self& obj)
+		bool operator<(const self& obj) const noexcept
 		{
 			if (step_count < obj.step_count)
 				return true;
@@ -1394,7 +1433,7 @@ struct RB_Tree_iterator
 			return false;
 		}
 
-		bool operator>(const self& obj)
+		bool operator>(const self& obj) const noexcept
 		{
 			if (step_count > obj.step_count)
 				return true;
@@ -1402,7 +1441,7 @@ struct RB_Tree_iterator
 			return false;
 		}
 
-		bool operator<=(const self& obj)
+		bool operator<=(const self& obj) const noexcept
 		{
 			if (step_count <= obj.step_count)
 				return true;
@@ -1410,7 +1449,7 @@ struct RB_Tree_iterator
 			return false;
 		}
 
-		bool operator>=(const self& obj)
+		bool operator>=(const self& obj) const noexcept
 		{
 			if (step_count >= obj.step_count)
 				return true;
@@ -1419,7 +1458,7 @@ struct RB_Tree_iterator
 		}
 
 	private:
-		void increment()
+		void increment() noexcept
 		{
 			if (ptr->Rchild != nullptr)
 			{
@@ -1446,7 +1485,7 @@ struct RB_Tree_iterator
 			}
 		}
 
-		void decrement()
+		void decrement() noexcept
 		{
 			if (ptr->Color == 0 && ptr->Father->Father == ptr)
 			{
@@ -1478,12 +1517,12 @@ struct RB_Tree_iterator
 		}
 
 	private:
-		friend bool operator!=(const self& Lhs , const self& Rhs)
+		friend bool operator!=(const self& Lhs , const self& Rhs) noexcept
 		{
 			return Lhs.step_count != Rhs.step_count;
 		}
 
-		friend bool operator==(const self& Lhs , const self& Rhs)
+		friend bool operator==(const self& Lhs , const self& Rhs) noexcept
 		{
 			return Lhs.step_count == Rhs.step_count;
 		}
@@ -1520,17 +1559,17 @@ struct const_RB_Tree_iterator
 			ptr = nullptr;
 		}
 
-		decltype(ptr->data) operator*() const
+		_NODISCARD const TypeValue& operator*() const noexcept
 		{
 			return ptr->data;
 		}
 
-		int step()
+		_NODISCARD int step() const noexcept
 		{
 			return step_count;
 		}
 
-		self operator+(int n)
+		_NODISCARD self operator+(int n) noexcept
 		{
 			auto cur_ptr_save = ptr;
 
@@ -1545,7 +1584,7 @@ struct const_RB_Tree_iterator
 			return self(return_ptr , step_count + n);
 		}
 
-		self operator-(int n)
+		_NODISCARD self operator-(int n) noexcept
 		{
 			auto cur_ptr_save = ptr;
 
@@ -1560,7 +1599,7 @@ struct const_RB_Tree_iterator
 			return self(return_ptr , step_count - n);
 		}
 
-		self& operator++()
+		self& operator++() noexcept
 		{
 			increment();
 			step_count++;
@@ -1568,7 +1607,7 @@ struct const_RB_Tree_iterator
 			return *this;
 		}
 
-		self operator++(int)
+		self operator++(int) noexcept
 		{
 			auto temp = *this;
 			increment();
@@ -1577,7 +1616,7 @@ struct const_RB_Tree_iterator
 			return temp;
 		}
 
-		self& operator--()
+		self& operator--() noexcept
 		{
 			decrement();
 			step_count--;
@@ -1585,7 +1624,7 @@ struct const_RB_Tree_iterator
 			return *this;
 		}
 
-		self operator--(int)
+		self operator--(int) noexcept
 		{
 			auto temp = *this;
 			decrement();
@@ -1594,7 +1633,7 @@ struct const_RB_Tree_iterator
 			return temp;
 		}
 
-		self& operator=(const self& obj)
+		self& operator=(const self& obj) noexcept
 		{
 			auto temp = obj.ptr;
 			this->ptr = temp;
@@ -1603,7 +1642,7 @@ struct const_RB_Tree_iterator
 			return *this;
 		}
 
-		bool operator<(const self& obj)
+		bool operator<(const self& obj) const noexcept
 		{
 			if (step_count < obj.step_count)
 				return true;
@@ -1611,7 +1650,7 @@ struct const_RB_Tree_iterator
 			return false;
 		}
 
-		bool operator>(const self& obj)
+		bool operator>(const self& obj) const noexcept
 		{
 			if (step_count > obj.step_count)
 				return true;
@@ -1619,7 +1658,7 @@ struct const_RB_Tree_iterator
 			return false;
 		}
 
-		bool operator<=(const self& obj)
+		bool operator<=(const self& obj) const noexcept
 		{
 			if (step_count <= obj.step_count)
 				return true;
@@ -1627,7 +1666,7 @@ struct const_RB_Tree_iterator
 			return false;
 		}
 
-		bool operator>=(const self& obj)
+		bool operator>=(const self& obj) const noexcept
 		{
 			if (step_count >= obj.step_count)
 				return true;
@@ -1636,7 +1675,7 @@ struct const_RB_Tree_iterator
 		}
 
 	private:
-		void increment()
+		void increment() noexcept
 		{
 			if (ptr->Rchild != nullptr)
 			{
@@ -1663,7 +1702,7 @@ struct const_RB_Tree_iterator
 			}
 		}
 
-		void decrement()
+		void decrement() noexcept
 		{
 			if (ptr->Color == 0 && ptr->Father->Father == ptr)
 			{
@@ -1695,12 +1734,12 @@ struct const_RB_Tree_iterator
 		}
 
 	private:
-		friend bool operator!=(const self& Lhs , const self& Rhs)
+		friend bool operator!=(const self& Lhs , const self& Rhs) noexcept
 		{
 			return Lhs.step_count != Rhs.step_count;
 		}
 
-		friend bool operator==(const self& Lhs , const self& Rhs)
+		friend bool operator==(const self& Lhs , const self& Rhs) noexcept
 		{
 			return Lhs.step_count == Rhs.step_count;
 		}
@@ -1751,17 +1790,22 @@ struct hash_table_iterator
 			node = nullptr;
 		}
 
-		int step()
+		_NODISCARD int step() const noexcept
 		{
 			return step_count;
 		}
 
-		decltype(node->val)& operator*()
+		_NODISCARD TypeValue& operator*() noexcept
 		{
 			return node->val;
 		}
 
-		self& operator=(const self& obj)
+		_NODISCARD const TypeValue& operator*() const noexcept
+		{
+			return node->val;
+		}
+
+		self& operator=(const self& obj) noexcept
 		{
 			this->ptr = obj.ptr;
 			this->node = obj.node;
@@ -1772,7 +1816,7 @@ struct hash_table_iterator
 			return *this;
 		}
 
-		self& operator++()
+		self& operator++() noexcept
 		{
 			node = node->next;
 
@@ -1785,7 +1829,7 @@ struct hash_table_iterator
 			return *this;
 		}
 
-		self operator+(int n)
+		_NODISCARD self operator+(int n) noexcept
 		{
 			auto cur_node_save = node;
 
@@ -1805,7 +1849,7 @@ struct hash_table_iterator
 			return self(return_node,ptr,bucket_size,step_count+n,count);
 		}
 
-		self operator++(int)
+		self operator++(int) noexcept
 		{
 			auto temp = *this;
 
@@ -1820,7 +1864,7 @@ struct hash_table_iterator
 			return temp;
 		}
 
-		bool operator>(const self& obj)
+		bool operator>(const self& obj) const noexcept
 		{
 			if (this->step_count > obj.step_count)
 				return true;
@@ -1828,7 +1872,7 @@ struct hash_table_iterator
 			return false;
 		}
 
-		bool operator<(const self& obj)
+		bool operator<(const self& obj) const noexcept
 		{
 			if (this->step_count < obj.step_count)
 				return true;
@@ -1836,7 +1880,7 @@ struct hash_table_iterator
 			return false;
 		}
 
-		bool operator>=(const self& obj)
+		bool operator>=(const self& obj) const noexcept
 		{
 			if (this->step_count >= obj.step_count)
 				return true;
@@ -1844,7 +1888,7 @@ struct hash_table_iterator
 			return false;
 		}
 
-		bool operator<=(const self& obj)
+		bool operator<=(const self& obj) const noexcept
 		{
 			if (this->step_count <= obj.step_count)
 				return true;
@@ -1853,7 +1897,7 @@ struct hash_table_iterator
 		}
 
 	private:
-		void bucket_jump()
+		void bucket_jump() noexcept
 		{
 			while (!node && ++count < bucket_size)
 			{
@@ -1861,12 +1905,12 @@ struct hash_table_iterator
 			}
 		}
 
-		friend bool operator!=(const self& Lhs , const self& Rhs)
+		friend bool operator!=(const self& Lhs , const self& Rhs) noexcept
 		{
 			return Lhs.step_count != Rhs.step_count;
 		}
 
-		friend bool operator==(const self& Lhs , const self& Rhs)
+		friend bool operator==(const self& Lhs , const self& Rhs) noexcept
 		{
 			return Lhs.step_count == Rhs.step_count;
 		}
@@ -1915,17 +1959,17 @@ struct const_hash_table_iterator
 			node = nullptr;
 		}
 
-		int step()
+		_NODISCARD int step() const noexcept
 		{
 			return step_count;
 		}
 
-		decltype(node->val) operator*()
+		_NODISCARD const TypeValue& operator*() const noexcept
 		{
 			return node->val;
 		}
 
-		self& operator=(const self& obj)
+		self& operator=(const self& obj) noexcept
 		{
 			this->ptr = obj.ptr;
 			this->node = obj.node;
@@ -1936,7 +1980,7 @@ struct const_hash_table_iterator
 			return *this;
 		}
 
-		self& operator++()
+		self& operator++() noexcept
 		{
 			node = node->next;
 
@@ -1949,7 +1993,7 @@ struct const_hash_table_iterator
 			return *this;
 		}
 
-		self operator+(int n)
+		_NODISCARD self operator+(int n) noexcept
 		{
 			auto cur_node_save = node;
 
@@ -1969,7 +2013,7 @@ struct const_hash_table_iterator
 			return self(return_node , ptr , bucket_size , step_count + n , count);
 		}
 
-		self operator++(int)
+		self operator++(int) noexcept
 		{
 			auto temp = *this;
 
@@ -1984,7 +2028,7 @@ struct const_hash_table_iterator
 			return temp;
 		}
 
-		bool operator>(const self& obj)
+		bool operator>(const self& obj) const noexcept
 		{
 			if (this->step_count > obj.step_count)
 				return true;
@@ -1992,7 +2036,7 @@ struct const_hash_table_iterator
 			return false;
 		}
 
-		bool operator<(const self& obj)
+		bool operator<(const self& obj) const noexcept
 		{
 			if (this->step_count < obj.step_count)
 				return true;
@@ -2000,7 +2044,7 @@ struct const_hash_table_iterator
 			return false;
 		}
 
-		bool operator>=(const self& obj)
+		bool operator>=(const self& obj) const noexcept
 		{
 			if (this->step_count >= obj.step_count)
 				return true;
@@ -2008,7 +2052,7 @@ struct const_hash_table_iterator
 			return false;
 		}
 
-		bool operator<=(const self& obj)
+		bool operator<=(const self& obj) const noexcept
 		{
 			if (this->step_count <= obj.step_count)
 				return true;
@@ -2017,7 +2061,7 @@ struct const_hash_table_iterator
 		}
 
 	private:
-		void bucket_jump()
+		void bucket_jump() noexcept
 		{
 			while (!node && ++count < bucket_size)
 			{
@@ -2025,12 +2069,12 @@ struct const_hash_table_iterator
 			}
 		}
 
-		friend bool operator!=(const self& Lhs , const self& Rhs)
+		friend bool operator!=(const self& Lhs , const self& Rhs) noexcept
 		{
 			return Lhs.step_count != Rhs.step_count;
 		}
 
-		friend bool operator==(const self& Lhs , const self& Rhs)
+		friend bool operator==(const self& Lhs , const self& Rhs) noexcept
 		{
 			return Lhs.step_count == Rhs.step_count;
 		}
@@ -2075,27 +2119,32 @@ class deque_iterator
 		}
 
 
-		int step()
+		_NODISCARD int step() const noexcept
 		{
 			return step_count;
 		}
 
-		int buffer()
+		_NODISCARD int buffer() const noexcept
 		{
 			return buffer_count;
 		}
 
-		int insert_flag()
+		_NODISCARD int insert_flag() const noexcept
 		{
 			return insert_count;
 		}
 
-		Ty& operator*()
+		_NODISCARD Ty& operator*() noexcept
 		{
 			return ptr[buffer_count][insert_count];
 		}
 
-		self& operator=(const self& obj)
+		_NODISCARD const Ty& operator*() const noexcept
+		{
+			return ptr[buffer_count][insert_count];
+		}
+
+		self& operator=(const self& obj) noexcept
 		{
 			this->ptr = obj.ptr;
 			this->body_size = obj.body_size;
@@ -2106,7 +2155,7 @@ class deque_iterator
 			return *this;
 		}
 
-		self& operator++()
+		self& operator++() noexcept
 		{
 			if (insert_count == body_size - 1)
 			{
@@ -2122,7 +2171,7 @@ class deque_iterator
 			return *this;
 		}
 
-		self operator+(int n)
+		_NODISCARD self operator+(int n) noexcept
 		{
 			int insert_count_save = insert_count;
 			int buffer_count_save = buffer_count;
@@ -2149,7 +2198,7 @@ class deque_iterator
 			return self(ptr , return_insert_count , return_buffer_count , body_size , step_count + n);
 		}
 
-		self operator++(int)
+		self operator++(int) noexcept
 		{
 			auto temp = *this;
 
@@ -2167,7 +2216,7 @@ class deque_iterator
 			return temp;
 		}
 
-		self& operator--()
+		self& operator--() noexcept
 		{
 			if (insert_count == 0)
 			{
@@ -2183,7 +2232,7 @@ class deque_iterator
 			return *this;
 		}
 
-		self operator-(int n)
+		_NODISCARD self operator-(int n) noexcept
 		{
 			int insert_count_save = insert_count;
 			int buffer_count_save = buffer_count;
@@ -2210,7 +2259,7 @@ class deque_iterator
 			return self(ptr , return_insert_count , return_buffer_count , body_size , step_count - n);
 		}
 
-		self operator--(int)
+		self operator--(int) noexcept
 		{
 			auto temp = *this;
 
@@ -2228,7 +2277,7 @@ class deque_iterator
 			return temp;
 		}
 
-		bool operator>(const self& obj)
+		bool operator>(const self& obj) const noexcept
 		{
 			if (this->step_count > obj.step_count)
 				return true;
@@ -2236,7 +2285,7 @@ class deque_iterator
 			return false;
 		}
 
-		bool operator<(const self& obj)
+		bool operator<(const self& obj) const noexcept
 		{
 			if (this->step_count < obj.step_count)
 				return true;
@@ -2244,7 +2293,7 @@ class deque_iterator
 			return false;
 		}
 
-		bool operator>=(const self& obj)
+		bool operator>=(const self& obj) const noexcept
 		{
 			if (this->step_count >= obj.step_count)
 				return true;
@@ -2252,7 +2301,7 @@ class deque_iterator
 			return false;
 		}
 
-		bool operator<=(const self& obj)
+		bool operator<=(const self& obj) const noexcept
 		{
 			if (this->step_count <= obj.step_count)
 				return true;
@@ -2261,12 +2310,12 @@ class deque_iterator
 		}
 
 	private:
-		friend bool operator==(const self& Lhs , const self& Rhs)
+		friend bool operator==(const self& Lhs , const self& Rhs) noexcept
 		{
 			return Lhs.step_count == Rhs.step_count;
 		}
 
-		friend bool operator!=(const self& Lhs , const self& Rhs)
+		friend bool operator!=(const self& Lhs , const self& Rhs) noexcept
 		{
 			return Lhs.step_count != Rhs.step_count;
 		}
@@ -2309,17 +2358,17 @@ class const_deque_iterator
 		}
 
 
-		int step()
+		_NODISCARD int step() const noexcept
 		{
 			return step_count;
 		}
 
-		Ty operator*()
+		_NODISCARD const Ty& operator*() const noexcept
 		{
 			return ptr[buffer_count][insert_count];
 		}
 
-		self& operator=(const self& obj)
+		self& operator=(const self& obj) noexcept
 		{
 			this->ptr = obj.ptr;
 			this->body_size = obj.body_size;
@@ -2330,7 +2379,7 @@ class const_deque_iterator
 			return *this;
 		}
 
-		self& operator++()
+		self& operator++() noexcept
 		{
 			if (insert_count == body_size - 1)
 			{
@@ -2346,7 +2395,7 @@ class const_deque_iterator
 			return *this;
 		}
 
-		self operator+(int n)
+		_NODISCARD self operator+(int n) noexcept
 		{
 			int insert_count_save = insert_count;
 			int buffer_count_save = buffer_count;
@@ -2373,7 +2422,7 @@ class const_deque_iterator
 			return self(ptr , return_insert_count , return_buffer_count , body_size , step_count + n);
 		}
 
-		self operator++(int)
+		self operator++(int) noexcept
 		{
 			auto temp = *this;
 
@@ -2391,7 +2440,7 @@ class const_deque_iterator
 			return temp;
 		}
 
-		self& operator--()
+		self& operator--() noexcept
 		{
 			if (insert_count == 0)
 			{
@@ -2407,7 +2456,7 @@ class const_deque_iterator
 			return *this;
 		}
 
-		self operator-(int n)
+		_NODISCARD self operator-(int n) noexcept
 		{
 			int insert_count_save = insert_count;
 			int buffer_count_save = buffer_count;
@@ -2434,7 +2483,7 @@ class const_deque_iterator
 			return self(ptr , return_insert_count , return_buffer_count , body_size , step_count - n);
 		}
 
-		self operator--(int)
+		self operator--(int) noexcept
 		{
 			auto temp = *this;
 
@@ -2452,7 +2501,7 @@ class const_deque_iterator
 			return temp;
 		}
 
-		bool operator>(const self& obj)
+		bool operator>(const self& obj) const noexcept
 		{
 			if (this->step_count > obj.step_count)
 				return true;
@@ -2460,7 +2509,7 @@ class const_deque_iterator
 			return false;
 		}
 
-		bool operator<(const self& obj)
+		bool operator<(const self& obj) const noexcept
 		{
 			if (this->step_count < obj.step_count)
 				return true;
@@ -2468,7 +2517,7 @@ class const_deque_iterator
 			return false;
 		}
 
-		bool operator>=(const self& obj)
+		bool operator>=(const self& obj) const noexcept
 		{
 			if (this->step_count >= obj.step_count)
 				return true;
@@ -2476,7 +2525,7 @@ class const_deque_iterator
 			return false;
 		}
 
-		bool operator<=(const self& obj)
+		bool operator<=(const self& obj) const noexcept
 		{
 			if (this->step_count <= obj.step_count)
 				return true;
@@ -2485,12 +2534,12 @@ class const_deque_iterator
 		}
 
 	private:
-		friend bool operator==(const self& Lhs , const self& Rhs)
+		friend bool operator==(const self& Lhs , const self& Rhs) noexcept
 		{
 			return Lhs.step_count == Rhs.step_count;
 		}
 
-		friend bool operator!=(const self& Lhs , const self& Rhs)
+		friend bool operator!=(const self& Lhs , const self& Rhs) noexcept
 		{
 			return Lhs.step_count != Rhs.step_count;
 		}

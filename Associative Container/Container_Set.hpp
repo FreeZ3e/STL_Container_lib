@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.2.0-alpha
+ * version : 1.2.1-alpha
  *
  * author : Mashiro
  *
@@ -91,18 +91,18 @@ class set
 		int elem_count = 0;
 
 	public:
-		set()
+		set() noexcept
 		{
 			tree = new RB_Tree<Ty , Unique_Compare>();
 		}
 
-		set(Ty elem)
+		set(const Ty& elem) noexcept
 		{
 			tree = new RB_Tree<Ty , Unique_Compare>(elem);
 			elem_count++;
 		}
 
-		explicit set(const initializer_list<Ty>& list)
+		explicit set(const initializer_list<Ty>& list) noexcept
 		{
 			tree = new RB_Tree<Ty , Unique_Compare>();
 
@@ -112,7 +112,7 @@ class set
 			}
 		}
 
-		explicit set(const set<Ty>& obj)
+		explicit set(const set<Ty>& obj) noexcept
 		{
 			tree = new RB_Tree<Ty , Unique_Compare>();
 
@@ -125,7 +125,7 @@ class set
 			this->elem_count = obj.elem_count;
 		}
 
-		~set()
+		~set() noexcept
 		{
 			clear();
 
@@ -136,7 +136,7 @@ class set
 
 		//insert and erase operations
 
-		void insert(Ty elem)
+		[[noreturn]] void insert(const Ty& elem) noexcept
 		{
 			if (tree->Search(elem) == false)
 			{
@@ -145,7 +145,7 @@ class set
 			}
 		}
 
-		void insert(const initializer_list<Ty>& obj)
+		[[noreturn]] void insert(const initializer_list<Ty>& obj) noexcept
 		{
 			for (auto p : obj)
 			{
@@ -153,25 +153,28 @@ class set
 			}
 		}
 
-		void erase(Ty elem)
+		[[noreturn]] void erase(const Ty& elem) noexcept
 		{
-			tree->DeleteNode(elem);
-			elem_count--;
+			if (tree->Search(elem))
+			{
+				tree->DeleteNode(elem);
+				elem_count--;
+			}
 		}
 
-		iterator erase(iterator ptr)
-		{
-			elem_count--;
-			return tree->erase(ptr);
-		}
-
-		const_iterator erase(const_iterator& ptr)
+		_NODISCARD iterator erase(iterator ptr) noexcept
 		{
 			elem_count--;
 			return tree->erase(ptr);
 		}
 
-		void erase(iterator p_begin , iterator p_end)
+		_NODISCARD const_iterator erase(const_iterator& ptr) noexcept
+		{
+			elem_count--;
+			return tree->erase(ptr);
+		}
+
+		[[noreturn]] void erase(iterator p_begin , iterator p_end) noexcept
 		{
 			int n = p_begin.step();
 			for (; n < p_end.step(); ++n)
@@ -180,7 +183,7 @@ class set
 			}
 		}
 
-		void clear()
+		[[noreturn]] void clear() noexcept
 		{
 			tree->Destory();
 			elem_count = 0;
@@ -189,7 +192,7 @@ class set
 
 		//other
 
-		bool empty() const
+		_NODISCARD bool empty() const noexcept
 		{
 			if (elem_count == 0)
 				return true;
@@ -197,22 +200,22 @@ class set
 			return false;
 		}
 
-		int size() const
+		_NODISCARD int size() const noexcept
 		{
 			return this->elem_count;
 		}
 
-		bool find(Ty elem)
+		_NODISCARD bool find(const Ty& elem) const noexcept
 		{
 			return tree->Search(elem);
 		}
 
-		compare key_comp() const
+		_NODISCARD compare key_comp() const noexcept
 		{
 			return compare;
 		}
 
-		void swap(set<Ty>& obj)
+		[[noreturn]] void swap(set<Ty>& obj) noexcept
 		{
 			RB_Tree<Ty , Unique_Compare>* temp_tree = tree;
 			RB_Tree<Ty , Unique_Compare>* obj_tree = obj.tree;
@@ -228,22 +231,32 @@ class set
 
 		//RB_Tree iterator
 
-		iterator begin()
+		_NODISCARD iterator begin() noexcept
 		{
 			return tree->begin();
 		}
 
-		iterator end()
+		_NODISCARD iterator end() noexcept
 		{
 			return tree->end();
 		}
 
-		const_iterator cbegin() const
+		_NODISCARD iterator begin() const noexcept
+		{
+			return tree->begin();
+		}
+
+		_NODISCARD iterator end() const noexcept
+		{
+			return tree->end();
+		}
+
+		_NODISCARD const_iterator cbegin() const noexcept
 		{
 			return tree->cbegin();
 		}
 
-		const_iterator cend() const
+		_NODISCARD const_iterator cend() const noexcept
 		{
 			return tree->cend();
 		}
@@ -251,7 +264,7 @@ class set
 
 		//operator overload
 
-		self& operator=(const set<Ty>& obj)
+		self& operator=(const set<Ty>& obj) noexcept
 		{
 			clear();
 
@@ -264,7 +277,7 @@ class set
 			return *this;
 		}
 
-		bool operator==(const set<Ty>& obj) const
+		_NODISCARD bool operator==(const set<Ty>& obj) const noexcept
 		{
 			if (elem_count != obj.elem_count)
 				return false;
@@ -280,12 +293,12 @@ class set
 			return true;
 		}
 
-		bool operator!=(const set<Ty>& obj) const
+		_NODISCARD bool operator!=(const set<Ty>& obj) const noexcept
 		{
 			return !((*this) == obj);
 		}
 
-		bool operator>(const set<Ty>& obj) const
+		_NODISCARD bool operator>(const set<Ty>& obj) const noexcept
 		{
 			if (elem_count > obj.elem_count)
 				return true;
@@ -293,7 +306,7 @@ class set
 			return false;
 		}
 
-		bool operator<(const set<Ty>& obj) const
+		_NODISCARD bool operator<(const set<Ty>& obj) const noexcept
 		{
 			if (elem_count < obj.elem_count)
 				return true;
@@ -301,7 +314,7 @@ class set
 			return false;
 		}
 
-		bool operator>=(const set<Ty>& obj) const
+		_NODISCARD bool operator>=(const set<Ty>& obj) const noexcept
 		{
 			if (elem_count >= obj.elem_count)
 				return true;
@@ -309,7 +322,7 @@ class set
 			return false;
 		}
 
-		bool operator<=(const set<Ty>& obj) const
+		_NODISCARD bool operator<=(const set<Ty>& obj) const noexcept
 		{
 			if (elem_count <= obj.elem_count)
 				return true;

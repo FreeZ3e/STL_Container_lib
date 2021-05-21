@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.2.0-alpha
+ * version : 1.2.1-alpha
  *
  * author : Mashiro
  *
@@ -70,8 +70,9 @@
 
 
 #pragma once
-#include"HashTable.hpp"
 #include<initializer_list>
+#include<assert.h>
+#include"HashTable.hpp"
 
 using std::initializer_list;
 
@@ -86,17 +87,19 @@ class Unordered_Multiset
 		using const_iterator = const_hash_table_iterator<typename hash_table<Ty , Equal_Compare>::NodeType* , hash_table<Ty , Equal_Compare>>;
 
 	private:
-		hash_table<Ty,Equal_Compare>* ptr;
+		hash_table<Ty,Equal_Compare>* ptr = nullptr;
 
 	public:
 		Unordered_Multiset() = delete;
 
-		Unordered_Multiset(size_t size)
+		Unordered_Multiset(const size_t& size)
 		{
+			assert(size > 0);
+
 			ptr = new hash_table<Ty,Equal_Compare>(size);
 		}
 
-		explicit Unordered_Multiset(const initializer_list<Ty>& list)
+		explicit Unordered_Multiset(const initializer_list<Ty>& list) noexcept
 		{
 			size_t size = list.size();
 			ptr = new hash_table<Ty, Equal_Compare>(size);
@@ -107,7 +110,7 @@ class Unordered_Multiset
 			}
 		}
 
-		explicit Unordered_Multiset(const Unordered_Multiset<Ty>& obj)
+		explicit Unordered_Multiset(const Unordered_Multiset<Ty>& obj) noexcept
 		{
 			size_t size = obj.ptr->buckets_count();
 			ptr = new hash_table<Ty,Equal_Compare>(size);
@@ -119,8 +122,9 @@ class Unordered_Multiset
 			}
 		}
 
-		~Unordered_Multiset()
+		~Unordered_Multiset() noexcept
 		{
+			ptr->~hash_table();
 			delete ptr;
 			ptr = nullptr;
 		}
@@ -129,32 +133,32 @@ class Unordered_Multiset
 
 		//insert and erase operations
 
-		void insert(Ty elem)
+		[[noreturn]] void insert(const Ty& elem) noexcept
 		{
 			ptr->insert(elem);
 		}
 
-		void erase(Ty elem)
+		[[noreturn]] void erase(const Ty& elem) noexcept
 		{
 			ptr->erase(elem);
 		}
 
-		iterator erase(iterator p)
+		_NODISCARD iterator erase(iterator p) noexcept
 		{
 			return ptr->erase(p);
 		}
 
-		const_iterator erase(const_iterator p)
+		_NODISCARD const_iterator erase(const_iterator p) noexcept
 		{
 			return ptr->erase(p);
 		}
 
-		void erase(iterator p_begin , iterator p_end)
+		[[noreturn]] void erase(iterator p_begin , iterator p_end) noexcept
 		{
 			return ptr->erase(p_begin,p_end);
 		}
 
-		void clear()
+		[[noreturn]] void clear() noexcept
 		{
 			ptr->clear();
 		}
@@ -162,22 +166,22 @@ class Unordered_Multiset
 
 		//other
 
-		bool empty() const
+		_NODISCARD bool empty() const noexcept
 		{
 			return ptr->empty();
 		}
 
-		int size() const
+		_NODISCARD int size() const noexcept
 		{
 			return ptr->size();
 		}
 
-		size_t buckets_count() const
+		_NODISCARD size_t buckets_count() const noexcept
 		{
 			return ptr->buckets_count();
 		}
 
-		int count(Ty elem) const
+		_NODISCARD int count(const Ty& elem) const noexcept
 		{
 			int count = 0;
 
@@ -192,17 +196,17 @@ class Unordered_Multiset
 			return count;
 		}
 
-		bool find(Ty elem)
+		_NODISCARD bool find(const Ty& elem) const noexcept
 		{
 			return ptr->find(elem);
 		}
 
-		compare key_comp() const
+		_NODISCARD compare key_comp() const noexcept
 		{
 			return compare;
 		}
 
-		void swap(Unordered_Multiset<Ty>& obj)
+		[[noreturn]] void swap(Unordered_Multiset<Ty>& obj) noexcept
 		{
 			hash_table<Ty , Equal_Compare>* temp_ptr = ptr;
 			hash_table<Ty , Equal_Compare>* obj_ptr = obj.ptr;
@@ -214,22 +218,32 @@ class Unordered_Multiset
 
 		//hash_table iterator
 
-		iterator begin()
+		_NODISCARD iterator begin() noexcept
 		{
 			return ptr->begin();
 		}
 
-		iterator end()
+		_NODISCARD iterator end() noexcept
 		{
 			return ptr->end();
 		}
 
-		const_iterator cbegin() const
+		_NODISCARD iterator begin() const noexcept
+		{
+			return ptr->begin();
+		}
+
+		_NODISCARD iterator end() const noexcept
+		{
+			return ptr->end();
+		}
+
+		_NODISCARD const_iterator cbegin() const noexcept
 		{
 			return ptr->cbegin();
 		}
 
-		const_iterator cend() const
+		_NODISCARD const_iterator cend() const noexcept
 		{
 			return ptr->cend();
 		}
@@ -237,7 +251,7 @@ class Unordered_Multiset
 
 		//operator overload
 
-		self& operator=(const Unordered_Multiset<Ty>& obj)
+		self& operator=(const Unordered_Multiset<Ty>& obj) noexcept
 		{
 			clear();
 
@@ -250,7 +264,7 @@ class Unordered_Multiset
 			return *this;
 		}
 
-		bool operator==(const Unordered_Multiset<Ty>& obj) const
+		_NODISCARD bool operator==(const Unordered_Multiset<Ty>& obj) const noexcept
 		{
 			if (size() != obj.size() || buckets_count() != obj.buckets_count())
 				return false;
@@ -266,12 +280,12 @@ class Unordered_Multiset
 			return true;
 		}
 
-		bool operator!=(const Unordered_Multiset<Ty>& obj) const
+		_NODISCARD bool operator!=(const Unordered_Multiset<Ty>& obj) const noexcept
 		{
 			return !((*this) == obj);
 		}
 
-		bool operator>(const Unordered_Multiset<Ty>& obj) const
+		_NODISCARD bool operator>(const Unordered_Multiset<Ty>& obj) const noexcept
 		{
 			if (size() > obj.size())
 				return true;
@@ -279,7 +293,7 @@ class Unordered_Multiset
 			return false;
 		}
 
-		bool operator<(const Unordered_Multiset<Ty>& obj) const
+		_NODISCARD bool operator<(const Unordered_Multiset<Ty>& obj) const noexcept
 		{
 			if (size() < obj.size())
 				return true;
@@ -287,7 +301,7 @@ class Unordered_Multiset
 			return false;
 		}
 
-		bool operator>=(const Unordered_Multiset<Ty>& obj) const
+		_NODISCARD bool operator>=(const Unordered_Multiset<Ty>& obj) const noexcept
 		{
 			if (size() >= obj.size())
 				return true;
@@ -295,7 +309,7 @@ class Unordered_Multiset
 			return false;
 		}
 
-		bool operator<=(const Unordered_Multiset<Ty>& obj) const
+		_NODISCARD bool operator<=(const Unordered_Multiset<Ty>& obj) const noexcept
 		{
 			if (size() <= obj.size())
 				return true;
