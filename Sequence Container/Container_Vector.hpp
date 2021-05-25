@@ -78,9 +78,16 @@
 
 #pragma once
 #include<initializer_list>
-#include<assert.h>
 #include"memory.hpp"
 #include"iterator.hpp"
+#include"errors.hpp"
+
+#if _LIB_DEBUG_LEVEL == 1
+
+#include<iostream>
+#include<assert.h>
+
+#endif  // _LIB_DEBUG_LEVEL == 1
 
 using std::initializer_list;
 
@@ -108,7 +115,12 @@ class vector
 
 		vector(const size_t& size)
 		{
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY( (size > 0), "container size error");
 			assert(size > 0);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
 
 			arr_size = size;
 			arr = new Ty[arr_size];
@@ -116,7 +128,12 @@ class vector
 
 		vector(const size_t& size , const Ty& elem):vector(size)
 		{
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY( (size > 0) , "container size error");
 			assert(size > 0);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
 
 			for (int n = 0; n < arr_size; ++n)
 			{
@@ -344,7 +361,12 @@ class vector
 
 		[[noreturn]] void resize(size_t resize)
 		{
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY( (resize > 0) , "container size error");
 			assert(resize > 0);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
 
 			MemoryExpand(resize);
 
@@ -432,14 +454,24 @@ class vector
 
 		_NODISCARD const Ty& operator[](int n) const
 		{
-			assert(n < elem_count);
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY(((n < elem_count) && (n >= 0)) , "out of range");
+			assert(n < elem_count && n >= 0);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
 
 			return arr[n];
 		}
 
 		_NODISCARD Ty& operator[](int n)
 		{
-			assert(n < elem_count);
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY(((n < elem_count) && (n >= 0)) , "out of range");
+			assert(n < elem_count && n >= 0);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
 
 			return arr[n];
 		}
@@ -516,7 +548,12 @@ class vector
 	private:
 		[[noreturn]] void MemoryExpand(size_t resize)
 		{
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY( (resize > 0) , "container size error");
 			assert(resize > 0);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
 
 			if (elem_count != 0)
 			{

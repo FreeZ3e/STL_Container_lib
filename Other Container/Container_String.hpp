@@ -80,6 +80,8 @@ using std::ostream;
 using std::istream;
 using std::initializer_list;
 
+#pragma warning(disable : 6386) //warning disable
+
 
 class self_string
 {

@@ -66,8 +66,16 @@
 #include<initializer_list>
 #include<typeinfo>
 #include<string>
-#include<assert.h>
 #include"iterator.hpp"
+#include"errors.hpp"
+
+#if _LIB_DEBUG_LEVEL == 1
+
+#include<iostream>
+#include<assert.h>
+
+#endif // _LIB_DEBUG_LEVEL == 1
+
 
 using std::initializer_list;
 using std::string;
@@ -253,14 +261,24 @@ class array
 
 		_NODISCARD const Ty& operator[](int n) const noexcept
 		{
-			assert(n < elem_count);//range limit
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY(((n < elem_count) && (n >= 0)) , "out of range");
+			assert(n < elem_count&& n >= 0);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
 
 			return this->arr[n];
 		}
 
 		_NODISCARD Ty& operator[](int n) noexcept
 		{
-			assert(n < elem_count);
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY(((n < elem_count) && (n >= 0)) , "out of range");
+			assert(n < elem_count&& n >= 0);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
 
 			return this->arr[n];
 		}

@@ -92,9 +92,16 @@
 
 #pragma once
 #include<initializer_list>
-#include<assert.h>
 #include"memory.hpp"
 #include"iterator.hpp"
+#include"errors.hpp"
+
+#if _LIB_DEBUG_LEVEL == 1
+
+#include<iostream>
+#include<assert.h>
+
+#endif //_LIB_DEBUG_LEVEL == 1
 
 using std::initializer_list;
 
@@ -139,7 +146,12 @@ class list
 
 		list(const size_t& size)
 		{
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY((size > 0) , "container size error");
 			assert(size > 0);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
 
 			list_size = size;
 			alloc(list_size);
@@ -147,7 +159,12 @@ class list
 
 		list(const size_t& size , const Ty& elem):list(size)
 		{
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY((size > 0) , "container size error");
 			assert(size > 0);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
 
 			for(int n=0;n<size;++n)
 				push_back(elem);
@@ -436,7 +453,12 @@ class list
 
 		[[noreturn]] void resize(const size_t& size)
 		{
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY((size > 0) , "container size error");
 			assert(size > 0);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
 
 			if (size >= list_size)
 			{
@@ -574,7 +596,12 @@ class list
 	private:
 		[[noreturn]] void alloc(const size_t& list_size)
 		{
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY((list_size > 0) , "container size error");
 			assert(list_size > 0);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
 
 			//Head node alloc
 			CurPtr = new node;

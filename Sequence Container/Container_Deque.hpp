@@ -84,9 +84,16 @@
 
 #pragma once
 #include<initializer_list>
-#include<assert.h>
 #include"memory.hpp"
 #include"iterator.hpp"
+#include"errors.hpp"
+
+#if _LIB_DEBUG_LEVEL == 1
+
+#include<iostream>
+#include<assert.h>
+
+#endif // _LIB_DEBUG_LEVEL == 1
 
 using std::initializer_list;
 
@@ -122,7 +129,12 @@ class deque
 
 		deque(const size_t& size)
 		{
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY((size > 0) , "container size error");
 			assert(size > 0);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
 
 			buffer_size = size;
 			alloc();
@@ -130,7 +142,12 @@ class deque
 
 		deque(const size_t& size , const Ty& elem)
 		{
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY((size > 0) , "container size error");
 			assert(size > 0);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
 
 			buffer_size = size;
 			alloc();
@@ -451,7 +468,12 @@ class deque
 
 		[[noreturn]] void resize(size_t size)
 		{
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY((size > 0) , "container size error");
 			assert(size > 0);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
 
 			if ((int)(size * body_size) == elem_count)
 				return;
@@ -590,14 +612,24 @@ class deque
 
 		_NODISCARD const Ty*& operator[](int n) const
 		{
-			assert(n < elem_count);
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY(((n < elem_count) && (n >= 0)) , "out of range");
+			assert(n < elem_count&& n >= 0);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
 
 			return map_ptr[n];
 		}
 
 		_NODISCARD Ty*& operator[](int n)
 		{
-			assert(n < elem_count);
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY(((n < elem_count) && (n >= 0)) , "out of range");
+			assert(n < elem_count&& n >= 0);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
 
 			return map_ptr[n];
 		}
@@ -698,7 +730,12 @@ class deque
 
 		[[noreturn]] void MemoryExpand(size_t size)
 		{
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY((size > 0) , "container size error");
 			assert(size > 0);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
 
 			if (elem_count != 0) //deque not empty
 			{

@@ -82,7 +82,7 @@ using std::initializer_list;
 template<typename key,typename value>
 class map
 {
-	using pair = pair<key , value>;
+	using pair = pair<const key , value>;
 	using RB_Tree = RB_Tree<pair,Unique_Compare>;
 
 	public:

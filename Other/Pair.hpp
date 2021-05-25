@@ -16,13 +16,14 @@
  */
 
 #pragma once
+#include"type_traits.hpp"
 
 template<typename Key_Ty,typename Value_Ty>
 struct pair
 {
 	using self = pair<Key_Ty , Value_Ty>;
 
-	Key_Ty key;
+	Key_Ty key = 0;
 	Value_Ty value;
 
 	pair(Key_Ty k,Value_Ty v):key(k),value(v)
@@ -114,8 +115,9 @@ struct pair
 };
 
 
+
 template<typename key,typename value>
-_NODISCARD inline pair<key , value> make_pair(const key &k , const value &v) noexcept
+_NODISCARD inline auto make_pair(const key& k , const value& v) noexcept
 {
-	return pair<key , value>(k , v);
+	return pair<const key , value>(k , v);
 }

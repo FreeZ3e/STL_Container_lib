@@ -76,7 +76,6 @@
 
 #pragma once
 #include<initializer_list>
-#include<assert.h>
 #include"HashTable.hpp"
 
 using std::initializer_list;
@@ -84,7 +83,7 @@ using std::initializer_list;
 template<typename key,typename value>
 class Unordered_Map
 {
-	using pair = pair<key , value>;
+	using pair = pair<const key , value>;
 	using hash_table = hash_table<pair , Unique_Compare , pair_hash<key , value>>;
 
 	public:
@@ -102,8 +101,6 @@ class Unordered_Map
 
 		Unordered_Map(const size_t& size)
 		{
-			assert(size > 0);
-
 			ptr = new hash_table(size);
 		}
 
@@ -288,6 +285,17 @@ class Unordered_Map
 
 
 		//operator overload
+		_NODISCARD key& operator[](int n) noexcept
+		{	
+			//call operator[]
+			return ptr->operator[](n)->val.value;
+		}
+
+		_NODISCARD const key& operator[](int n) const noexcept
+		{
+			//call operator[]
+			return ptr->operator[](n)->val.value;
+		}
 
 		self& operator=(const Unordered_Map<key,value>& obj) noexcept
 		{

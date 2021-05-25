@@ -71,7 +71,6 @@
 
 #pragma once
 #include<initializer_list>
-#include<assert.h>
 #include"HashTable.hpp"
 
 using std::initializer_list;
@@ -94,8 +93,6 @@ class Unordered_Multiset
 
 		Unordered_Multiset(const size_t& size)
 		{
-			assert(size > 0);
-
 			ptr = new hash_table<Ty,Equal_Compare>(size);
 		}
 

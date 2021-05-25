@@ -76,7 +76,6 @@
 
 #pragma once
 #include<initializer_list>
-#include<assert.h>
 #include"HashTable.hpp"
 
 using std::initializer_list;
@@ -84,7 +83,7 @@ using std::initializer_list;
 template<typename key , typename value>
 class Unordered_Multimap
 {
-		using pair = pair<key , value>;
+		using pair = pair<const key , value>;
 		using hash_table = hash_table<pair , Equal_Compare , pair_hash<key , value>>;
 
 	public:
@@ -102,8 +101,6 @@ class Unordered_Multimap
 
 		Unordered_Multimap(const size_t& size)
 		{
-			assert(size > 0);
-
 			ptr = new hash_table(size);
 		}
 

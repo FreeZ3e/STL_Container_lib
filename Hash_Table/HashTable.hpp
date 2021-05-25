@@ -102,10 +102,17 @@
 
 #pragma once
 #include<functional>
-#include<assert.h>
+#include"errors.hpp"
 #include"memory.hpp"
 #include"iterator.hpp"
 #include"Hash_Function.hpp"
+
+#if _LIB_DEBUG_LEVEL == 1
+
+#include<iostream>
+#include<assert.h>
+
+#endif // __LIB_DEBUG_LEVEL == 1
 
 using std::function;
 
@@ -125,7 +132,7 @@ class hash_table
 		using TypeValue = value;
 
 		value val;
-		hash_node* next;
+		hash_node* next = nullptr;
 
 		hash_node(value elem):val(elem),next(nullptr)
 		{ }
@@ -162,7 +169,12 @@ class hash_table
 		//ctor
 		hash_table(const size_t& size)
 		{
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY((size > 0) , "container size error");
 			assert(size > 0);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
 
 			buckets = new hash_node<Ty>*[size * 2];
 			this->bucket_size = size * 2;
@@ -184,7 +196,7 @@ class hash_table
 		{
 			size_t key = hasher(elem);
 			
-			while (key >= bucket_size || elem_count >= bucket_size)//oversize
+			while (key >= bucket_size || elem_count >= bucket_size)//make sure load_factor <= 1
 			{
 				resize(bucket_size);
 			}
@@ -332,7 +344,12 @@ class hash_table
 
 		[[noreturn]] void resize(const size_t& size)
 		{
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY((size > 0) , "container size error");
 			assert(size > 0);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
 
 			MemoryExpand(size);
 
@@ -429,11 +446,25 @@ class hash_table
 
 		_NODISCARD hash_node<Ty>*& operator[](const size_t& key) noexcept
 		{
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY(((key < (int)bucket_size) && (key >= 0)) , "out of range");
+			assert(key < (int)bucket_size && key >= 0);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
+
 			return buckets[key];
 		}
 
 		_NODISCARD const hash_node<Ty>*& operator[](const size_t& key) const noexcept
 		{
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY(((key < (int)bucket_size) && (key >= 0)) , "out of range");
+			assert(key < (int)bucket_size && key >= 0);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
+
 			return buckets[key];
 		}
 
@@ -508,7 +539,12 @@ class hash_table
 	private:
 		[[noreturn]] void MemoryExpand(const size_t& resize)
 		{
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY((resize > 0) , "container size error");
 			assert(resize > 0);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
 
 			hash_node<Ty>** temp = new hash_node<Ty>*[bucket_size];
 
