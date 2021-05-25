@@ -33,7 +33,7 @@
 6. **memory(elem_destory)**
 
 
-## 2021/5/21(1.2.1 -alpha)
-1. 新增了对容器元素进行回收处理的elem_destory函数,在memory.hpp下实现.
-2. 添加了对容器操作和成员函数调用的防御性设计.
-3. 现在const 容器也可使用普通的迭代器.
+## 2021/5/25
+1. 新增了防御性的报错提示,实现在errors.hpp下.
+2. 将map容器的pair中key类型改为const key.
+3. 为unordered_map新增了operator[],返回pair的value值.
