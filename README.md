@@ -31,6 +31,7 @@
 4. **functional**
 5. **mate functors(tmp)**
 6. **memory(elem_destory)**
+7. **errors**
 
 
 ## 2021/5/25
