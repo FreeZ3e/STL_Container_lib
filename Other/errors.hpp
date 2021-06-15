@@ -4,7 +4,7 @@
  * 
  * This File is part of CONTAINER LIBRARY project.
  * 
- * version : 1.2.1-alpha
+ * version : 1.3.0-alpha
  * 
  * author : Mashiro
  * 
@@ -17,7 +17,7 @@
 
 
 #pragma once
-
+#include<iostream>
 
 
 //-------------DEBUG LEVEL-------------
@@ -42,3 +42,17 @@
 //-------------------------------------
 
 #endif // _LIB_DEBUG_LEVEL == 1
+
+
+//out_of_memory_handler_check----------
+#define _BAD_ALLOC_THROW		      \
+		_mes_print("bad alloc error") \
+		throw;						  \
+//-------------------------------------
+
+
+//memory_free_check--------------------
+#define _MEMORY_FREE_CHECK			   \
+		_mes_print("memory free error")\
+//-------------------------------------
+

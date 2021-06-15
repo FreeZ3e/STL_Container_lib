@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.2.1-alpha
+ * version : 1.3.0-alpha
  *
  * author : Mashiro
  *
@@ -75,14 +75,14 @@
 
 using std::initializer_list;
 
-template<typename Ty>
+template<typename Ty,typename alloc = _default_allocator>
 class Multiset
 {	
 	public:
-		using self = Multiset<Ty>;
+		using self = Multiset<Ty , alloc>;
 		using compare = Equal_Compare;
 		using TypeValue = Ty;
-		using RB_Tree = RB_Tree<Ty , Equal_Compare>;
+		using RB_Tree = RB_Tree<Ty , Equal_Compare , alloc>;
 		using iterator = RB_Tree_iterator<typename RB_Tree::NodeType>;
 		using const_iterator = const_RB_Tree_iterator<typename RB_Tree::NodeType>;
 		
@@ -114,7 +114,7 @@ class Multiset
 			}
 		}
 
-		explicit Multiset(const Multiset<Ty>& obj) noexcept
+		explicit Multiset(const Multiset<Ty , alloc>& obj) noexcept
 		{
 			tree = new RB_Tree();
 
@@ -266,11 +266,11 @@ class Multiset
 
 		//operator overload
 
-		self& operator=(const Multiset<Ty>& obj) noexcept
+		self& operator=(const Multiset<Ty , alloc>& obj) noexcept
 		{
 			clear();
 
-			Multiset<Ty>::const_iterator p = obj.cbegin();
+			Multiset<Ty , alloc>::const_iterator p = obj.cbegin();
 			for (; p != obj.cend(); ++p)
 			{
 				insert((*p));
@@ -279,13 +279,13 @@ class Multiset
 			return *this;
 		}
 
-		_NODISCARD bool operator==(const Multiset<Ty>& obj) const noexcept
+		_NODISCARD bool operator==(const Multiset<Ty , alloc>& obj) const noexcept
 		{
 			if (elem_count != obj.elem_count)
 				return false;
 
-			Multiset<Ty>::const_iterator p1 = obj.cbegin();
-			Multiset<Ty>::const_iterator p2 = cbegin();
+			Multiset<Ty , alloc>::const_iterator p1 = obj.cbegin();
+			Multiset<Ty , alloc>::const_iterator p2 = cbegin();
 			for (; p1 != obj.cend() , p2 != cend(); ++p1 , ++p2)
 			{
 				if ((*p1) != (*p2))
@@ -295,12 +295,12 @@ class Multiset
 			return true;
 		}
 
-		_NODISCARD bool operator!=(const Multiset<Ty>& obj) const noexcept
+		_NODISCARD bool operator!=(const Multiset<Ty , alloc>& obj) const noexcept
 		{
 			return !((*this) == obj);
 		}
 
-		_NODISCARD bool operator>(const Multiset<Ty>& obj) const noexcept
+		_NODISCARD bool operator>(const Multiset<Ty , alloc>& obj) const noexcept
 		{
 			if (elem_count > obj.elem_count)
 				return true;
@@ -308,7 +308,7 @@ class Multiset
 			return false;
 		}
 
-		_NODISCARD bool operator<(const Multiset<Ty>& obj) const noexcept
+		_NODISCARD bool operator<(const Multiset<Ty , alloc>& obj) const noexcept
 		{
 			if (elem_count < obj.elem_count)
 				return true;
@@ -316,7 +316,7 @@ class Multiset
 			return false;
 		}
 
-		_NODISCARD bool operator>=(const Multiset<Ty>& obj) const noexcept
+		_NODISCARD bool operator>=(const Multiset<Ty , alloc>& obj) const noexcept
 		{
 			if (elem_count >= obj.elem_count)
 				return true;
@@ -324,7 +324,7 @@ class Multiset
 			return false;
 		}
 
-		_NODISCARD bool operator<=(const Multiset<Ty>& obj) const noexcept
+		_NODISCARD bool operator<=(const Multiset<Ty , alloc>& obj) const noexcept
 		{
 			if (elem_count <= obj.elem_count)
 				return true;

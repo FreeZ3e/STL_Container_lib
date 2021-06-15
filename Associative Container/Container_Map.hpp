@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.2.1-alpha
+ * version : 1.3.0-alpha
  *
  * author : Mashiro
  *
@@ -79,14 +79,14 @@
 
 using std::initializer_list;
 
-template<typename key,typename value>
+template<typename key,typename value,typename alloc = _default_allocator>
 class map
 {
 	using pair = pair<const key , value>;
-	using RB_Tree = RB_Tree<pair,Unique_Compare>;
+	using RB_Tree = RB_Tree<pair,Unique_Compare,alloc>;
 
 	public:
-		using self = map<key , value>;
+		using self = map<key , value , alloc>;
 		using compare = Unique_Compare;
 		using TypeValue = pair;
 		using iterator = RB_Tree_iterator<typename RB_Tree::NodeType>;
@@ -120,7 +120,7 @@ class map
 			}
 		}
 		
-		explicit map(const map<key , value>& obj) noexcept
+		explicit map(const map<key , value , alloc>& obj) noexcept
 		{
 			tree = new RB_Tree();
 
@@ -243,7 +243,7 @@ class map
 			return compare;
 		}
 
-		[[noreturn]] void swap(map<key , value>& obj) noexcept
+		[[noreturn]] void swap(map<key , value , alloc>& obj) noexcept
 		{
 			RB_Tree* temp_tree = tree;
 			RB_Tree* obj_tree = obj.tree;
@@ -292,11 +292,11 @@ class map
 
 		//operator overload
 
-		self& operator=(const map<key , value>& obj) noexcept
+		self& operator=(const map<key , value , alloc>& obj) noexcept
 		{
 			clear();
 
-			map<key , value>::const_iterator p = obj.cbegin();
+			map<key , value , alloc>::const_iterator p = obj.cbegin();
 			for (; p != obj.cend(); ++p)
 			{
 				insert((*p));
@@ -305,13 +305,13 @@ class map
 			return *this;
 		}
 
-		_NODISCARD bool operator==(const map<key , value>& obj) const noexcept
+		_NODISCARD bool operator==(const map<key , value , alloc>& obj) const noexcept
 		{
 			if (elem_count != obj.elem_count)
 				return false;
 
-			map<key , value>::const_iterator p1 = obj.cbegin();
-			map<key , value>::const_iterator p2 = cbegin();
+			map<key , value , alloc>::const_iterator p1 = obj.cbegin();
+			map<key , value , alloc>::const_iterator p2 = cbegin();
 			for (; p1 != obj.cend() , p2 != cend(); ++p1 , ++p2)
 			{
 				if ((*p1) != (*p2))
@@ -321,12 +321,12 @@ class map
 			return true;
 		}
 
-		_NODISCARD bool operator!=(const map<key,value>& obj) const noexcept
+		_NODISCARD bool operator!=(const map<key , value , alloc>& obj) const noexcept
 		{
 			return !((*this) == obj);
 		}
 
-		_NODISCARD bool operator>(const map<key , value>& obj) const noexcept
+		_NODISCARD bool operator>(const map<key , value , alloc>& obj) const noexcept
 		{
 			if (elem_count > obj.elem_count)
 				return true;
@@ -334,7 +334,7 @@ class map
 			return false;
 		}
 
-		_NODISCARD bool operator<(const map<key , value>& obj) const noexcept
+		_NODISCARD bool operator<(const map<key , value , alloc>& obj) const noexcept
 		{
 			if (elem_count < obj.elem_count)
 				return true;
@@ -342,7 +342,7 @@ class map
 			return false;
 		}
 
-		_NODISCARD bool operator>=(const map<key , value>& obj) const noexcept
+		_NODISCARD bool operator>=(const map<key , value , alloc>& obj) const noexcept
 		{
 			if (elem_count >= obj.elem_count)
 				return true;
@@ -350,7 +350,7 @@ class map
 			return false;
 		}
 
-		_NODISCARD bool operator<=(const map<key , value>& obj) const noexcept
+		_NODISCARD bool operator<=(const map<key , value , alloc>& obj) const noexcept
 		{
 			if (elem_count <= obj.elem_count)
 				return true;

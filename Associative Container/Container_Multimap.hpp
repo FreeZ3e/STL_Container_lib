@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.2.1-alpha
+ * version : 1.3.0-alpha
  *
  * author : Mashiro
  *
@@ -79,14 +79,14 @@
 
 using std::initializer_list;
 
-template<typename key , typename value>
+template<typename key , typename value , typename alloc = _default_allocator>
 class Multimap
 {	
 	using pair = pair<const key , value>;
-	using RB_Tree = RB_Tree<pair,Equal_Compare>;
+	using RB_Tree = RB_Tree<pair,Equal_Compare , alloc>;
 
 	public:
-		using self = Multimap<key , value>;
+		using self = Multimap<key , value , alloc>;
 		using compare = Equal_Compare;
 		using TypeValue = pair;
 		using iterator = RB_Tree_iterator<typename RB_Tree::NodeType>;
@@ -121,7 +121,7 @@ class Multimap
 			}
 		}
 
-		explicit Multimap(const Multimap<key , value>& obj) noexcept
+		explicit Multimap(const Multimap<key , value , alloc>& obj) noexcept
 		{
 			tree = new RB_Tree();
 
@@ -244,7 +244,7 @@ class Multimap
 			return compare;
 		}
 
-		[[noreturn]] void swap(Multimap<key , value>& obj) noexcept
+		[[noreturn]] void swap(Multimap<key , value , alloc>& obj) noexcept
 		{
 			RB_Tree* temp_tree = tree;
 			RB_Tree* obj_tree = obj.tree;
@@ -293,11 +293,11 @@ class Multimap
 
 		//operator overload
 
-		self& operator=(const Multimap<key , value>& obj) noexcept
+		self& operator=(const Multimap<key , value , alloc>& obj) noexcept
 		{
 			clear();
 
-			Multimap<key , value>::const_iterator p = obj.cbegin();
+			typename Multimap<key , value , alloc>::const_iterator p = obj.cbegin();
 			for (; p != obj.cend(); ++p)
 			{
 				insert((*p));
@@ -306,13 +306,13 @@ class Multimap
 			return *this;
 		}
 
-		_NODISCARD bool operator==(const Multimap<key , value>& obj) const noexcept
+		_NODISCARD bool operator==(const Multimap<key , value , alloc>& obj) const noexcept
 		{
 			if (elem_count != obj.elem_count)
 				return false;
 
-			Multimap<key , value>::const_iterator p1 = obj.cbegin();
-			Multimap<key , value>::const_iterator p2 = cbegin();
+			typename Multimap<key , value , alloc>::const_iterator p1 = obj.cbegin();
+			typename Multimap<key , value , alloc>::const_iterator p2 = cbegin();
 			for (; p1 != obj.cend() , p2 != cend(); ++p1 , ++p2)
 			{
 				if ((*p1) != (*p2))
@@ -322,12 +322,12 @@ class Multimap
 			return true;
 		}
 
-		_NODISCARD bool operator!=(const Multimap<key , value>& obj) const noexcept
+		_NODISCARD bool operator!=(const Multimap<key , value , alloc>& obj) const noexcept
 		{
 			return !((*this) == obj);
 		}
 
-		_NODISCARD bool operator>(const Multimap<key , value>& obj) const noexcept
+		_NODISCARD bool operator>(const Multimap<key , value , alloc>& obj) const noexcept
 		{
 			if (elem_count > obj.elem_count)
 				return true;
@@ -335,7 +335,7 @@ class Multimap
 			return false;
 		}
 
-		_NODISCARD bool operator<(const Multimap<key , value>& obj) const noexcept
+		_NODISCARD bool operator<(const Multimap<key , value , alloc>& obj) const noexcept
 		{
 			if (elem_count < obj.elem_count)
 				return true;
@@ -343,7 +343,7 @@ class Multimap
 			return false;
 		}
 
-		_NODISCARD bool operator>=(const Multimap<key , value>& obj) const noexcept
+		_NODISCARD bool operator>=(const Multimap<key , value , alloc>& obj) const noexcept
 		{
 			if (elem_count >= obj.elem_count)
 				return true;
@@ -351,7 +351,7 @@ class Multimap
 			return false;
 		}
 
-		_NODISCARD bool operator<=(const Multimap<key , value>& obj) const noexcept
+		_NODISCARD bool operator<=(const Multimap<key , value , alloc>& obj) const noexcept
 		{
 			if (elem_count <= obj.elem_count)
 				return true;

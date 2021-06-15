@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.2.1-alpha
+ * version : 1.3.0-alpha
  *
  * author : Mashiro
  *
@@ -77,17 +77,18 @@
 #pragma once
 #include<initializer_list>
 #include"HashTable.hpp"
+#include"memory_allocator.hpp"
 
 using std::initializer_list;
 
-template<typename key,typename value>
+template<typename key,typename value,typename alloc = _default_allocator>
 class Unordered_Map
 {
 	using pair = pair<const key , value>;
-	using hash_table = hash_table<pair , Unique_Compare , pair_hash<key , value>>;
+	using hash_table = hash_table<pair , alloc,Unique_Compare , pair_hash<key , value>>;
 
 	public:
-		using self = Unordered_Map<key , value>;
+		using self = Unordered_Map<key , value, alloc>;
 		using TypeValue = pair;
 		using compare = Unique_Compare;
 		using iterator = hash_table_iterator<typename hash_table::NodeType* , hash_table>;
@@ -115,7 +116,7 @@ class Unordered_Map
 			}
 		}
 
-		explicit Unordered_Map(const Unordered_Map<key , value>& obj) noexcept
+		explicit Unordered_Map(const Unordered_Map<key , value , alloc>& obj) noexcept
 		{
 			size_t size = obj.ptr->buckets_count();
 			ptr = new hash_table(size);
@@ -241,7 +242,7 @@ class Unordered_Map
 			return compare;
 		}
 
-		[[noreturn]] void swap(Unordered_Map<key , value>& obj) noexcept
+		[[noreturn]] void swap(Unordered_Map<key , value , alloc>& obj) noexcept
 		{
 			hash_table* temp_ptr = ptr;
 			hash_table* obj_ptr = obj.ptr;
@@ -297,11 +298,11 @@ class Unordered_Map
 			return ptr->operator[](n)->val.value;
 		}
 
-		self& operator=(const Unordered_Map<key,value>& obj) noexcept
+		self& operator=(const Unordered_Map<key,value , alloc>& obj) noexcept
 		{
 			clear();
 
-			Unordered_Map<key,value>::const_iterator p = obj.cbegin();
+			typename Unordered_Map<key,value , alloc>::const_iterator p = obj.cbegin();
 			for (; p != obj.cend(); ++p)
 			{
 				insert(*p);
@@ -310,13 +311,13 @@ class Unordered_Map
 			return *this;
 		}
 
-		_NODISCARD bool operator==(const Unordered_Map<key,value>& obj) const noexcept
+		_NODISCARD bool operator==(const Unordered_Map<key,value , alloc>& obj) const noexcept
 		{
 			if (size() != obj.size() || buckets_count() != obj.buckets_count())
 				return false;
 
-			Unordered_Map<key,value>::const_iterator p1 = obj.cbegin();
-			Unordered_Map<key,value>::const_iterator p2 = cbegin();
+			typename Unordered_Map<key,value , alloc>::const_iterator p1 = obj.cbegin();
+			typename Unordered_Map<key,value , alloc>::const_iterator p2 = cbegin();
 			for (; p1 != obj.cend() , p2 != cend(); ++p1 , ++p2)
 			{
 				if ((*p1) != (*p2))
@@ -326,12 +327,12 @@ class Unordered_Map
 			return true;
 		}
 
-		_NODISCARD bool operator!=(const Unordered_Map<key,value>& obj) const noexcept
+		_NODISCARD bool operator!=(const Unordered_Map<key,value , alloc>& obj) const noexcept
 		{
 			return !((*this) == obj);
 		}
 
-		_NODISCARD bool operator>(const Unordered_Map<key,value>& obj) const noexcept
+		_NODISCARD bool operator>(const Unordered_Map<key,value , alloc>& obj) const noexcept
 		{
 			if (size() > obj.size())
 				return true;
@@ -339,7 +340,7 @@ class Unordered_Map
 			return false;
 		}
 
-		_NODISCARD bool operator<(const Unordered_Map<key,value>& obj) const noexcept
+		_NODISCARD bool operator<(const Unordered_Map<key,value , alloc>& obj) const noexcept
 		{
 			if (size() < obj.size())
 				return true;
@@ -347,7 +348,7 @@ class Unordered_Map
 			return false;
 		}
 
-		_NODISCARD bool operator>=(const Unordered_Map<key,value>& obj) const noexcept
+		_NODISCARD bool operator>=(const Unordered_Map<key,value , alloc>& obj) const noexcept
 		{
 			if (size() >= obj.size())
 				return true;
@@ -355,7 +356,7 @@ class Unordered_Map
 			return false;
 		}
 
-		_NODISCARD bool operator<=(const Unordered_Map<key,value>& obj) const noexcept
+		_NODISCARD bool operator<=(const Unordered_Map<key,value , alloc>& obj) const noexcept
 		{
 			if (size() <= obj.size())
 				return true;

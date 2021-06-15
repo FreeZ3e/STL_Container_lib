@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.2.1-alpha
+ * version : 1.3.0-alpha
  *
  * author : Mashiro
  *
@@ -21,7 +21,7 @@
  * {
  *		//iterator : List_iterator
  *		//const_iterator : const_List_iterator
- * 
+ *
  *      //node define
  *      struct node
  *      {
@@ -95,17 +95,18 @@
 #include"memory.hpp"
 #include"iterator.hpp"
 #include"errors.hpp"
+#include"memory_allocator.hpp"
 
 #if _LIB_DEBUG_LEVEL == 1
 
-#include<iostream>
 #include<assert.h>
 
 #endif //_LIB_DEBUG_LEVEL == 1
 
 using std::initializer_list;
 
-template<typename Ty,int default_size = 8>
+template<typename Ty , int default_size = 8,
+						typename _alloc = _default_allocator>
 class list
 {
 	private:
@@ -119,8 +120,19 @@ class list
 
 			node() = default;
 
-			node(Ty elem , node* n_ptr=nullptr , node* l_ptr=nullptr):data(elem),next(n_ptr),last(l_ptr)
-			{ }
+			node(Ty elem , node* n_ptr = nullptr , node* l_ptr = nullptr) :data(elem) , next(n_ptr) , last(l_ptr)
+			{
+			}
+
+			void* operator new(size_t size)
+			{
+				return simple_allocator(_alloc , node)::allocate(1);
+			}
+
+			void operator delete(void* ptr , size_t size)
+			{
+				simple_allocator(_alloc , node)::deallocate((node*)ptr , sizeof(node));
+			}
 		};
 
 		node* Head = nullptr;
@@ -130,7 +142,7 @@ class list
 		int elem_count = 0;
 
 	public:
-		using self = list<Ty , default_size>;
+		using self = list<Ty , default_size , _alloc>;
 		using TypeValue = Ty;
 		using iterator = List_iterator<node>;
 		using const_iterator = const_List_iterator<node>;
@@ -157,7 +169,7 @@ class list
 			alloc(list_size);
 		}
 
-		list(const size_t& size , const Ty& elem):list(size)
+		list(const size_t& size , const Ty& elem) :list(size)
 		{
 		#if _LIB_DEBUG_LEVEL == 1
 
@@ -166,7 +178,7 @@ class list
 
 		#endif // _LIB_DEBUG_LEVEL == 1
 
-			for(int n=0;n<size;++n)
+			for (int n = 0; n < size; ++n)
 				push_back(elem);
 		}
 
@@ -194,7 +206,7 @@ class list
 			//get head ptr
 			auto ptr = obj.Head;
 
-			for (int n=0;n<obj.elem_count;++n)
+			for (int n = 0; n < obj.elem_count; ++n)
 			{
 				CurPtr->data = ptr->data;
 
@@ -242,7 +254,7 @@ class list
 
 		[[noreturn]] void push_front(const Ty& elem) noexcept
 		{
-			node* temp = new node(elem,Head,nullptr);
+			node* temp = new node(elem , Head , nullptr);
 
 			Head->last = temp;
 			Head = temp;
@@ -253,7 +265,7 @@ class list
 		}
 
 		[[noreturn]] void pop_back() noexcept
-		{	
+		{
 			if (elem_count > 0)
 			{
 				memory::elem_destory(back());
@@ -349,7 +361,7 @@ class list
 				return end();
 			}
 
-			auto next_val = *(ptr+1);
+			auto next_val = *(ptr + 1);
 
 			remove(*ptr);
 			return find(next_val);
@@ -506,12 +518,12 @@ class list
 		//iterator
 		_NODISCARD iterator begin() noexcept
 		{
-			return iterator(Head,0);
+			return iterator(Head , 0);
 		}
 
 		_NODISCARD iterator end() noexcept
 		{
-			return iterator(CurPtr,elem_count);
+			return iterator(CurPtr , elem_count);
 		}
 
 		_NODISCARD iterator begin() const noexcept
@@ -526,12 +538,12 @@ class list
 
 		_NODISCARD const_iterator cbegin() const noexcept
 		{
-			return const_iterator(Head,0);
+			return const_iterator(Head , 0);
 		}
 
 		_NODISCARD const_iterator cend() const noexcept
 		{
-			return const_iterator(CurPtr,elem_count);
+			return const_iterator(CurPtr , elem_count);
 		}
 
 
@@ -545,7 +557,7 @@ class list
 				return false;
 
 			auto ptr = Head;
-			for (auto p = obj.cbegin(); p!=obj.cend();++p)
+			for (auto p = obj.cbegin(); p != obj.cend(); ++p)
 			{
 				if ((*p) != ptr->data)
 					return false;

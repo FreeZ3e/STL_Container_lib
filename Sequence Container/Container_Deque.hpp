@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.2.1-alpha
+ * version : 1.3.0-alpha
  *
  * author : Mashiro
  *
@@ -87,10 +87,11 @@
 #include"memory.hpp"
 #include"iterator.hpp"
 #include"errors.hpp"
+#include"memory_allocator.hpp"
+
 
 #if _LIB_DEBUG_LEVEL == 1
 
-#include<iostream>
 #include<assert.h>
 
 #endif // _LIB_DEBUG_LEVEL == 1
@@ -98,7 +99,7 @@
 using std::initializer_list;
 
 
-template<typename Ty>
+template<typename Ty , typename _alloc = _default_allocator>
 class deque
 {
 	private:
@@ -116,7 +117,7 @@ class deque
 		int buffer_distance = 1;
 
 	public:
-		using self = deque<Ty>;
+		using self = deque<Ty , _alloc>;
 		using TypeValue = Ty;
 		using iterator = deque_iterator<Ty>;
 		using const_iterator = const_deque_iterator<Ty>;
@@ -190,13 +191,13 @@ class deque
 
 			last_insert = obj.last_insert;
 			head_insert = obj.head_insert;
-			
+
 			for (int n = head_flag; n <= last_flag; ++n)
 			{
 				if (obj.map_ptr[n] != nullptr)
 				{
 					if (map_ptr[n] == nullptr)
-						map_ptr[n] = new Ty[body_size];
+						map_ptr[n] = simple_allocator(_alloc , Ty)::allocate((int)body_size);
 
 					for (int i = 0; i < body_size; ++i)
 					{
@@ -229,7 +230,7 @@ class deque
 					MemoryExpand(buffer_size);
 				}
 
-				map_ptr[++last_flag] = new Ty[body_size];
+				map_ptr[++last_flag] = simple_allocator(_alloc , Ty)::allocate((int)body_size);
 				last_insert = 0;
 				buffer_distance++;
 			}
@@ -248,7 +249,7 @@ class deque
 					MemoryExpand(buffer_size);
 				}
 
-				map_ptr[--head_flag] = new Ty[body_size];
+				map_ptr[--head_flag] = simple_allocator(_alloc , Ty)::allocate((int)body_size);
 				head_insert = body_size - 1;
 				buffer_distance++;
 			}
@@ -258,7 +259,7 @@ class deque
 		}
 
 		[[noreturn]] void pop_back() noexcept
-		{	
+		{
 			if (elem_count > 0)
 			{
 				memory::elem_destory(back());
@@ -266,7 +267,7 @@ class deque
 				if (last_insert == 0)
 				{
 					last_flag--;
-					last_insert = body_size - 1;
+					last_insert = (int)body_size - 1;
 
 					buffer_distance--;
 				}
@@ -409,7 +410,7 @@ class deque
 			if (head_insert == body_size - 1)
 				return map_ptr[last_flag][0];
 			else
-				return map_ptr[head_flag][head_insert+1];
+				return map_ptr[head_flag][head_insert + 1];
 		}
 
 		_NODISCARD const Ty& front() const noexcept
@@ -422,7 +423,7 @@ class deque
 
 		_NODISCARD Ty& back() noexcept
 		{
-			return map_ptr[last_flag][last_insert-1];
+			return map_ptr[last_flag][last_insert - 1];
 		}
 
 		_NODISCARD const Ty& back() const noexcept
@@ -466,7 +467,7 @@ class deque
 			return cend();
 		}
 
-		[[noreturn]] void resize(size_t size)
+		void resize(size_t size)
 		{
 		#if _LIB_DEBUG_LEVEL == 1
 
@@ -572,7 +573,7 @@ class deque
 			if (head_insert == body_size - 1)
 				return iterator(map_ptr , 0 , head_flag + 1 , (int)body_size , 0);
 			else
-				return iterator(map_ptr , head_insert+1 , head_flag , (int)body_size , 0);
+				return iterator(map_ptr , head_insert + 1 , head_flag , (int)body_size , 0);
 		}
 
 		_NODISCARD iterator begin() const noexcept
@@ -665,7 +666,7 @@ class deque
 		}
 
 		_NODISCARD bool operator!=(const deque<Ty>& obj) const noexcept
-		{ 
+		{
 			return !((*this) == obj);
 		}
 
@@ -692,7 +693,7 @@ class deque
 	private:
 		[[noreturn]] void alloc() noexcept
 		{
-			map_ptr = new Ty * [buffer_size];
+			map_ptr = simple_allocator(_alloc , Ty*)::allocate((int)buffer_size);
 
 			for (int n = 0; n < buffer_size; ++n)
 			{
@@ -702,11 +703,11 @@ class deque
 			last_flag = (int)buffer_size / 2;
 			head_flag = last_flag - 1;
 
-			map_ptr[last_flag] = new Ty[body_size];
-			map_ptr[head_flag] = new Ty[body_size];
+			map_ptr[last_flag] = simple_allocator(_alloc , Ty)::allocate((int)body_size);
+			map_ptr[head_flag] = simple_allocator(_alloc , Ty)::allocate((int)body_size);
 		}
 
-		[[noreturn]] void ptr_alloc(Ty** &ptr,int size) noexcept
+		[[noreturn]] void ptr_alloc(Ty**& ptr , int size) noexcept
 		{
 			for (int n = 0; n < size; ++n)
 			{
@@ -721,7 +722,7 @@ class deque
 				for (int n = 0; n < buffer_size; ++n)
 				{
 					if (map_ptr[n] != nullptr)
-						delete[] map_ptr[n];
+						simple_allocator(_alloc , Ty)::deallocate(map_ptr[n],body_size * sizeof(Ty));
 				}
 
 				map_ptr = nullptr;
@@ -743,7 +744,7 @@ class deque
 				ptr_alloc(temp_arr , (int)size);
 
 				int count = 0;
-				for (int n = head_flag; n <= last_flag ; ++n) // save data
+				for (int n = head_flag; n <= last_flag; ++n) // save data
 				{
 					temp_arr[count] = new Ty[body_size];
 
@@ -755,8 +756,8 @@ class deque
 					count++;
 				}
 
-				delete[] map_ptr;
-				map_ptr = new Ty * [size];
+				simple_allocator(_alloc , Ty*)::deallocate(map_ptr , buffer_size * sizeof(Ty*));
+				map_ptr = simple_allocator(_alloc , Ty*)::allocate((int)size);
 				ptr_alloc(map_ptr , (int)size);
 
 				int map_count = (int)size / 2 - 1;
@@ -764,7 +765,7 @@ class deque
 				{
 					if (temp_arr[n] != nullptr)
 					{
-						map_ptr[map_count] = new Ty[body_size];
+						map_ptr[map_count] = simple_allocator(_alloc , Ty)::allocate((int)body_size);
 
 						for (int i = 0; i < body_size; ++i)
 						{
@@ -777,8 +778,8 @@ class deque
 
 
 				//reset flags;
-				head_flag = size / 2-1;
-				last_flag = head_flag + buffer_distance;
+				head_flag = (int)size / 2 - 1;
+				last_flag = (int)(head_flag + buffer_distance);
 
 				delete[] temp_arr;
 				temp_arr = nullptr;

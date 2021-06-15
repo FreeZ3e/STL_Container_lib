@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.2.1-alpha
+ * version : 1.3.0-alpha
  *
  * author : Mashiro
  *
@@ -81,17 +81,18 @@
 #include"memory.hpp"
 #include"iterator.hpp"
 #include"errors.hpp"
+#include"memory_allocator.hpp"
 
 #if _LIB_DEBUG_LEVEL == 1
 
-#include<iostream>
 #include<assert.h>
 
 #endif  // _LIB_DEBUG_LEVEL == 1
 
 using std::initializer_list;
+//using allocator::simple_alloc;
 
-template<typename Ty>
+template<typename Ty , typename alloc = _default_allocator>
 class vector
 {
 	private:
@@ -101,7 +102,7 @@ class vector
 		int elem_count = 0;
 
 	public:
-		using self = vector<Ty>;
+		using self = vector<Ty , alloc>;
 		using TypeValue = Ty;
 		using iterator = Random_iterator<Ty>;
 		using const_iterator = const_Random_iterator<Ty>;
@@ -110,7 +111,7 @@ class vector
 
 		vector() noexcept
 		{
-			arr = new Ty[arr_size];
+			arr = simple_allocator(alloc , Ty)::allocate((int)arr_size);
 		}
 
 		vector(const size_t& size)
@@ -123,7 +124,7 @@ class vector
 		#endif // _LIB_DEBUG_LEVEL == 1
 
 			arr_size = size;
-			arr = new Ty[arr_size];
+			arr = simple_allocator(alloc , Ty)::allocate((int)arr_size);
 		}
 
 		vector(const size_t& size , const Ty& elem):vector(size)
@@ -146,7 +147,7 @@ class vector
 		explicit vector(const initializer_list<Ty>& list) noexcept
 		{
 			arr_size = list.size();
-			arr = new Ty[arr_size];
+			arr = simple_allocator(alloc , Ty)::allocate((int)arr_size);
 
 			for (auto p = list.begin(); p != list.end(); ++p)
 			{
@@ -158,7 +159,7 @@ class vector
 		explicit vector(const vector<Ty>& obj) noexcept
 		{
 			arr_size = obj.arr_size;
-			arr = new Ty[arr_size];
+			arr = simple_allocator(alloc , Ty)::allocate((int)arr_size);
 
 			for (int n = 0; n < obj.elem_count; ++n)
 			{
@@ -172,7 +173,7 @@ class vector
 		{
 			if (arr != nullptr)
 			{
-				delete[] arr;
+				simple_allocator(alloc , Ty)::deallocate(arr , arr_size * sizeof(Ty));
 				arr = nullptr;
 			}
 		}
@@ -232,8 +233,8 @@ class vector
 					Temp[n] = arr[n];
 				}
 
-				delete[] arr;
-				arr = new Ty[arr_size];
+				simple_allocator(alloc , Ty)::deallocate(arr , arr_size * sizeof(Ty));
+				arr = simple_allocator(alloc , Ty)::allocate(arr_size);
 
 				for (int n = 0; n < elem_count; ++n)
 				{
@@ -265,8 +266,8 @@ class vector
 					del = n;
 			}
 
-			delete[] arr;
-			arr = new Ty[arr_size];
+			simple_allocator(alloc , Ty)::deallocate(arr , arr_size * sizeof(Ty));
+			arr = simple_allocator(alloc , Ty)::allocate(arr_size);
 			memory::elem_destory(*ptr);
 
 			for (int n = 0; n < count; ++n)	//reset data
@@ -299,8 +300,8 @@ class vector
 					del = n;
 			}
 
-			delete[] arr;
-			arr = new Ty[arr_size];
+			simple_allocator(alloc , Ty)::deallocate(arr , arr_size * sizeof(Ty));
+			arr = simple_allocator(alloc , Ty)::allocate(arr_size);
 			memory::elem_destory(*ptr);
 
 			for (int n = 0; n < count; ++n)
@@ -330,8 +331,8 @@ class vector
 
 		[[noreturn]] void clear() noexcept
 		{
-			delete[] arr;
-			arr = new Ty[arr_size];
+			simple_allocator(alloc , Ty)::deallocate(arr , arr_size * sizeof(Ty));
+			arr = simple_allocator(alloc , Ty)::allocate(arr_size);
 
 			elem_count = 0;
 		}
@@ -564,8 +565,8 @@ class vector
 					TempArr[n] = arr[n];
 				}
 
-				delete[] arr;
-				arr = new Ty[resize];
+				simple_allocator(alloc , Ty)::deallocate(arr , arr_size * sizeof(Ty));
+				arr = simple_allocator(alloc , Ty)::allocate((int)resize);
 
 				if (resize > arr_size)
 				{
@@ -583,8 +584,8 @@ class vector
 			}
 			else
 			{
-				delete[] arr;
-				arr = new Ty[resize];
+				simple_allocator(alloc , Ty)::deallocate(arr , arr_size * sizeof(Ty));
+				arr = simple_allocator(alloc , Ty)::allocate((int)resize);
 			}
 		}
 };

@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.2.1-alpha
+ * version : 1.3.0-alpha
  *
  * author : Mashiro
  *
@@ -75,31 +75,31 @@
 
 using std::initializer_list;
 
-template<typename Ty>
+template<typename Ty , typename alloc = _default_allocator>
 class Unordered_Set
 {
 	public:
-		using self = Unordered_Set<Ty>;
+		using self = Unordered_Set<Ty , alloc>;
 		using TypeValue = Ty;
 		using compare = Unique_Compare;
-		using iterator = hash_table_iterator<typename hash_table<Ty>::NodeType* , hash_table<Ty>>;
-		using const_iterator = const_hash_table_iterator<typename hash_table<Ty>::NodeType* , hash_table<Ty>>;
+		using iterator = hash_table_iterator<typename hash_table<Ty , alloc>::NodeType* , hash_table<Ty , alloc>>;
+		using const_iterator = const_hash_table_iterator<typename hash_table<Ty , alloc>::NodeType* , hash_table<Ty , alloc>>;
 
 	private:
-		hash_table<Ty>* ptr = nullptr;
+		hash_table<Ty , alloc>* ptr = nullptr;
 
 	public:
 		Unordered_Set() = delete;
 
 		Unordered_Set(const size_t& size)
 		{
-			ptr = new hash_table<Ty>(size);
+			ptr = new hash_table<Ty , alloc>(size);
 		}
 
 		explicit Unordered_Set(const initializer_list<Ty>& list) noexcept
 		{
 			size_t size = list.size();
-			ptr = new hash_table<Ty>(size);
+			ptr = new hash_table<Ty , alloc>(size);
 
 			for (auto p : list)
 			{
@@ -107,10 +107,10 @@ class Unordered_Set
 			}
 		}
 
-		explicit Unordered_Set(const Unordered_Set<Ty>& obj) noexcept
+		explicit Unordered_Set(const Unordered_Set<Ty , alloc>& obj) noexcept
 		{
 			size_t size = obj.ptr->buckets_count();
-			ptr = new hash_table<Ty>(size);
+			ptr = new hash_table<Ty , alloc>(size);
 
 			auto p = obj.cbegin();
 			for (; p != obj.cend(); ++p)
@@ -203,10 +203,10 @@ class Unordered_Set
 			return compare;
 		}
 
-		[[noreturn]] void swap(Unordered_Set<Ty>& obj) noexcept
+		[[noreturn]] void swap(Unordered_Set<Ty , alloc>& obj) noexcept
 		{
-			hash_table<Ty>* temp_ptr = ptr;
-			hash_table<Ty>* obj_ptr = obj.ptr;
+			hash_table<Ty , alloc>* temp_ptr = ptr;
+			hash_table<Ty , alloc>* obj_ptr = obj.ptr;
 
 			ptr = obj_ptr;
 			obj.ptr = temp_ptr;
@@ -248,11 +248,11 @@ class Unordered_Set
 
 		//operator overload
 
-		self& operator=(const Unordered_Set<Ty>& obj) noexcept
+		self& operator=(const Unordered_Set<Ty , alloc>& obj) noexcept
 		{
 			clear();
 
-			Unordered_Set<Ty>::const_iterator p = obj.cbegin();
+			typename Unordered_Set<Ty , alloc>::const_iterator p = obj.cbegin();
 			for (; p != obj.cend(); ++p)
 			{
 				insert(*p);
@@ -261,13 +261,13 @@ class Unordered_Set
 			return *this;
 		}
 
-		_NODISCARD bool operator==(const Unordered_Set<Ty>& obj) const noexcept
+		_NODISCARD bool operator==(const Unordered_Set<Ty , alloc>& obj) const noexcept
 		{
 			if (size() != obj.size() || buckets_count() != obj.buckets_count())
 				return false;
 
-			Unordered_Set<Ty>::const_iterator p1 = obj.cbegin();
-			Unordered_Set<Ty>::const_iterator p2 = cbegin();
+			typename Unordered_Set<Ty , alloc>::const_iterator p1 = obj.cbegin();
+			typename Unordered_Set<Ty , alloc>::const_iterator p2 = cbegin();
 			for (; p1 != obj.cend(),p2 != cend(); ++p1,++p2)
 			{
 				if ((*p1) != (*p2))
@@ -277,12 +277,12 @@ class Unordered_Set
 			return true;
 		}
 
-		_NODISCARD bool operator!=(const Unordered_Set<Ty>& obj) const noexcept
+		_NODISCARD bool operator!=(const Unordered_Set<Ty , alloc>& obj) const noexcept
 		{
 			return !((*this) == obj);
 		}
 
-		_NODISCARD bool operator>(const Unordered_Set<Ty>& obj) const noexcept
+		_NODISCARD bool operator>(const Unordered_Set<Ty , alloc>& obj) const noexcept
 		{
 			if (size() > obj.size())
 				return true;
@@ -290,7 +290,7 @@ class Unordered_Set
 			return false;
 		}
 
-		_NODISCARD bool operator<(const Unordered_Set<Ty>& obj) const noexcept
+		_NODISCARD bool operator<(const Unordered_Set<Ty , alloc>& obj) const noexcept
 		{
 			if (size() < obj.size())
 				return true;
@@ -298,7 +298,7 @@ class Unordered_Set
 			return false;
 		}
 
-		_NODISCARD bool operator>=(const Unordered_Set<Ty>& obj) const noexcept
+		_NODISCARD bool operator>=(const Unordered_Set<Ty , alloc>& obj) const noexcept
 		{
 			if (size() >= obj.size())
 				return true;
@@ -306,7 +306,7 @@ class Unordered_Set
 			return false;
 		}
 
-		_NODISCARD bool operator<=(const Unordered_Set<Ty>& obj) const noexcept
+		_NODISCARD bool operator<=(const Unordered_Set<Ty , alloc>& obj) const noexcept
 		{
 			if (size() <= obj.size())
 				return true;

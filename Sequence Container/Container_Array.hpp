@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.2.1-alpha
+ * version : 1.3.0-alpha
  *
  * author : Mashiro
  *
@@ -68,10 +68,10 @@
 #include<string>
 #include"iterator.hpp"
 #include"errors.hpp"
+#include"memory_allocator.hpp"
 
 #if _LIB_DEBUG_LEVEL == 1
 
-#include<iostream>
 #include<assert.h>
 
 #endif // _LIB_DEBUG_LEVEL == 1
@@ -80,16 +80,16 @@
 using std::initializer_list;
 using std::string;
 
-
-template<typename Ty , size_t _size = 8>
+template<typename Ty , size_t _size = 8,
+		typename alloc = _default_allocator>
 class array
 {
 	private:
-		Ty* arr = new Ty[_size];
+		Ty* arr = simple_allocator(alloc , Ty)::allocate(_size);
 		int elem_count = 0;
 
 	public:
-		using self = array<Ty , _size>;
+		using self = array<Ty , _size , alloc>;
 		using TypeValue = Ty;
 		using iterator = Random_iterator<Ty>;
 		using const_iterator = const_Random_iterator<Ty>;
@@ -150,8 +150,8 @@ class array
 
 		~array() noexcept
 		{
-			if(arr != nullptr)
-				delete[] arr;
+			if (arr != nullptr)
+				simple_allocator(alloc , Ty)::deallocate(arr , _size * sizeof(Ty));
 
 			arr = nullptr;
 		}

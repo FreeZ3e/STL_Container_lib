@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.2.1-alpha
+ * version : 1.3.0-alpha
  *
  * author : Mashiro
  *
@@ -75,36 +75,36 @@
 
 using std::initializer_list;
 
-template<typename Ty>
+template<typename Ty,typename alloc = _default_allocator>
 class set
 {
 	public:
-		using self = set<Ty>;
+		using self = set<Ty,alloc>;
 		using compare = Unique_Compare;
 	    using TypeValue = Ty;
-		using iterator = RB_Tree_iterator<typename RB_Tree<Ty , Unique_Compare>::NodeType>;
-		using const_iterator = const_RB_Tree_iterator<typename RB_Tree<Ty , Unique_Compare>::NodeType>;
+		using iterator = RB_Tree_iterator<typename RB_Tree<Ty , Unique_Compare , alloc>::NodeType>;
+		using const_iterator = const_RB_Tree_iterator<typename RB_Tree<Ty , Unique_Compare , alloc>::NodeType>;
 		
 	private:
-		RB_Tree<Ty,Unique_Compare>* tree = nullptr;
+		RB_Tree<Ty,Unique_Compare,alloc>* tree = nullptr;
 		
 		int elem_count = 0;
 
 	public:
 		set() noexcept
 		{
-			tree = new RB_Tree<Ty , Unique_Compare>();
+			tree = new RB_Tree<Ty , Unique_Compare , alloc>();
 		}
 
 		set(const Ty& elem) noexcept
 		{
-			tree = new RB_Tree<Ty , Unique_Compare>(elem);
+			tree = new RB_Tree<Ty , Unique_Compare , alloc>(elem);
 			elem_count++;
 		}
 
 		explicit set(const initializer_list<Ty>& list) noexcept
 		{
-			tree = new RB_Tree<Ty , Unique_Compare>();
+			tree = new RB_Tree<Ty , Unique_Compare , alloc>();
 
 			for (auto p : list)
 			{
@@ -112,11 +112,11 @@ class set
 			}
 		}
 
-		explicit set(const set<Ty>& obj) noexcept
+		explicit set(const set<Ty , alloc>& obj) noexcept
 		{
-			tree = new RB_Tree<Ty , Unique_Compare>();
+			tree = new RB_Tree<Ty , Unique_Compare , alloc>();
 
-			typename RB_Tree<Ty , Unique_Compare>::const_iterator p = obj.tree->cbegin();
+			typename RB_Tree<Ty , Unique_Compare , alloc>::const_iterator p = obj.tree->cbegin();
 			for (; p != obj.tree->cend(); ++p)
 			{
 				tree->Insert((*p));
@@ -215,10 +215,10 @@ class set
 			return compare;
 		}
 
-		[[noreturn]] void swap(set<Ty>& obj) noexcept
+		[[noreturn]] void swap(set<Ty , alloc>& obj) noexcept
 		{
-			RB_Tree<Ty , Unique_Compare>* temp_tree = tree;
-			RB_Tree<Ty , Unique_Compare>* obj_tree = obj.tree;
+			RB_Tree<Ty , Unique_Compare , alloc>* temp_tree = tree;
+			RB_Tree<Ty , Unique_Compare , alloc>* obj_tree = obj.tree;
 
 			tree = obj_tree;
 			obj.tree = temp_tree;
@@ -264,11 +264,11 @@ class set
 
 		//operator overload
 
-		self& operator=(const set<Ty>& obj) noexcept
+		self& operator=(const set<Ty , alloc>& obj) noexcept
 		{
 			clear();
 
-			set<Ty>::const_iterator p = obj.cbegin();
+			set<Ty , alloc>::const_iterator p = obj.cbegin();
 			for (; p != obj.cend(); ++p)
 			{
 				insert((*p));
@@ -277,13 +277,13 @@ class set
 			return *this;
 		}
 
-		_NODISCARD bool operator==(const set<Ty>& obj) const noexcept
+		_NODISCARD bool operator==(const set<Ty , alloc>& obj) const noexcept
 		{
 			if (elem_count != obj.elem_count)
 				return false;
 
-			set<Ty>::const_iterator p1 = obj.cbegin();
-			set<Ty>::const_iterator p2 = cbegin();
+			set<Ty , alloc>::const_iterator p1 = obj.cbegin();
+			set<Ty , alloc>::const_iterator p2 = cbegin();
 			for (; p1 != obj.cend() , p2 != cend(); ++p1 , ++p2)
 			{
 				if ((*p1) != (*p2))
@@ -293,12 +293,12 @@ class set
 			return true;
 		}
 
-		_NODISCARD bool operator!=(const set<Ty>& obj) const noexcept
+		_NODISCARD bool operator!=(const set<Ty , alloc>& obj) const noexcept
 		{
 			return !((*this) == obj);
 		}
 
-		_NODISCARD bool operator>(const set<Ty>& obj) const noexcept
+		_NODISCARD bool operator>(const set<Ty , alloc>& obj) const noexcept
 		{
 			if (elem_count > obj.elem_count)
 				return true;
@@ -306,7 +306,7 @@ class set
 			return false;
 		}
 
-		_NODISCARD bool operator<(const set<Ty>& obj) const noexcept
+		_NODISCARD bool operator<(const set<Ty , alloc>& obj) const noexcept
 		{
 			if (elem_count < obj.elem_count)
 				return true;
@@ -314,7 +314,7 @@ class set
 			return false;
 		}
 
-		_NODISCARD bool operator>=(const set<Ty>& obj) const noexcept
+		_NODISCARD bool operator>=(const set<Ty , alloc>& obj) const noexcept
 		{
 			if (elem_count >= obj.elem_count)
 				return true;
@@ -322,7 +322,7 @@ class set
 			return false;
 		}
 
-		_NODISCARD bool operator<=(const set<Ty>& obj) const noexcept
+		_NODISCARD bool operator<=(const set<Ty , alloc>& obj) const noexcept
 		{
 			if (elem_count <= obj.elem_count)
 				return true;

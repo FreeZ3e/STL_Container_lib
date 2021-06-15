@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.2.1-alpha
+ * version : 1.3.0-alpha
  *
  * author : Mashiro
  *
@@ -83,11 +83,13 @@
 #include<functional>
 #include"memory.hpp"
 #include"iterator.hpp"
+#include"memory_allocator.hpp"
 
 using std::initializer_list;
 using std::function;
 
-template<typename Ty,typename Compare_Class = Unique_Compare>
+template<typename Ty,typename Compare_Class = Unique_Compare,
+					 typename alloc = _default_allocator>
 class RB_Tree
 {	
 	//insert compare function define
@@ -107,18 +109,28 @@ class RB_Tree
 
 		T data;
 		TreeColor Color = Red;
-		TreeNode<T>* Rchild;
-		TreeNode<T>* Lchild;
-		TreeNode<T>* Father;
+		TreeNode<T>* Rchild = nullptr;
+		TreeNode<T>* Lchild = nullptr;
+		TreeNode<T>* Father = nullptr;
 
 		TreeNode() = default;
 
 		TreeNode(const T& elem , TreeNode<T>* R = nullptr , TreeNode<T>* L = nullptr , TreeNode<T>* F = nullptr) :data(elem) , Rchild(R) , Lchild(L) , Father(F)
 		{}
+
+		void* operator new(size_t size)
+		{
+			return simple_allocator(alloc , TreeNode<T>)::allocate(1);
+		}
+
+		void operator delete(void* ptr , size_t size)
+		{
+			simple_allocator(alloc , TreeNode<T>)::deallocate((TreeNode<T>*)ptr , sizeof(TreeNode<T>*));
+		}
 	};
 
 	public:
-		using self = RB_Tree<Ty , Compare_Class>;
+		using self = RB_Tree<Ty , Compare_Class , alloc>;
 		using TypeValue = Ty;
 		using NodeType = TreeNode<Ty>;
 		using iterator = RB_Tree_iterator<TreeNode<Ty>>;
@@ -134,7 +146,7 @@ class RB_Tree
 		int NodeCount = 0;
 
 	public:
-		explicit RB_Tree(const RB_Tree<Ty , Compare_Class>& obj) noexcept :RB_Tree()
+		explicit RB_Tree(const RB_Tree<Ty , Compare_Class , alloc>& obj) noexcept :RB_Tree()
 		{
 			TreeCopy(obj.head);
 		}
@@ -300,7 +312,7 @@ class RB_Tree
 			return NodeCount;
 		}
 
-		[[noreturn]] void swap(RB_Tree<Ty , Compare_Class>& obj) noexcept
+		[[noreturn]] void swap(RB_Tree<Ty , Compare_Class , alloc>& obj) noexcept
 		{
 			TreeNode<Ty>* temp_head = head;
 			TreeNode<Ty>* obj_head = obj.head;
@@ -354,9 +366,9 @@ class RB_Tree
 
 
 		//operator overload
-		self& operator=(const RB_Tree<Ty , Compare_Class>& obj) noexcept
+		self& operator=(const RB_Tree<Ty , Compare_Class , alloc>& obj) noexcept
 		{
-			RB_Tree<Ty , Compare_Class>::const_iterator p = obj.cbegin();
+			typename RB_Tree<Ty , Compare_Class , alloc>::const_iterator p = obj.cbegin();
 			for (; p != obj.cend(); ++p)
 			{
 				Insert((*p));
@@ -366,13 +378,13 @@ class RB_Tree
 			return *this;
 		}
 
-		_NODISCARD bool operator==(const RB_Tree<Ty , Compare_Class>& obj) const noexcept
+		_NODISCARD bool operator==(const RB_Tree<Ty , Compare_Class , alloc>& obj) const noexcept
 		{
 			if (NodeCount != obj.NodeCount)
 				return false;
 
-			RB_Tree<Ty , Compare_Class>::const_iterator p = obj.cbegin();
-			RB_Tree<Ty , Compare_Class>::const_iterator self_p = cbegin();
+			typename RB_Tree<Ty , Compare_Class , alloc>::const_iterator p = obj.cbegin();
+			typename RB_Tree<Ty , Compare_Class , alloc>::const_iterator self_p = cbegin();
 			for (; p != obj.cend(),self_p != cend(); ++p,++self_p)
 			{
 				if ((*p) != (*self_p))
@@ -382,12 +394,12 @@ class RB_Tree
 			return true;
 		}
 
-		_NODISCARD bool operator!=(const RB_Tree<Ty , Compare_Class>& obj) const noexcept
+		_NODISCARD bool operator!=(const RB_Tree<Ty , Compare_Class , alloc>& obj) const noexcept
 		{
 			return !((*this) == obj);
 		}
 
-		_NODISCARD bool operator>(const RB_Tree<Ty , Compare_Class>& obj) const noexcept
+		_NODISCARD bool operator>(const RB_Tree<Ty , Compare_Class , alloc>& obj) const noexcept
 		{
 			if (NodeCount > obj.NodeCount)
 				return true;
@@ -395,7 +407,7 @@ class RB_Tree
 			return false;
 		}
 
-		_NODISCARD bool operator<(const RB_Tree<Ty , Compare_Class>& obj) const noexcept
+		_NODISCARD bool operator<(const RB_Tree<Ty , Compare_Class , alloc>& obj) const noexcept
 		{
 			if (NodeCount < obj.NodeCount)
 				return true;
@@ -403,7 +415,7 @@ class RB_Tree
 			return false;
 		}
 
-		_NODISCARD bool operator>=(const RB_Tree<Ty , Compare_Class>& obj) const noexcept
+		_NODISCARD bool operator>=(const RB_Tree<Ty , Compare_Class , alloc>& obj) const noexcept
 		{
 			if (NodeCount >= obj.NodeCount)
 				return true;
@@ -411,7 +423,7 @@ class RB_Tree
 			return false;
 		}
 
-		_NODISCARD bool operator<=(const RB_Tree<Ty , Compare_Class>& obj) const noexcept
+		_NODISCARD bool operator<=(const RB_Tree<Ty , Compare_Class , alloc>& obj) const noexcept
 		{
 			if (NodeCount <= obj.NodeCount)
 				return true;

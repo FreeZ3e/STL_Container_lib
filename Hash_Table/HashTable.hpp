@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.2.1-alpha
+ * version : 1.3.0-alpha
  *
  * author : Mashiro
  *
@@ -106,6 +106,7 @@
 #include"memory.hpp"
 #include"iterator.hpp"
 #include"Hash_Function.hpp"
+#include"memory_allocator.hpp"
 
 #if _LIB_DEBUG_LEVEL == 1
 
@@ -117,7 +118,8 @@
 using std::function;
 
 //hash_table
-template<typename Ty , typename Compare_Class = Unique_Compare , typename Hash_Class = hash_function<Ty>>
+template<typename Ty , typename alloc = _default_allocator , 
+		typename Compare_Class = Unique_Compare , typename Hash_Class = hash_function<Ty>>
 class hash_table
 {	
 	//hasher
@@ -138,6 +140,26 @@ class hash_table
 		{ }
 
 		hash_node() = default;
+
+		void* operator new(size_t size)
+		{
+			return simple_allocator(alloc , hash_node<value>)::allocate(1);
+		}
+
+		void operator delete(void* ptr , size_t size)
+		{
+			simple_allocator(alloc , hash_node<value>)::deallocate((hash_node<value>*)ptr , sizeof(hash_node<value>**));
+		}
+
+		void* operator new[](size_t size)
+		{
+			return simple_allocator(alloc , hash_node<value>*)::allocate(1);
+		}
+
+		void operator delete[](void* ptr , size_t size)
+		{
+			simple_allocator(alloc , hash_node<value>*)::deallocate((hash_node<value>**)ptr , sizeof(hash_node<value>**));
+		}
 	};
 
 	//friend iterator
@@ -148,11 +170,11 @@ class hash_table
 	friend struct const_hash_table_iterator;
 
 	public:
-		using self = hash_table<Ty , Compare_Class , Hash_Class>;
+		using self = hash_table<Ty , alloc , Compare_Class , Hash_Class>;
 		using TypeValue = Ty;
 		using NodeType = hash_node<Ty>;
-		using iterator = hash_table_iterator<hash_node<Ty>*,hash_table<Ty,Compare_Class,Hash_Class>>;
-		using const_iterator = const_hash_table_iterator<hash_node<Ty>* , hash_table<Ty , Compare_Class , Hash_Class>>;
+		using iterator = hash_table_iterator<hash_node<Ty>*,hash_table<Ty, alloc , Compare_Class,Hash_Class>>;
+		using const_iterator = const_hash_table_iterator<hash_node<Ty>* , hash_table<Ty , alloc , Compare_Class , Hash_Class>>;
 
 	private:
 		key_compare compare_func = Compare_Class::Compare;

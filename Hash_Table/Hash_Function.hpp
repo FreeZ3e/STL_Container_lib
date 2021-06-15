@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.2.1-alpha
+ * version : 1.3.0-alpha
  *
  * author : Mashiro
  *
@@ -131,7 +131,7 @@ struct pair_hash
 	}
 
 	//hash function
-	static _NODISCARD inline size_t hash(const pair<key , value>& obj) noexcept
+	static _NODISCARD inline size_t hash(const pair<const key , value>& obj) noexcept
 	{
 		typename is_pod<key>::type type_tag;
 		return _hash(obj.key , type_tag);
@@ -139,9 +139,9 @@ struct pair_hash
 };
 
 template<typename value>
-struct pair_hash<string , value>
+struct pair_hash<const string , value>
 {
-	static _NODISCARD size_t hash(const pair<string , value>& obj) noexcept
+	static _NODISCARD size_t hash(const pair<const string , value>& obj) noexcept
 	{
 		unsigned long h = 0;
 
@@ -155,9 +155,9 @@ struct pair_hash<string , value>
 };
 
 template<typename value>
-struct pair_hash<char* , value>
+struct pair_hash<const char* , value>
 {
-	static _NODISCARD size_t hash(const pair<char* , value>& obj) noexcept
+	static _NODISCARD size_t hash(const pair<const char* , value>& obj) noexcept
 	{
 		unsigned long h = 0;
 
