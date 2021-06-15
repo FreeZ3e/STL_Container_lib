@@ -35,7 +35,9 @@
 8. **memory allocator**
 
 
-### 2021/6/15(1.3.0 -alpha)
+
+### 最近更新 
+#### 2021/6/15(1.3.0 -alpha)
 1. 新增了内存分配器,实现在memory_allocator.hpp下,其中包含三类分配器:
 - malloc_allocator:直接调用malloc & free.
 - default_allocator:通过freelist进行内存管理与分配,各容器默认使用此分配器.
