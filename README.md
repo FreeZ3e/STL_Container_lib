@@ -37,12 +37,5 @@
 
 
 ### 最近更新 
-#### 2021/6/15(1.3.0 -alpha)
-1. 新增了内存分配器,实现在memory_allocator.hpp下,其中包含三类分配器:
-- malloc_allocator:直接调用malloc & free.
-- default_allocator:通过freelist进行内存管理与分配,各容器默认使用此分配器.
-- buddy_allocator:使用伙伴分配算法,便于向系统归还内存.
-
-上述三种分配器都通过simple_alloc进行包装使用.
-
-2. 分配计数器(alloc_count):对simple_alloc的分配和归还操作进行计数,若计数不匹配则报错提示,对于容器只适用于部分序列式容器.
+#### 2021/6/18:
+- 在trait_type中添加了便于使用的变量模板.
