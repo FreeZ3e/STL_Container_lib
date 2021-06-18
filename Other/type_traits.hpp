@@ -1178,4 +1178,79 @@ namespace lib_type
 	};
 	//-----------------------------------------------------------
 
+
+
+
+
+	template<typename t>
+	bool isVoid = is_void<t>::value;
+
+	template<typename t>
+	bool isInt = is_integer<t>::value;
+
+	template<typename t>
+	bool isFloat = is_float<t>::value;
+
+	template<typename t>
+	bool isChar = is_char<t>::value;
+
+	template<typename t>
+	bool isBool = is_bool<t>::value;
+
+	template<typename t>
+	bool isPtr = is_pointer<t>::value;
+
+	template<typename t>
+	bool isArr = is_array<t>::value;
+
+	template<typename t>
+	bool isRef = is_reference<t>::value;
+
+	template<typename t>
+	bool isRvalueRef = is_rvalue_reference<t>::value;
+
+	template<typename t>
+	bool isConst = is_const<t>::value;
+
+	template<typename t>
+	bool isConstRef = is_const_reference<t>::value;
+
+	template<typename t>
+	bool isConstPtr = is_const_pointer<t>::value;
+
+	template<typename t>
+	bool isPtrConst = is_pointer_const<t>::value;
+
+	template<typename t>
+	bool isVolatile = is_volatile<t>::value;
+
+	template<typename t>
+	bool isSigned = is_signed<t>::value;
+
+	template<typename t>
+	bool isUnsigned = is_unsigned<t>::value;
+
+	template<typename t>
+	bool isFunc = is_function<t>::value;
+
+	template<typename t>
+	bool isMemPtr = is_member_pointer<t>::value;
+
+	template<typename t>
+	bool isObj = is_object<t>::value;
+
+	template<typename t>
+	bool isClass = is_class<t>::value;
+
+	template<typename t1,typename t2>
+	bool isSame = is_same<t1,t2>::value;
+
+	template<typename t1,typename t2>
+	bool isBase = is_base_of<t1 , t2>::value;
+
+	template<typename t1,typename t2>
+	bool isIterator = is_iterator<t1 , t2>::value;
+
+	template<typename t>
+	bool isPod = is_pod<t>::value;
 }
