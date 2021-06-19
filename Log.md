@@ -197,7 +197,7 @@
 - 其中变量模板在enableIfV中不可用:
         
         template<typename t>
-        enableIfv<isInt<t>> func(t n)
+        enableIfV<isInt<t>> func(t n)
         {
             //..
         }
