@@ -37,5 +37,14 @@
 
 
 ### 最近更新 
-#### 2021/6/18:
-- 在trait_type中添加了便于使用的变量模板.
+#### 2021/6/19:
+- 增加了便于traits classes使用的类型别名模板
+- 其中变量模板在enableIfV中不可用:
+        
+        template<typename t>
+        enableIfV<isInt<t>> func(t n)
+        {
+            //..
+        }
+
+在使用中会报错
