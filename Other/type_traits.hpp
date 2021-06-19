@@ -1031,13 +1031,13 @@ namespace lib_type
 
 	//remove_rvalue_reference----------------------------------
 	template<typename t>
-	struct remove_ravlue_reference
+	struct remove_rvalue_reference
 	{
 		using type_value = t;
 	};
 
 	template<typename t>
-	struct remove_ravlue_reference<t&&>
+	struct remove_rvalue_reference<t&&>
 	{
 		using type_value = t;
 	};
@@ -1242,15 +1242,63 @@ namespace lib_type
 	template<typename t>
 	bool isClass = is_class<t>::value;
 
-	template<typename t1,typename t2>
-	bool isSame = is_same<t1,t2>::value;
+	template<typename t1 , typename t2>
+	bool isSame = is_same<t1 , t2>::value;
 
-	template<typename t1,typename t2>
+	template<typename t1 , typename t2>
 	bool isBase = is_base_of<t1 , t2>::value;
 
-	template<typename t1,typename t2>
+	template<typename t1 , typename t2>
 	bool isIterator = is_iterator<t1 , t2>::value;
 
 	template<typename t>
 	bool isPod = is_pod<t>::value;
+
+	template<typename t>
+	using type = typename traits<t>::type_value;
+
+	template<typename t>
+	using getTypeValue = typename get_TypeValue<t>::type_value;
+
+	template<typename t>
+	using getSelf = typename get_self<t>::self;
+
+	template<bool b, typename t = void>
+	using enableIfV = typename enable_if<b,t>::type_value;
+
+	template<typename t>
+	using removeConst = typename remove_const<t>::type_value;
+
+	template<typename t>
+	using removeRef = typename remove_reference<t>::type_value;
+
+	template<typename t>
+	using removeRvRef = typename remove_rvalue_reference<t>::type_value;
+
+	template<typename t>
+	using removeVolatile = typename remove_volatile<t>::type_value;
+
+	template<typename t>
+	using removePtr = typename remove_pointer<t>::type_value;
+
+	template<typename t>
+	using addConst = typename add_const<t>::type_value;
+
+	template<typename t>
+	using addVolatile = typename add_volatile<t>::type_value;
+
+	template<typename t>
+	using addPtr = typename add_pointer<t>::type_value;
+
+	template<typename t>
+	using addRef = typename add_reference<t>::type_value;
+
+	template<typename t>
+	using addRvRef = typename add_rvalue_reference<t>::type_value;
+
+	template<typename t>
+	using makeSigned = typename make_signed<t>::type_value;
+
+	template<typename t>
+	using makeUnsigned = typename make_unsigned<t>::type_value;
 }
