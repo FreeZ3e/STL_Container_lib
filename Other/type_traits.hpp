@@ -1179,6 +1179,34 @@ namespace lib_type
 	//-----------------------------------------------------------
 
 
+	//is_trivial-------------------------------------------------
+	template<typename t,typename ctor = t>
+	struct is_trivial
+	{
+		enum{value = 0};
+	};
+
+	template<typename t>
+	struct is_trivial<t , decltype(t())>
+	{
+		enum{value = 1};
+	};
+	//-----------------------------------------------------------
+
+	
+	//ifThenElse-------------------------------------------------
+	template<bool b,typename _true,typename _false>
+	struct ifThenElse
+	{
+		using type_value = _false;
+	};
+
+	template<typename _true , typename _false>
+	struct ifThenElse<true , _true, _false>
+	{
+		using type_value = _true;
+	};
+	//-----------------------------------------------------------
 
 
 
@@ -1255,6 +1283,9 @@ namespace lib_type
 	bool isPod = is_pod<t>::value;
 
 	template<typename t>
+	bool isTrivial = is_trivial<t>::value;
+
+	template<typename t>
 	using type = typename traits<t>::type_value;
 
 	template<typename t>
@@ -1301,4 +1332,7 @@ namespace lib_type
 
 	template<typename t>
 	using makeUnsigned = typename make_unsigned<t>::type_value;
+
+	template<bool b,typename t,typename f>
+	using ifThenElseV = typename ifThenElse<b , t , f>::type_value;
 }
