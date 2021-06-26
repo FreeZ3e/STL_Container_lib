@@ -203,3 +203,6 @@
         }
 
 在使用中会报错
+
+### 2021/6/23:
+- 在type_traits下新增判断类是否有默认构造函数的is_trivial以及ifThenElse.
