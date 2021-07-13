@@ -16,7 +16,7 @@
  *
  *-------------------------------README------------------------------------
  *
- * template<typename Ty>
+ * template<typename Ty,typename alloc = _default_allocator>
  * class Unordered_Set
  * {
  *      //iterator : hash_table_iterator
@@ -28,7 +28,7 @@
  *
  *      Unordered_Set(size_t size)--------------------initialize with size.
  *      Unordered_Set(const initializer_list<Ty>& list)
- *      Unordered_Set(const Unordered_Set<Ty>& obj)
+ *      Unordered_Set(const Unordered_Set<Ty,alloc>& obj)
  *
  *      //operations
  *
@@ -44,7 +44,7 @@
  *      int count(Ty elem)
  *      bool find(Ty elem)
  *      compare key_comp()
- *      void swap(Unordered_Set<Ty>& obj)
+ *      void swap(self& obj)
  *
  *
  *      //iterator
@@ -57,13 +57,13 @@
  *
  *      //operator overload
  *
- *      self& operator=(const Unordered_Set<Ty>& obj)
- *      bool operator==(const Unordered_Set<Ty>& obj)
- *      bool operator!=(const Unordered_Set<Ty>& obj)
- *      bool operator>(const Unordered_Set<Ty>& obj)
- *      bool operator<(const Unordered_Set<Ty>& obj)
- *      bool operator>=(const Unordered_Set<Ty>& obj)
- *      bool operator<=(const Unordered_Set<Ty>& obj)
+ *      self& operator=(const self& obj)
+ *      bool operator==(const coll& obj)
+ *      bool operator!=(const coll& obj)
+ *      bool operator>(const coll& obj)
+ *      bool operator<(const coll& obj)
+ *      bool operator>=(const coll& obj)
+ *      bool operator<=(const coll& obj)
  * }
  * ----------------------------------------------------------------------------------------------
  */
@@ -203,7 +203,7 @@ class Unordered_Set
 			return compare;
 		}
 
-		[[noreturn]] void swap(Unordered_Set<Ty , alloc>& obj) noexcept
+		[[noreturn]] void swap(self& obj) noexcept
 		{
 			hash_table<Ty , alloc>* temp_ptr = ptr;
 			hash_table<Ty , alloc>* obj_ptr = obj.ptr;
@@ -248,7 +248,7 @@ class Unordered_Set
 
 		//operator overload
 
-		self& operator=(const Unordered_Set<Ty , alloc>& obj) noexcept
+		self& operator=(const self& obj) noexcept
 		{
 			clear();
 
@@ -261,12 +261,13 @@ class Unordered_Set
 			return *this;
 		}
 
-		_NODISCARD bool operator==(const Unordered_Set<Ty , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator==(const coll& obj) const noexcept
 		{
 			if (size() != obj.size() || buckets_count() != obj.buckets_count())
 				return false;
 
-			typename Unordered_Set<Ty , alloc>::const_iterator p1 = obj.cbegin();
+			typename coll::const_iterator p1 = obj.cbegin();
 			typename Unordered_Set<Ty , alloc>::const_iterator p2 = cbegin();
 			for (; p1 != obj.cend(),p2 != cend(); ++p1,++p2)
 			{
@@ -277,12 +278,14 @@ class Unordered_Set
 			return true;
 		}
 
-		_NODISCARD bool operator!=(const Unordered_Set<Ty , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator!=(const coll& obj) const noexcept
 		{
 			return !((*this) == obj);
 		}
 
-		_NODISCARD bool operator>(const Unordered_Set<Ty , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator>(const coll& obj) const noexcept
 		{
 			if (size() > obj.size())
 				return true;
@@ -290,7 +293,8 @@ class Unordered_Set
 			return false;
 		}
 
-		_NODISCARD bool operator<(const Unordered_Set<Ty , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator<(const coll& obj) const noexcept
 		{
 			if (size() < obj.size())
 				return true;
@@ -298,7 +302,8 @@ class Unordered_Set
 			return false;
 		}
 
-		_NODISCARD bool operator>=(const Unordered_Set<Ty , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator>=(const coll& obj) const noexcept
 		{
 			if (size() >= obj.size())
 				return true;
@@ -306,7 +311,8 @@ class Unordered_Set
 			return false;
 		}
 
-		_NODISCARD bool operator<=(const Unordered_Set<Ty , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator<=(const coll& obj) const noexcept
 		{
 			if (size() <= obj.size())
 				return true;

@@ -16,7 +16,7 @@
  *
  *-------------------------------README------------------------------------
  *
- * template<typename key,typename value>
+ * template<typename key,typename value,typename alloc = _default_allocator>
  * class Unordered_Multimap
  * {
  *      //iterator : hash_table_iterator
@@ -29,7 +29,7 @@
  *
  *      Unordered_Multimap(size_t size)--------------------initialize with size.
  *      Unordered_Multimap(const initializer_list<pair>& list)
- *      Unordered_Multimap(const Unordered_Multimap<key,value>& obj)
+ *      Unordered_Multimap(const Unordered_Multimap<key,value,alloc>& obj)
  *
  *      //operations
  *
@@ -49,7 +49,7 @@
  *      bool find(const pair& obj)
  *      bool find(key k)--------------------------------------if node with k exist,return true.
  *      compare key_comp()
- *      void swap(Unordered_Multimap<key,value>& obj)
+ *      void swap(self& obj)
  *
  *
  *      //iterator
@@ -62,13 +62,13 @@
  *
  *      //operator overload
  *
- *      self& operator=(const Unordered_Multimap<key,value>& obj)
- *      bool operator==(const Unordered_Multimap<key,value>& obj)
- *      bool operator!=(const Unordered_Multimap<key,value>& obj)
- *      bool operator>(const Unordered_Multimap<key,value>& obj)
- *      bool operator<(const Unordered_Multimap<key,value>& obj)
- *      bool operator>=(const Unordered_Multimap<key,value>& obj)
- *      bool operator<=(const Unordered_Multimap<key,value>& obj)
+ *      self& operator=(const self& obj)
+ *      bool operator==(const coll& obj)
+ *      bool operator!=(const coll& obj)
+ *      bool operator>(const coll& obj)
+ *      bool operator<(const coll& obj)
+ *      bool operator>=(const coll& obj)
+ *      bool operator<=(const coll& obj)
  * }
  * ----------------------------------------------------------------------------------------------
  */
@@ -242,7 +242,7 @@ class Unordered_Multimap
 			return compare;
 		}
 
-		[[noreturn]] void swap(Unordered_Multimap<key , value , alloc>& obj) noexcept
+		[[noreturn]] void swap(self& obj) noexcept
 		{
 			hash_table* temp_ptr = ptr;
 			hash_table* obj_ptr = obj.ptr;
@@ -287,7 +287,7 @@ class Unordered_Multimap
 
 		//operator overload
 
-		self& operator=(const Unordered_Multimap<key,value, alloc>& obj) noexcept
+		self& operator=(const self& obj) noexcept
 		{
 			clear();
 
@@ -300,12 +300,13 @@ class Unordered_Multimap
 			return *this;
 		}
 
-		_NODISCARD bool operator==(const Unordered_Multimap<key,value , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator==(const coll& obj) const noexcept
 		{
 			if (size() != obj.size() || buckets_count() != obj.buckets_count())
 				return false;
 
-			typename Unordered_Multimap<key,value , alloc>::const_iterator p1 = obj.cbegin();
+			typename coll::const_iterator p1 = obj.cbegin();
 			typename Unordered_Multimap<key,value , alloc>::const_iterator p2 = cbegin();
 			for (; p1 != obj.cend() , p2 != cend(); ++p1 , ++p2)
 			{
@@ -316,12 +317,14 @@ class Unordered_Multimap
 			return true;
 		}
 
-		_NODISCARD bool operator!=(const Unordered_Multimap<key,value , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator!=(const coll& obj) const noexcept
 		{
 			return !((*this) == obj);
 		}
 
-		_NODISCARD bool operator>(const Unordered_Multimap<key,value , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator>(const coll& obj) const noexcept
 		{
 			if (size() > obj.size())
 				return true;
@@ -329,7 +332,8 @@ class Unordered_Multimap
 			return false;
 		}
 
-		_NODISCARD bool operator<(const Unordered_Multimap<key,value , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator<(const coll& obj) const noexcept
 		{
 			if (size() < obj.size())
 				return true;
@@ -337,7 +341,8 @@ class Unordered_Multimap
 			return false;
 		}
 
-		_NODISCARD bool operator>=(const Unordered_Multimap<key,value , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator>=(const coll& obj) const noexcept
 		{
 			if (size() >= obj.size())
 				return true;
@@ -345,7 +350,8 @@ class Unordered_Multimap
 			return false;
 		}
 
-		_NODISCARD bool operator<=(const Unordered_Multimap<key,value , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator<=(const coll& obj) const noexcept
 		{
 			if (size() <= obj.size())
 				return true;

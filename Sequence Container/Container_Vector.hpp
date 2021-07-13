@@ -16,7 +16,7 @@
  *
  *-------------------------------README------------------------------------
  *
- * template<typename Ty>
+ * template<typename Ty,typename alloc = _default_allocator>
  * class vector
  * {
  *		//iterator : random_iterator
@@ -28,7 +28,7 @@
  *      vector(size_t size)
  *      vector(size_t size,Ty elem)
  *      vector(const initializer_list<Ty>& list)
- *      vector(const vector<Ty>& obj)
+ *      vector(const vector<Ty,alloc>& obj)
  *
  *      //operations
  *
@@ -48,7 +48,7 @@
  *      int size()
  *		bool empty()
  *      int capacity()--------------------------------------return max_size-size.
- *      void swap(vector<Ty& obj)
+ *      void swap(self& obj)
  *
  *      //iterator
  *
@@ -60,13 +60,13 @@
  *      //operator overload
  *
  *      decltype(auto) operator[](int n)
- *      self& operator=(const vector<Ty>& obj)
- *      bool operator==(const vector<Ty>& obj)
- *      bool operator!=(const vector<Ty>& obj)
- *      bool operator<(const vector<Ty>& obj)
- *      bool operator>(const vector<Ty>& obj)
- *      bool operator<=(const vector<Ty>& obj)
- *      bool operator>=(const vector<Ty& obj)
+ *      self& operator=(const self& obj)
+ *      bool operator==(const coll& obj)
+ *      bool operator!=(const coll& obj)
+ *      bool operator<(const coll& obj)
+ *      bool operator>(const coll& obj)
+ *      bool operator<=(const coll& obj)
+ *      bool operator>=(const coll& obj)
  *
  *      //private function
  *
@@ -156,7 +156,7 @@ class vector
 			}
 		}
 
-		explicit vector(const vector<Ty>& obj) noexcept
+		explicit vector(const vector<Ty , alloc>& obj) noexcept
 		{
 			arr_size = obj.arr_size;
 			arr = simple_allocator(alloc , Ty)::allocate((int)arr_size);
@@ -400,7 +400,7 @@ class vector
 			return (int)arr_size - elem_count;
 		}
 
-		[[noreturn]] void swap(vector<Ty>& obj) noexcept
+		[[noreturn]] void swap(self& obj) noexcept
 		{
 			Ty* temp_ptr = arr;
 			Ty* obj_ptr = obj.arr;
@@ -477,7 +477,7 @@ class vector
 			return arr[n];
 		}
 
-		self& operator=(const vector<Ty>& obj) noexcept
+		self& operator=(const self& obj) noexcept
 		{
 			if (arr_size < obj.arr_size)
 			{
@@ -495,52 +495,59 @@ class vector
 			return *this;
 		}
 
-		_NODISCARD bool operator==(const vector<Ty>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator==(const coll& obj) const noexcept
 		{
-			if (elem_count != obj.elem_count)
+			if (elem_count != obj.size())
 				return false;
 
-			for (int n = 0; n < elem_count; ++n)
+			auto p = obj.begin();
+			for (int n = 0; n < elem_count; ++n,++p)
 			{
-				if (arr[n] != obj.arr[n])
+				if (arr[n] != *p)
 					return false;
 			}
 
 			return true;
 		}
 
-		_NODISCARD bool operator!=(const vector<Ty>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator!=(const coll& obj) const noexcept
 		{
 			return !((*this) == obj);
 		}
 
-		_NODISCARD bool operator>(const vector<Ty>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator>(const coll& obj) const noexcept
 		{
-			if (arr_size > obj.arr_size)
+			if (elem_count > obj.size())
 				return true;
 			
 			return false;
 		}
 
-		_NODISCARD bool operator<(const vector<Ty>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator<(const coll& obj) const noexcept
 		{
-			if (arr_size < obj.arr_size)
+			if (elem_count < obj.size())
 				return true;
 
 			return false;
 		}
 
-		_NODISCARD bool operator<=(const vector<Ty>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator<=(const coll& obj) const noexcept
 		{
-			if (arr_size <= obj.arr_size)
+			if (elem_count <= obj.size())
 				return true;
 
 			return false;
 		}
 
-		_NODISCARD bool operator>=(const vector<Ty>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator>=(const coll& obj) const noexcept
 		{
-			if (arr_size >= obj.arr_size)
+			if (elem_count >= obj.size())
 				return true;
 
 			return false;

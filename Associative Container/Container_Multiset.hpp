@@ -16,7 +16,7 @@
  *
  *-------------------------------README------------------------------------
  *
- * template<typename Ty>
+ * template<typename Ty,typename alloc = _default_allocator>
  * class Multiset
  * {
  *      //iterator : RB_Tree_iterator
@@ -29,7 +29,7 @@
  *      Multiset()------------------------------------initialize RB_Tree ptr.
  *      Multiset(Ty elem)-----------------------------insert elem.
  *      Multiset(const initializer_list<Ty>& list)
- *      Multiset(const Multiset<Ty>& obj)
+ *      Multiset(const Multiset<Ty,alloc>& obj)
  *
  *      //operations
  *
@@ -44,7 +44,7 @@
  *      int size()
  *      bool find(Ty elem)
  *      compare key_comp--------------------------return compare function.
- *      void swap(Multiset<Ty>& obj)
+ *      void swap(self& obj)
  *
  *
  *      //iterator
@@ -57,13 +57,13 @@
  *
  *      //operator overload
  *
- *      self& operator=(const Multiset<Ty>& obj)
- *      bool operator==(const Multiset<Ty>& obj)
- *      bool operator!=(const Multiset<Ty>& obj)
- *      bool operator>(const Multiset<Ty>& obj)
- *      bool operator<(const Multiset<Ty>& obj)
- *      bool operator>=(const Multiset<Ty>& obj)
- *      bool operator<=(const Multiset<Ty>& obj)
+ *      self& operator=(const self& obj)
+ *      bool operator==(const coll& obj)
+ *      bool operator!=(const coll& obj)
+ *      bool operator>(const coll& obj)
+ *      bool operator<(const coll& obj)
+ *      bool operator>=(const coll& obj)
+ *      bool operator<=(const coll& obj)
  * }
  * ----------------------------------------------------------------------------------------------
  */
@@ -217,7 +217,7 @@ class Multiset
 			return compare;
 		}
 
-		[[noreturn]] void swap(Multiset<Ty>& obj) noexcept
+		[[noreturn]] void swap(self& obj) noexcept
 		{
 			RB_Tree* temp_tree = tree;
 			RB_Tree* obj_tree = obj.tree;
@@ -266,11 +266,11 @@ class Multiset
 
 		//operator overload
 
-		self& operator=(const Multiset<Ty , alloc>& obj) noexcept
+		self& operator=(const self& obj) noexcept
 		{
 			clear();
 
-			Multiset<Ty , alloc>::const_iterator p = obj.cbegin();
+			typename Multiset<Ty , alloc>::const_iterator p = obj.cbegin();
 			for (; p != obj.cend(); ++p)
 			{
 				insert((*p));
@@ -279,13 +279,14 @@ class Multiset
 			return *this;
 		}
 
-		_NODISCARD bool operator==(const Multiset<Ty , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator==(const coll& obj) const noexcept
 		{
-			if (elem_count != obj.elem_count)
+			if (elem_count != obj.size())
 				return false;
 
-			Multiset<Ty , alloc>::const_iterator p1 = obj.cbegin();
-			Multiset<Ty , alloc>::const_iterator p2 = cbegin();
+			typename coll::const_iterator p1 = obj.cbegin();
+			typename Multiset<Ty , alloc>::const_iterator p2 = cbegin();
 			for (; p1 != obj.cend() , p2 != cend(); ++p1 , ++p2)
 			{
 				if ((*p1) != (*p2))
@@ -295,38 +296,43 @@ class Multiset
 			return true;
 		}
 
-		_NODISCARD bool operator!=(const Multiset<Ty , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator!=(const coll& obj) const noexcept
 		{
 			return !((*this) == obj);
 		}
 
-		_NODISCARD bool operator>(const Multiset<Ty , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator>(const coll& obj) const noexcept
 		{
-			if (elem_count > obj.elem_count)
+			if (elem_count > obj.size())
 				return true;
 
 			return false;
 		}
 
-		_NODISCARD bool operator<(const Multiset<Ty , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator<(const coll& obj) const noexcept
 		{
-			if (elem_count < obj.elem_count)
+			if (elem_count < obj.size())
 				return true;
 
 			return false;
 		}
 
-		_NODISCARD bool operator>=(const Multiset<Ty , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator>=(const coll& obj) const noexcept
 		{
-			if (elem_count >= obj.elem_count)
+			if (elem_count >= obj.size())
 				return true;
 
 			return false;
 		}
 
-		_NODISCARD bool operator<=(const Multiset<Ty , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator<=(const coll& obj) const noexcept
 		{
-			if (elem_count <= obj.elem_count)
+			if (elem_count <= obj.size())
 				return true;
 
 			return false;

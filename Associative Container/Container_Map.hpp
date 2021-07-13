@@ -16,7 +16,7 @@
  *
  *-------------------------------README------------------------------------
  *
- * template<typename key,typename value>
+ * template<typename key,typename value,typename alloc = _default_allocator>
  * class map
  * {
  *      //iterator : RB_Tree_iterator
@@ -30,7 +30,7 @@
  *      map()--------------------------------------------initialize RB_Tree ptr.
  *      map(const pair& obj)-----------------------------insert obj.
  *      map(const initializer_list<pair>& list)
- *      map(const map<key,value>& obj)
+ *      map(const map<key,value,alloc>& obj)
  *
  *      //operations
  *
@@ -47,7 +47,7 @@
  *      bool find(const pair& obj)
  *      bool find(key k)
  *      compare key_comp()---------------------------------return compare function.
- *      void swap(map<key , value>& obj)
+ *      void swap(self& obj)
  *
  *
  *      //iterator
@@ -60,13 +60,13 @@
  *
  *      //operator overload
  *
- *      self& operator=(const map<key , value>& obj)
- *      bool operator==(const map<key , value>& obj)
- *      bool operator!=(const map<key , value>& obj)
- *      bool operator>(const map<key , value>& obj)
- *      bool operator<(const map<key , value>& obj)
- *      bool operator>=(const map<key , value>& obj)
- *      bool operator<=(const map<key , value>& obj)
+ *      self& operator=(const self& obj)
+ *      bool operator==(const coll& obj)
+ *      bool operator!=(const coll& obj)
+ *      bool operator>(const coll& obj)
+ *      bool operator<(const coll& obj)
+ *      bool operator>=(const coll& obj)
+ *      bool operator<=(const coll& obj)
  * }
  * ----------------------------------------------------------------------------------------------
  */
@@ -243,7 +243,7 @@ class map
 			return compare;
 		}
 
-		[[noreturn]] void swap(map<key , value , alloc>& obj) noexcept
+		[[noreturn]] void swap(self& obj) noexcept
 		{
 			RB_Tree* temp_tree = tree;
 			RB_Tree* obj_tree = obj.tree;
@@ -292,11 +292,11 @@ class map
 
 		//operator overload
 
-		self& operator=(const map<key , value , alloc>& obj) noexcept
+		self& operator=(const self& obj) noexcept
 		{
 			clear();
 
-			map<key , value , alloc>::const_iterator p = obj.cbegin();
+			typename map<key , value , alloc>::const_iterator p = obj.cbegin();
 			for (; p != obj.cend(); ++p)
 			{
 				insert((*p));
@@ -305,13 +305,14 @@ class map
 			return *this;
 		}
 
-		_NODISCARD bool operator==(const map<key , value , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator==(const coll& obj) const noexcept
 		{
-			if (elem_count != obj.elem_count)
+			if (elem_count != obj.size())
 				return false;
 
-			map<key , value , alloc>::const_iterator p1 = obj.cbegin();
-			map<key , value , alloc>::const_iterator p2 = cbegin();
+			typename coll::const_iterator p1 = obj.cbegin();
+			typename map<key , value , alloc>::const_iterator p2 = cbegin();
 			for (; p1 != obj.cend() , p2 != cend(); ++p1 , ++p2)
 			{
 				if ((*p1) != (*p2))
@@ -321,38 +322,43 @@ class map
 			return true;
 		}
 
-		_NODISCARD bool operator!=(const map<key , value , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator!=(const coll& obj) const noexcept
 		{
 			return !((*this) == obj);
 		}
 
-		_NODISCARD bool operator>(const map<key , value , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator>(const coll& obj) const noexcept
 		{
-			if (elem_count > obj.elem_count)
+			if (elem_count > obj.size())
 				return true;
 
 			return false;
 		}
 
-		_NODISCARD bool operator<(const map<key , value , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator<(const coll& obj) const noexcept
 		{
-			if (elem_count < obj.elem_count)
+			if (elem_count < obj.size())
 				return true;
 
 			return false;
 		}
 
-		_NODISCARD bool operator>=(const map<key , value , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator>=(const coll& obj) const noexcept
 		{
-			if (elem_count >= obj.elem_count)
+			if (elem_count >= obj.size())
 				return true;
 
 			return false;
 		}
 
-		_NODISCARD bool operator<=(const map<key , value , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator<=(const coll& obj) const noexcept
 		{
-			if (elem_count <= obj.elem_count)
+			if (elem_count <= obj.size())
 				return true;
 
 			return false;

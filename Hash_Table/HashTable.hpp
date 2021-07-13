@@ -16,7 +16,8 @@
  *
  *-------------------------------README------------------------------------
  *
- * template<typename Ty,typename Compare_Class = Unique_Compare,typename hash_function<Ty>>
+ * template<typename Ty,typename Compare_Class = Unique_Compare,typename hash_function<Ty>,
+			typename alloc = _default_allocator>
  * class hash_table
  * {
  *      //bucket node
@@ -83,11 +84,11 @@
  *      hash_node<Ty>*& operator[](size_t key)
  *      self& operator=(const self& obj)
  *      bool operator==(const self& obj)
- *      bool operator!=(const self& obj)
- *      bool operator>(const self& obj)
- *      bool operator<(const self& obj)
- *      bool operator>=(const self& obj)
- *      bool operator<=(const self& obj)
+ *      bool operator!=(const coll& obj)
+ *      bool operator>(const coll& obj)
+ *      bool operator<(const coll& obj)
+ *      bool operator>=(const coll& obj)
+ *      bool operator<=(const coll& obj)
  *
  *      //private functions
  *
@@ -521,38 +522,43 @@ class hash_table
 			return true;
 		}
 
-		_NODISCARD bool operator!=(const self& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator!=(const coll& obj) const noexcept
 		{
 			return !((*this) == obj);
 		}
 
-		_NODISCARD bool operator>(const self& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator>(const coll& obj) const noexcept
 		{
-			if (elem_count > obj.elem_count)
+			if (elem_count > obj.size())
 				return true;
 
 			return false;
 		}
 
-		_NODISCARD bool operator<(const self& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator<(const coll& obj) const noexcept
 		{
-			if (elem_count < obj.elem_count)
+			if (elem_count < obj.size())
 				return true;
 
 			return false;
 		}
 
-		_NODISCARD bool operator>=(const self& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator>=(const coll& obj) const noexcept
 		{
-			if (elem_count >= obj.elem_count)
+			if (elem_count >= obj.size())
 				return true;
 
 			return false;
 		}
 		 
-		_NODISCARD bool operator<=(const self& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator<=(const coll& obj) const noexcept
 		{
-			if (elem_count <= obj.elem_count)
+			if (elem_count <= obj.size())
 				return true;
 
 			return false;

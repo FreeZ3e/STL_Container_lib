@@ -110,9 +110,10 @@ namespace lib_algo
 	_NODISCARD bool equal(const t& obj) noexcept
 	{
 		auto p = obj.cbegin();
+		auto p_end = obj.cend();
 		auto elem = *p;
 
-		for (; p != obj.cend(); ++p)
+		for (; p != p_end; ++p)
 		{
 			if (*p != elem)
 				return false;
@@ -129,8 +130,10 @@ namespace lib_algo
 
 		auto p1 = obj1.cbegin();
 		auto p2 = obj2.cbegin();
+		auto p1_end = obj1.cend();
+		auto p2_end = obj2.cend();
 
-		for (; p1 != obj1.cend() , p2 != obj2.cend(); ++p1 , ++p2)
+		for (; p1 != p1_end , p2 != p2_end; ++p1 , ++p2)
 		{
 			if (*(p1) != *(p2))
 				return false;
@@ -162,7 +165,9 @@ namespace lib_algo
 	inline void fill(t& obj,any elem) noexcept
 	{
 		auto p = obj.begin();
-		for (; p != obj.end(); ++p)
+		auto p_end = obj.end();
+
+		for (; p != p_end; ++p)
 		{
 			*p = elem;
 		}
@@ -184,8 +189,8 @@ namespace lib_algo
 
 	//sort----------------------------------------------------------
 	//sort call insert_sort , quick_sort & heap_sort
-	//when sort range less than threshold  -just call insert_sort
-	//when depth_limit == 0 - return to heap_sort
+	//when sort range less than threshold  ----just call insert_sort
+	//when depth_limit == 0 ---- return to heap_sort
 
 	//default sort compare function
 	template<typename t>
@@ -194,7 +199,7 @@ namespace lib_algo
 		return elem1 < elem2 ? elem1 : elem2;
 	}
 
-
+	
 
 	template<typename t>
 	void _PercolateDown(t p_begin , int index , int size) noexcept
@@ -522,7 +527,9 @@ namespace lib_algo
 	_NODISCARD inline decltype(auto) find(const t& obj,any elem) noexcept
 	{	
 		auto p = obj.cbegin();
-		for (;p != obj.cend();++p)
+		auto p_end = obj.cend();
+
+		for (;p != p_end;++p)
 		{
 			if (*p == elem)
 				return p;
@@ -555,7 +562,9 @@ namespace lib_algo
 	_NODISCARD inline decltype(auto) find_if(const t& obj , bool(*pred)(typename t::TypeValue)) noexcept
 	{
 		auto p = obj.cbegin();
-		for (; p != obj.cend(); ++p)
+		auto p_end = obj.cend();
+
+		for (; p != p_end; ++p)
 		{
 			if (pred(*p) == true)
 				return p;
@@ -590,7 +599,9 @@ namespace lib_algo
 		int count = 0;
 
 		auto p = obj.cbegin();
-		for (; p != obj.cend(); ++p)
+		auto p_end = obj.cend();
+
+		for (; p != p_end; ++p)
 		{
 			if (*p == elem)
 				count++;
@@ -627,7 +638,9 @@ namespace lib_algo
 		int count = 0;
 
 		auto p = obj.cbegin();
-		for (; p != obj.cend(); ++p)
+		auto p_end = obj.cend();
+
+		for (; p != p_end; ++p)
 		{
 			if (function(*p) == true)
 				++count;
@@ -662,7 +675,9 @@ namespace lib_algo
 	_NODISCARD inline bool search(const t& obj , any elem) noexcept
 	{
 		auto p = obj.cbegin();
-		for (; p != obj.cend(); ++p)
+		auto p_end = obj.cend();
+
+		for (; p != p_end; ++p)
 		{
 			if (*p == elem)
 				return true;
@@ -696,27 +711,22 @@ namespace lib_algo
 		if (n <= 0)
 			return obj.cbegin();
 
-		auto first = find(obj,elem);
+		auto p = find(obj , elem);
+		auto p_end = obj.cend();
+		int count = 0;
 
-		while(first != obj.cend())
+		while (p != p_end)
 		{
-			int count = n - 1;
-			auto i = first;
-			++i;
+			if ((*p) == elem)
+				count++;
+			
+			if (count == n)
+				return find(obj , elem);
 
-			while (i != obj.cend() && count != 0 && *i == elem)
-			{
-				++i;
-				--count;
-			}
-
-			if (count == 0)
-				return first;
-			else
-				first = find(i , obj.cend() , elem);
+			++p;
 		}
 
-		return obj.cend() - 1;
+		return p_end - 1;
 	}
 
 	template<typename t,typename arg>
@@ -725,24 +735,18 @@ namespace lib_algo
 		if (n <= 0)
 			return p_begin;
 
-		auto first = find(p_begin , p_end , elem);
+		auto p = find(p_begin , p_end , elem);
+		int count = 0;
 
-		while (p_begin != p_end)
+		while (p != p_end)
 		{
-			int count = n - 1;
-			auto i = first;
-			++i;
+			if ((*p) == elem)
+				count++;
 
-			while (i != p_end && count != 0 && *i == elem)
-			{
-				++i;
-				--count;
-			}
+			if (count == n)
+				return find(p_begin , p_end , elem);
 
-			if (count == 0)
-				return first;
-			else
-				first = find(i , p_end , elem);
+			++p;
 		}
 
 		return p_end - 1;
@@ -881,9 +885,10 @@ namespace lib_algo
 	_NODISCARD inline decltype(auto) min_element(const t& obj) noexcept
 	{
 		auto p = obj.cbegin();
+		auto p_end = obj.cend();
 		auto res = *(obj.cbegin());
 
-		for (; p != obj.cend(); ++p)
+		for (; p != p_end; ++p)
 		{
 			if ((*p) < res)
 			{
@@ -920,9 +925,10 @@ namespace lib_algo
 	_NODISCARD inline decltype(auto) max_element(const t& obj) noexcept
 	{
 		auto p = obj.cbegin();
+		auto p_end = obj.cend();
 		auto res = *(obj.cbegin());
 
-		for (; p != obj.cend(); ++p)
+		for (; p != p_end; ++p)
 		{
 			if ((*p) > res)
 			{
@@ -1102,8 +1108,9 @@ namespace lib_algo
 	inline void replace(t& obj , any elem) noexcept
 	{
 		auto p = obj.begin();
+		auto p_end = obj.end();
 
-		for (; p != obj.end(); ++p)
+		for (; p != p_end; ++p)
 		{
 			*p = elem;
 		}
@@ -1164,8 +1171,9 @@ namespace lib_algo
 	_NODISCARD auto mismatch_element(const t& obj) noexcept
 	{
 		auto p = obj.cbegin();
+		auto p_end = obj.cend();
 
-		for (; p != obj.cend();)
+		for (; p != p_end;)
 		{
 			auto cur = (*p);
 			auto ptr = p;
@@ -1207,8 +1215,10 @@ namespace lib_algo
 	{																	//return less range container's iterator
 		auto p1 = obj1.cbegin();
 		auto p2 = obj2.cbegin();
+		auto p1_end = obj1.cend();
+		auto p2_end = obj2.cend();
 
-		for (; p1 != obj1.cend() , p2 != obj2.cend(); ++p1 , ++p2)
+		for (; p1 != p1_end , p2 != p2_end; ++p1 , ++p2)
 		{
 			if (*p1 != *p2)
 				return p2;
@@ -1320,8 +1330,9 @@ namespace lib_algo
 	_NODISCARD auto adjacent_find(const t& obj) noexcept
 	{
 		auto p = obj.cbegin();
+		auto p_end = obj.cend();
 
-		for (; p != obj.cend();)
+		for (; p != p_end;)
 		{
 			auto cur = *p;
 			auto next = *(++p);
@@ -1363,8 +1374,9 @@ namespace lib_algo
 			return false;
 
 		auto p = obj2.cbegin();
+		auto p_end = obj2.cend();
 
-		for (; p != obj2.cend(); ++p)
+		for (; p != p_end; ++p)
 		{
 			if (search(obj1 , *p) == false)
 			{
@@ -1384,8 +1396,9 @@ namespace lib_algo
 	inline void for_each(t& obj , void(*function)(typename t::TypeValue)) noexcept
 	{
 		auto p = obj.begin();
+		auto p_end = obj.end();
 
-		for (; p != obj.end(); ++p)
+		for (; p != p_end; ++p)
 		{
 			function(*p);
 		}
@@ -1395,8 +1408,9 @@ namespace lib_algo
 	inline void for_each(t& obj , typename t::TypeValue(*function)(typename t::TypeValue)) noexcept
 	{
 		auto p = obj.begin();
+		auto p_end = obj.end();
 
-		for (; p != obj.end(); ++p)
+		for (; p != p_end; ++p)
 		{
 			*p = function(*p);
 		}
@@ -1433,7 +1447,9 @@ namespace lib_algo
 	inline void remove_if(t& obj , bool(*function)(typename t::TypeValue)) noexcept
 	{
 		auto p = obj.begin();
-		for (; p != obj.end();)
+		auto p_end = obj.end();
+
+		for (; p != p_end;)
 		{
 			if (function(*p) == true)
 				p = obj.erase(p);
@@ -1453,8 +1469,10 @@ namespace lib_algo
 	{
 		auto p1 = obj1.cbegin();
 		auto p2 = obj2.cbegin();
-		
-		while (p1 != obj1.cend() && p2 != obj2.cend())
+		auto p1_end = obj1.cend();
+		auto p2_end = obj2.cend();
+
+		while (p1 != p1_end && p2 != p2_end)
 		{
 			if (*p1 < *p2)
 			{
@@ -1468,17 +1486,17 @@ namespace lib_algo
 			}
 		}
 
-		if (p1 != obj1.cend())
+		if (p1 != p1_end)
 		{
-			while (p1 != obj1.cend())
+			while (p1 != p1_end)
 			{
 				result.insert(*p1);
 				++p1;
 			}
 		}
-		if (p2 != obj2.cend())
+		if (p2 != p2_end)
 		{
-			while (p2 != obj2.cend())
+			while (p2 != p2_end)
 			{
 				result.insert(*p2);
 				++p2;

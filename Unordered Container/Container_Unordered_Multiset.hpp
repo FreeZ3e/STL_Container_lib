@@ -16,7 +16,7 @@
  *
  *-------------------------------README------------------------------------
  *
- * template<typename Ty>
+ * template<typename Ty,typename alloc = _default_allocator>
  * class Unordered_Multiset
  * {
  *      //iterator : hash_table_iterator
@@ -28,7 +28,7 @@
  *
  *      Unordered_Multiset(size_t size)--------------------initialize with size.
  *      Unordered_Multiset(const initializer_list<Ty>& list)
- *      Unordered_Multiset(const Unordered_Multiset<Ty>& obj)
+ *      Unordered_Multiset(const Unordered_Multiset<Ty,alloc>& obj)
  *
  *      //operations
  *
@@ -44,7 +44,7 @@
  *      int count(Ty elem)
  *      bool find(Ty elem)
  *      compare key_comp()
- *      void swap(Unordered_Multiset<Ty>& obj)
+ *      void swap(self& obj)
  *
  *
  *      //iterator
@@ -57,13 +57,13 @@
  *
  *      //operator overload
  *
- *      self& operator=(const Unordered_Multiset<Ty>& obj)
- *      bool operator==(const Unordered_Multiset<Ty>& obj)
- *      bool operator!=(const Unordered_Multiset<Ty>& obj)
- *      bool operator>(const Unordered_Multiset<Ty>& obj)
- *      bool operator<(const Unordered_Multiset<Ty>& obj)
- *      bool operator>=(const Unordered_Multiset<Ty>& obj)
- *      bool operator<=(const Unordered_Multiset<Ty>& obj)
+ *      self& operator=(const self& obj)
+ *      bool operator==(const coll& obj)
+ *      bool operator!=(const coll& obj)
+ *      bool operator>(const coll& obj)
+ *      bool operator<(const coll& obj)
+ *      bool operator>=(const coll& obj)
+ *      bool operator<=(const coll& obj)
  * }
  * ----------------------------------------------------------------------------------------------
  */
@@ -204,7 +204,7 @@ class Unordered_Multiset
 			return compare;
 		}
 
-		[[noreturn]] void swap(Unordered_Multiset<Ty , alloc>& obj) noexcept
+		[[noreturn]] void swap(self& obj) noexcept
 		{
 			hash_table<Ty , alloc , Equal_Compare>* temp_ptr = ptr;
 			hash_table<Ty , alloc , Equal_Compare>* obj_ptr = obj.ptr;
@@ -249,7 +249,7 @@ class Unordered_Multiset
 
 		//operator overload
 
-		self& operator=(const Unordered_Multiset<Ty , alloc>& obj) noexcept
+		self& operator=(const self& obj) noexcept
 		{
 			clear();
 
@@ -262,12 +262,13 @@ class Unordered_Multiset
 			return *this;
 		}
 
-		_NODISCARD bool operator==(const Unordered_Multiset<Ty , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator==(const coll& obj) const noexcept
 		{
 			if (size() != obj.size() || buckets_count() != obj.buckets_count())
 				return false;
 
-			typename Unordered_Multiset<Ty , alloc>::const_iterator p1 = obj.cbegin();
+			typename coll::const_iterator p1 = obj.cbegin();
 			typename Unordered_Multiset<Ty , alloc>::const_iterator p2 = cbegin();
 			for (; p1 != obj.cend() , p2 != cend(); ++p1 , ++p2)
 			{
@@ -278,12 +279,14 @@ class Unordered_Multiset
 			return true;
 		}
 
-		_NODISCARD bool operator!=(const Unordered_Multiset<Ty , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator!=(const coll& obj) const noexcept
 		{
 			return !((*this) == obj);
 		}
 
-		_NODISCARD bool operator>(const Unordered_Multiset<Ty , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator>(const coll& obj) const noexcept
 		{
 			if (size() > obj.size())
 				return true;
@@ -291,7 +294,8 @@ class Unordered_Multiset
 			return false;
 		}
 
-		_NODISCARD bool operator<(const Unordered_Multiset<Ty , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator<(const coll& obj) const noexcept
 		{
 			if (size() < obj.size())
 				return true;
@@ -299,7 +303,8 @@ class Unordered_Multiset
 			return false;
 		}
 
-		_NODISCARD bool operator>=(const Unordered_Multiset<Ty , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator>=(const coll& obj) const noexcept
 		{
 			if (size() >= obj.size())
 				return true;
@@ -307,7 +312,8 @@ class Unordered_Multiset
 			return false;
 		}
 
-		_NODISCARD bool operator<=(const Unordered_Multiset<Ty , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator<=(const coll& obj) const noexcept
 		{
 			if (size() <= obj.size())
 				return true;

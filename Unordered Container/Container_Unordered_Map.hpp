@@ -16,7 +16,7 @@
  *
  *-------------------------------README------------------------------------
  *
- * template<typename key,typename value>
+ * template<typename key,typename value,typename alloc = _default_alloc>
  * class Unordered_Map
  * {
  *      //iterator : hash_table_iterator
@@ -29,7 +29,7 @@
  *
  *      Unordered_Map(size_t size)--------------------initialize with size.
  *      Unordered_Map(const initializer_list<pair>& list)
- *      Unordered_Map(const Unordered_Map<key,value>& obj)
+ *      Unordered_Map(const Unordered_Map<key,value,alloc>& obj)
  *
  *      //operations
  *
@@ -49,7 +49,7 @@
  *      bool find(const pair& obj)
  *      bool find(key k)--------------------------------------if node with k exist,return true.
  *      compare key_comp()
- *      void swap(Unordered_Map<key,value>& obj)
+ *      void swap(self& obj)
  *
  *
  *      //iterator
@@ -62,13 +62,13 @@
  *
  *      //operator overload
  *
- *      self& operator=(const Unordered_Map<key,value>& obj)
- *      bool operator==(const Unordered_Map<key,value>& obj)
- *      bool operator!=(const Unordered_Map<key,value>& obj)
- *      bool operator>(const Unordered_Map<key,value>& obj)
- *      bool operator<(const Unordered_Map<key,value>& obj)
- *      bool operator>=(const Unordered_Map<key,value>& obj)
- *      bool operator<=(const Unordered_Map<key,value>& obj)
+ *      self& operator=(const self& obj)
+ *      bool operator==(const coll& obj)
+ *      bool operator!=(const coll& obj)
+ *      bool operator>(const coll& obj)
+ *      bool operator<(const coll& obj)
+ *      bool operator>=(const coll& obj)
+ *      bool operator<=(const coll& obj)
  * }
  * ----------------------------------------------------------------------------------------------
  */
@@ -242,7 +242,7 @@ class Unordered_Map
 			return compare;
 		}
 
-		[[noreturn]] void swap(Unordered_Map<key , value , alloc>& obj) noexcept
+		[[noreturn]] void swap(self& obj) noexcept
 		{
 			hash_table* temp_ptr = ptr;
 			hash_table* obj_ptr = obj.ptr;
@@ -298,7 +298,7 @@ class Unordered_Map
 			return ptr->operator[](n)->val.value;
 		}
 
-		self& operator=(const Unordered_Map<key,value , alloc>& obj) noexcept
+		self& operator=(const self& obj) noexcept
 		{
 			clear();
 
@@ -311,12 +311,13 @@ class Unordered_Map
 			return *this;
 		}
 
-		_NODISCARD bool operator==(const Unordered_Map<key,value , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator==(const coll& obj) const noexcept
 		{
 			if (size() != obj.size() || buckets_count() != obj.buckets_count())
 				return false;
 
-			typename Unordered_Map<key,value , alloc>::const_iterator p1 = obj.cbegin();
+			typename coll::const_iterator p1 = obj.cbegin();
 			typename Unordered_Map<key,value , alloc>::const_iterator p2 = cbegin();
 			for (; p1 != obj.cend() , p2 != cend(); ++p1 , ++p2)
 			{
@@ -327,12 +328,14 @@ class Unordered_Map
 			return true;
 		}
 
-		_NODISCARD bool operator!=(const Unordered_Map<key,value , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator!=(const coll& obj) const noexcept
 		{
 			return !((*this) == obj);
 		}
 
-		_NODISCARD bool operator>(const Unordered_Map<key,value , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator>(const coll& obj) const noexcept
 		{
 			if (size() > obj.size())
 				return true;
@@ -340,7 +343,8 @@ class Unordered_Map
 			return false;
 		}
 
-		_NODISCARD bool operator<(const Unordered_Map<key,value , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator<(const coll& obj) const noexcept
 		{
 			if (size() < obj.size())
 				return true;
@@ -348,7 +352,8 @@ class Unordered_Map
 			return false;
 		}
 
-		_NODISCARD bool operator>=(const Unordered_Map<key,value , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator>=(const coll& obj) const noexcept
 		{
 			if (size() >= obj.size())
 				return true;
@@ -356,7 +361,8 @@ class Unordered_Map
 			return false;
 		}
 
-		_NODISCARD bool operator<=(const Unordered_Map<key,value , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator<=(const coll& obj) const noexcept
 		{
 			if (size() <= obj.size())
 				return true;

@@ -16,7 +16,7 @@
  *
  *-------------------------------README------------------------------------
  *
- * template<typename Ty,int default_size = 0>
+ * template<typename Ty,int default_size = 0,typename _alloc = _default_allocator>
  * class list
  * {
  *		//iterator : List_iterator
@@ -40,7 +40,7 @@
  *      list(size_t size)---------------------------------initialize with size.
  *      list(size_t size,Ty elem)-------------------------initialize with size and fill container with elem.
  *      list(const initializer_list<Ty>& list)
- *      list(const list<Ty,default_size>& obj)
+ *      list(const list<Ty,default_size,_alloc>& obj)
  *
  *      //operations
  *
@@ -63,7 +63,7 @@
  *      int size()
  *      size_t max_size()
  *      void resize(size_t size)
- *      void swap(list<Ty,default_size>& obj)
+ *      void swap(self& obj)
  *
  *      //iterator
  *
@@ -75,12 +75,12 @@
  *      //operator overload
  *
  *      Ty operator[](int n) = delete
- *      bool operator==(const list<Ty,default_size>& obj)
- *      bool operator!=(const list<Ty,default_size>& obj)
- *      bool operator>(const list<Ty,default_size>& obj)
- *      bool operator<(const list<Ty,default_size>& obj)
- *      bool operator>=(const list<Ty,default_size>& obj)
- *      bool operator<=(const list<Ty,default_size>& obj)
+ *      bool operator==(const coll& obj)
+ *      bool operator!=(const coll& obj)
+ *      bool operator>(const coll& obj)
+ *      bool operator<(const coll& obj)
+ *      bool operator>=(const coll& obj)
+ *      bool operator<=(const coll& obj)
  *
  *      //private function
  *
@@ -198,7 +198,7 @@ class list
 			}
 		}
 
-		explicit list(const list<Ty , default_size>& obj) noexcept
+		explicit list(const list<Ty , default_size , _alloc>& obj) noexcept
 		{
 			list_size = obj.list_size;
 			alloc(list_size);
@@ -492,7 +492,7 @@ class list
 			list_size = size;
 		}
 
-		[[noreturn]] void swap(list<Ty , default_size>& obj) noexcept
+		[[noreturn]] void swap(self& obj) noexcept
 		{
 			node* temp_head = Head;
 			node* temp_CurPtr = CurPtr;
@@ -551,9 +551,10 @@ class list
 
 		Ty operator[](int n) = delete;
 
-		_NODISCARD bool operator==(const list<Ty , default_size>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator==(const coll& obj) const noexcept
 		{
-			if (elem_count != obj.elem_count)
+			if (elem_count != obj.size())
 				return false;
 
 			auto ptr = Head;
@@ -568,38 +569,43 @@ class list
 			return true;
 		}
 
-		_NODISCARD bool operator!=(const list<Ty , default_size>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator!=(const coll& obj) const noexcept
 		{
 			return !((*this) == obj);
 		}
 
-		_NODISCARD bool operator>(const list<Ty , default_size>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator>(const coll& obj) const noexcept
 		{
-			if (list_size > obj.list_size)
+			if (elem_count > obj.size())
 				return true;
 
 			return false;
 		}
 
-		_NODISCARD bool operator<(const list<Ty , default_size>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator<(const coll& obj) const noexcept
 		{
-			if (list_size < obj.list_size)
+			if (elem_count < obj.size())
 				return true;
 
 			return false;
 		}
 
-		_NODISCARD bool operator>=(const list<Ty , default_size>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator>=(const coll& obj) const noexcept
 		{
-			if (list_size >= obj.list_size)
+			if (elem_count >= obj.size())
 				return true;
 
 			return false;
 		}
-
-		_NODISCARD bool operator<=(const list<Ty , default_size>& obj) const noexcept
+		
+		template<typename coll>
+		_NODISCARD bool operator<=(const coll& obj) const noexcept
 		{
-			if (list_size <= obj.list_size)
+			if (elem_count <= obj.size())
 				return true;
 
 			return false;

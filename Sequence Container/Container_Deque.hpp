@@ -16,7 +16,7 @@
  *
  *-------------------------------README------------------------------------
  *
- * template<typename Ty>
+ * template<typename Ty,_alloc = _default_allocator>
  * class deque
  * {
  *		//iterator : deque_iterator
@@ -28,7 +28,7 @@
  *      deque(size_t size)-------------------------------initialized with size.
  *      deque(size_t size,Ty elem)-----------------------initializer with size and fill with elem.
  *      deque(const initializer_list<Ty>& list)
- *      deque(const deque<Ty>& obj)
+ *      deque(const deque<Ty,_alloc>& obj)
  *
  *      //operations
  *
@@ -52,7 +52,7 @@
  *		size_t bodys()
  *      size_t max_size()--------------------------------return size of container.
  *		bool empty()-------------------------------------return true if container is empty.
- *      void swap(deque<Ty>& obj)------------------------make swap operation.
+ *      void swap(self& obj)------------------------make swap operation.
  *
  *      //iterator
  *
@@ -64,13 +64,13 @@
  *      //operator overload
  *
  *      decltype(auto) operator[](int n)
- *      self& operator=(const deque<Ty>& obj)
- *      bool operator==(const deque<Ty>& obj)
- *      bool operator!=(const deque<Ty>& obj)
- *      bool operator>(const deque<Ty>& obj)
- *      bool operator<(const deque<Ty>& obj)
- *      bool operator>=(const deque<Ty>& obj)
- *      bool operator<=(const deque<Ty>& obj)
+ *      self& operator=(const self& obj)
+ *      bool operator==(const coll& obj)
+ *      bool operator!=(const coll& obj)
+ *      bool operator>(const coll& obj)
+ *      bool operator<(const coll& obj)
+ *      bool operator>=(const coll& obj)
+ *      bool operator<=(const coll& obj)
  *
  *      //private functions
  *
@@ -177,7 +177,7 @@ class deque
 			last_insert = (int)body_size;
 		}
 
-		explicit deque(const deque<Ty>& obj) noexcept
+		explicit deque(const deque<Ty , _alloc>& obj) noexcept
 		{
 			elem_count = obj.elem_count;
 			buffer_distance = obj.buffer_distance;
@@ -519,7 +519,7 @@ class deque
 			return (elem_count == 0);
 		}
 
-		[[noreturn]] void swap(deque<Ty>& obj) noexcept
+		[[noreturn]] void swap(self& obj) noexcept
 		{
 			Ty** temp_arr = map_ptr;
 			Ty** obj_arr = obj.map_ptr;
@@ -635,7 +635,7 @@ class deque
 			return map_ptr[n];
 		}
 
-		self& operator=(const deque<Ty>& obj) noexcept
+		self& operator=(const self& obj) noexcept
 		{
 			clear();
 
@@ -648,9 +648,10 @@ class deque
 			return *this;
 		}
 
-		_NODISCARD bool operator==(const deque<Ty>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator==(const coll& obj) const noexcept
 		{
-			if (elem_count != obj.elem_count)
+			if (elem_count != obj.size())
 				return false;
 
 			auto p1 = cbegin();
@@ -665,29 +666,34 @@ class deque
 			return true;
 		}
 
-		_NODISCARD bool operator!=(const deque<Ty>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator!=(const coll& obj) const noexcept
 		{
 			return !((*this) == obj);
 		}
 
-		_NODISCARD bool operator>(const deque<Ty>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator>(const coll& obj) const noexcept
 		{
-			return (max_size() > obj.max_size());
+			return (elem_count > obj.size());
 		}
 
-		_NODISCARD bool operator>=(const deque<Ty>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator>=(const coll& obj) const noexcept
 		{
-			return (max_size() >= obj.max_size());
+			return (elem_count >= obj.size());
 		}
 
-		_NODISCARD bool operator<(const deque<Ty>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator<(const coll& obj) const noexcept
 		{
-			return (max_size() < obj.max_size());
+			return (elem_count < obj.size());
 		}
 
-		_NODISCARD bool operator<=(const deque<Ty>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator<=(const coll& obj) const noexcept
 		{
-			return (max_size() <= obj.max_size());
+			return (elem_count <= obj.size());
 		}
 
 	private:

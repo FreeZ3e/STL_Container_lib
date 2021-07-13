@@ -16,7 +16,7 @@
  *
  *-------------------------------README------------------------------------
  *
- * template<typename Ty>
+ * template<typename Ty,typename alloc = _default_allocator>
  * class set
  * {
  *      //iterator : RB_Tree_iterator
@@ -29,7 +29,7 @@
  *      set()------------------------------------initialize RB_Tree ptr.
  *      set(Ty elem)-----------------------------insert elem.
  *      set(const initializer_list<Ty>& list)
- *      set(const set<Ty>& obj)
+ *      set(const set<Ty,alloc>& obj)
  *
  *      //operations
  *
@@ -44,7 +44,7 @@
  *      int size()
  *      bool find(Ty elem)
  *      compare key_comp--------------------------return compare function.
- *      void swap(set<Ty>& obj)
+ *      void swap(self& obj)
  *
  *
  *      //iterator
@@ -57,13 +57,13 @@
  *
  *      //operator overload
  *
- *      self& operator=(const set<Ty>& obj)
- *      bool operator==(const set<Ty>& obj)
- *      bool operator!=(const set<Ty>& obj)
- *      bool operator>(const set<Ty>& obj)
- *      bool operator<(const set<Ty>& obj)
- *      bool operator>=(const set<Ty>& obj)
- *      bool operator<=(const set<Ty>& obj)
+ *      self& operator=(const self& obj)
+ *      bool operator==(const coll& obj)
+ *      bool operator!=(const coll& obj)
+ *      bool operator>(const coll& obj)
+ *      bool operator<(const coll& obj)
+ *      bool operator>=(const coll& obj)
+ *      bool operator<=(const coll& obj)
  * }
  * ----------------------------------------------------------------------------------------------
  */
@@ -215,7 +215,7 @@ class set
 			return compare;
 		}
 
-		[[noreturn]] void swap(set<Ty , alloc>& obj) noexcept
+		[[noreturn]] void swap(self& obj) noexcept
 		{
 			RB_Tree<Ty , Unique_Compare , alloc>* temp_tree = tree;
 			RB_Tree<Ty , Unique_Compare , alloc>* obj_tree = obj.tree;
@@ -264,11 +264,11 @@ class set
 
 		//operator overload
 
-		self& operator=(const set<Ty , alloc>& obj) noexcept
+		self& operator=(const self& obj) noexcept
 		{
 			clear();
 
-			set<Ty , alloc>::const_iterator p = obj.cbegin();
+			typename set<Ty , alloc>::const_iterator p = obj.cbegin();
 			for (; p != obj.cend(); ++p)
 			{
 				insert((*p));
@@ -277,13 +277,14 @@ class set
 			return *this;
 		}
 
-		_NODISCARD bool operator==(const set<Ty , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator==(const coll& obj) const noexcept
 		{
-			if (elem_count != obj.elem_count)
+			if (elem_count != obj.size())
 				return false;
 
-			set<Ty , alloc>::const_iterator p1 = obj.cbegin();
-			set<Ty , alloc>::const_iterator p2 = cbegin();
+			typename coll::const_iterator p1 = obj.cbegin();
+			typename set<Ty , alloc>::const_iterator p2 = cbegin();
 			for (; p1 != obj.cend() , p2 != cend(); ++p1 , ++p2)
 			{
 				if ((*p1) != (*p2))
@@ -293,38 +294,43 @@ class set
 			return true;
 		}
 
-		_NODISCARD bool operator!=(const set<Ty , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator!=(const coll& obj) const noexcept
 		{
 			return !((*this) == obj);
 		}
 
-		_NODISCARD bool operator>(const set<Ty , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator>(const coll& obj) const noexcept
 		{
-			if (elem_count > obj.elem_count)
+			if (elem_count > obj.size())
 				return true;
 
 			return false;
 		}
 
-		_NODISCARD bool operator<(const set<Ty , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator<(const coll& obj) const noexcept
 		{
-			if (elem_count < obj.elem_count)
+			if (elem_count < obj.size())
 				return true;
 
 			return false;
 		}
 
-		_NODISCARD bool operator>=(const set<Ty , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator>=(const coll& obj) const noexcept
 		{
-			if (elem_count >= obj.elem_count)
+			if (elem_count >= obj.size())
 				return true;
 
 			return false;
 		}
 
-		_NODISCARD bool operator<=(const set<Ty , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator<=(const coll& obj) const noexcept
 		{
-			if (elem_count <= obj.elem_count)
+			if (elem_count <= obj.size())
 				return true;
 
 			return false;

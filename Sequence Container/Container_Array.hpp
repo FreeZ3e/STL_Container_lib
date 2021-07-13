@@ -16,7 +16,7 @@
  *
  *-------------------------------README------------------------------------
  *
- * template<typename Ty,size_t _size = 10>
+ * template<typename Ty,size_t _size = 10,alloc = _default_allocator>
  * class array
  * {
  *		//iterator : random_iterator
@@ -25,7 +25,7 @@
  *      //ctor
  *
  *      array(const initializer_list<Ty>& list)
- *      array(const array<Ty,_size>& obj)
+ *      array(const array<Ty,_size,alloc>& obj)
  *      array(Ty num)--------------------------------initialized with num.
  *      array()
  *
@@ -38,7 +38,7 @@
  *      Ty back()------------------------------------return last elem of array without check.
  *      Ty front()-----------------------------------return first elem of array without check.
  *      void fill(Ty elem)---------------------------fill array with elem.
- *      void swap(array<Ty,_size>& obj)---------------make swap operation.
+ *      void swap(self& obj)---------------make swap operation.
  *
  *      //iterator
  *
@@ -50,13 +50,13 @@
  *      //operator overload
  *
  *      decltype(auto) operator[](int n)
- *      self& operator=(const array<Ty,_size>& obj)
- *      bool operator==(const array<Ty,_size>& obj)
- *      bool operator!=(const array<Ty,_size>& obj)
- *      bool operator>(const array<Ty,_size>& obj)
- *      bool operator<(const array<Ty,_size>& obj)
- *      bool operator>=(const array<Ty,_size>& obj)
- *      bool operator<=(const array<Ty,_size>& obj)
+ *      self& operator=(const self& obj)
+ *      bool operator==(const coll& obj)
+ *      bool operator!=(const coll& obj)
+ *      bool operator>(const coll& obj)
+ *      bool operator<(const coll& obj)
+ *      bool operator>=(const coll& obj)
+ *      bool operator<=(const coll& obj)
  * }
  * ----------------------------------------------------------------------------------------------
 */
@@ -122,7 +122,7 @@ class array
 			}
 		}
 
-		explicit array(const array<Ty , _size>& obj) noexcept
+		explicit array(const array<Ty , _size , alloc>& obj) noexcept
 		{
 			for (int i = 0; i < obj.elem_count; ++i)
 			{
@@ -211,7 +211,7 @@ class array
 			elem_count = _size;
 		}
 
-		[[noreturn]] void swap(array<Ty , _size>& obj) noexcept
+		[[noreturn]] void swap(self& obj) noexcept
 		{
 			Ty* self_ptr = this->arr;
 			Ty* obj_ptr = obj.arr;
@@ -283,7 +283,7 @@ class array
 			return this->arr[n];
 		}
 
-		self& operator=(const array<Ty , _size>& obj) noexcept
+		self& operator=(const self& obj) noexcept
 		{
 			for (int n = 0; n < obj.elem_count; ++n)
 			{
@@ -295,52 +295,59 @@ class array
 			return *this;
 		}
 
-		_NODISCARD bool operator==(const array<Ty , _size>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator==(const coll& obj) const noexcept
 		{
-			if (this->elem_count != obj.elem_count)
+			if (this->elem_count != obj.size())
 				return false;
 
-			for (int n = 0; n < obj.elem_count; ++n)
+			auto p = obj.begin();
+			for (int n = 0; n < elem_count; ++n,++p)
 			{
-				if (this->arr[n] != obj.arr[n])
+				if (this->arr[n] != *p)
 					return false;
 			}
 
 			return true;
 		}
 
-		_NODISCARD bool operator!=(const array<Ty , _size>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator!=(const coll& obj) const noexcept
 		{
 			return !((*this) == obj);
 		}
 
-		_NODISCARD bool operator>(const array<Ty , _size>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator>(const coll& obj) const noexcept
 		{
-			if (elem_count > obj.elem_count)
+			if (elem_count > obj.size())
 				return true;
 
 			return false;
 		}
 
-		_NODISCARD bool operator<(const array<Ty , _size>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator<(const coll& obj) const noexcept
 		{
-			if (elem_count < obj.elem_count)
+			if (elem_count < obj.size())
 				return true;
 
 			return false;
 		}
 
-		_NODISCARD bool operator<=(const array<Ty , _size>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator<=(const coll& obj) const noexcept
 		{
-			if (elem_count <= obj.elem_count)
+			if (elem_count <= obj.size())
 				return true;
 
 			return false;
 		}
 
-		_NODISCARD bool operator>=(const array<Ty , _size>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator>=(const coll& obj) const noexcept
 		{ 
-			if (elem_count >= obj.elem_count)
+			if (elem_count >= obj.size())
 				return true;
 
 			return false;

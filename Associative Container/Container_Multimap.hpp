@@ -16,7 +16,7 @@
  *
  *-------------------------------README------------------------------------
  *
- * template<typename key,typename value>
+ * template<typename key,typename value,typename alloc = _default_allocator>
  * class Multimap
  * {
  *      //iterator : RB_Tree_iterator
@@ -30,7 +30,7 @@
  *      Multimap()--------------------------------------------initialize RB_Tree ptr.
  *      Multimap(const pair& obj)-----------------------------insert obj.
  *      Multimap(const initializer_list<pair>& list)
- *      Multimap(const Multimap<key,value>& obj)
+ *      Multimap(const Multimap<key,value,alloc>& obj)
  *
  *      //operations
  *
@@ -47,7 +47,7 @@
  *      bool find(const pair& obj)
  *      bool find(key k)
  *      compare key_comp()---------------------------------return compare function.
- *      void swap(Multimap<key , value>& obj)
+ *      void swap(self& obj)
  *
  *
  *      //iterator
@@ -60,13 +60,13 @@
  *
  *      //operator overload
  *
- *      self& operator=(const Multimap<key , value>& obj)
- *      bool operator==(const Multimap<key , value>& obj)
- *      bool operator!=(const Multimap<key , value>& obj)
- *      bool operator>(const Multimap<key , value>& obj)
- *      bool operator<(const Multimap<key , value>& obj)
- *      bool operator>=(const Multimap<key , value>& obj)
- *      bool operator<=(const Multimap<key , value>& obj)
+ *      self& operator=(const self& obj)
+ *      bool operator==(const coll& obj)
+ *      bool operator!=(const coll& obj)
+ *      bool operator>(const coll& obj)
+ *      bool operator<(const coll& obj)
+ *      bool operator>=(const coll& obj)
+ *      bool operator<=(const coll& obj)
  * }
  * ----------------------------------------------------------------------------------------------
  */
@@ -244,7 +244,7 @@ class Multimap
 			return compare;
 		}
 
-		[[noreturn]] void swap(Multimap<key , value , alloc>& obj) noexcept
+		[[noreturn]] void swap(self& obj) noexcept
 		{
 			RB_Tree* temp_tree = tree;
 			RB_Tree* obj_tree = obj.tree;
@@ -293,7 +293,7 @@ class Multimap
 
 		//operator overload
 
-		self& operator=(const Multimap<key , value , alloc>& obj) noexcept
+		self& operator=(const self& obj) noexcept
 		{
 			clear();
 
@@ -306,12 +306,13 @@ class Multimap
 			return *this;
 		}
 
-		_NODISCARD bool operator==(const Multimap<key , value , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator==(const coll& obj) const noexcept
 		{
-			if (elem_count != obj.elem_count)
+			if (elem_count != obj.size())
 				return false;
 
-			typename Multimap<key , value , alloc>::const_iterator p1 = obj.cbegin();
+			typename coll::const_iterator p1 = obj.cbegin();
 			typename Multimap<key , value , alloc>::const_iterator p2 = cbegin();
 			for (; p1 != obj.cend() , p2 != cend(); ++p1 , ++p2)
 			{
@@ -322,38 +323,43 @@ class Multimap
 			return true;
 		}
 
-		_NODISCARD bool operator!=(const Multimap<key , value , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator!=(const coll& obj) const noexcept
 		{
 			return !((*this) == obj);
 		}
 
-		_NODISCARD bool operator>(const Multimap<key , value , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator>(const coll& obj) const noexcept
 		{
-			if (elem_count > obj.elem_count)
+			if (elem_count > obj.size())
 				return true;
 
 			return false;
 		}
 
-		_NODISCARD bool operator<(const Multimap<key , value , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator<(const coll& obj) const noexcept
 		{
-			if (elem_count < obj.elem_count)
+			if (elem_count < obj.size())
 				return true;
 
 			return false;
 		}
 
-		_NODISCARD bool operator>=(const Multimap<key , value , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator>=(const coll& obj) const noexcept
 		{
-			if (elem_count >= obj.elem_count)
+			if (elem_count >= obj.size())
 				return true;
 
 			return false;
 		}
 
-		_NODISCARD bool operator<=(const Multimap<key , value , alloc>& obj) const noexcept
+		template<typename coll>
+		_NODISCARD bool operator<=(const coll& obj) const noexcept
 		{
-			if (elem_count <= obj.elem_count)
+			if (elem_count <= obj.size())
 				return true;
 
 			return false;
