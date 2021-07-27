@@ -100,7 +100,7 @@ class Unordered_Map
 	public:
 		Unordered_Map() = delete;
 
-		Unordered_Map(const size_t& size)
+		explicit Unordered_Map(const size_t& size)
 		{
 			ptr = new hash_table(size);
 		}

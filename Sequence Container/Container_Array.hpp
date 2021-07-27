@@ -132,7 +132,7 @@ class array
 			elem_count = obj.elem_count;
 		}
 
-		array(const Ty& num) noexcept
+		explicit array(const Ty& num) noexcept
 		{
 			for (int i = 0;i<_size;++i)
 			{

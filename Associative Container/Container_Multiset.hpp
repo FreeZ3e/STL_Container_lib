@@ -97,7 +97,7 @@ class Multiset
 			tree = new RB_Tree();
 		}
 
-		Multiset(const Ty& elem) noexcept
+		explicit Multiset(const Ty& elem) noexcept
 		{
 			tree = new RB_Tree(elem);
 			elem_count++;

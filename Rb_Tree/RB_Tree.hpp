@@ -159,7 +159,7 @@ class RB_Tree
 			}
 		}
 
-		RB_Tree(const Ty& elem) noexcept
+		explicit RB_Tree(const Ty& elem) noexcept
 		{
 			header = new TreeNode<Ty>;
 			head = new TreeNode<Ty>(elem,nullptr,nullptr,header);

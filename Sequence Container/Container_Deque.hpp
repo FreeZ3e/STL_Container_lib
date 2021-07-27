@@ -128,7 +128,7 @@ class deque
 			alloc();
 		}
 
-		deque(const size_t& size)
+		explicit deque(const size_t& size)
 		{
 		#if _LIB_DEBUG_LEVEL == 1
 

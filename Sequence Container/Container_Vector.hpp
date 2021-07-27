@@ -114,7 +114,7 @@ class vector
 			arr = simple_allocator(alloc , Ty)::allocate((int)arr_size);
 		}
 
-		vector(const size_t& size)
+		explicit vector(const size_t& size)
 		{
 		#if _LIB_DEBUG_LEVEL == 1
 

@@ -190,7 +190,7 @@ class hash_table
 		hash_table() = delete;
 
 		//ctor
-		hash_table(const size_t& size)
+		explicit hash_table(const size_t& size)
 		{
 		#if _LIB_DEBUG_LEVEL == 1
 

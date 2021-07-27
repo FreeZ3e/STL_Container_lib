@@ -96,7 +96,7 @@ class set
 			tree = new RB_Tree<Ty , Unique_Compare , alloc>();
 		}
 
-		set(const Ty& elem) noexcept
+		explicit set(const Ty& elem) noexcept
 		{
 			tree = new RB_Tree<Ty , Unique_Compare , alloc>(elem);
 			elem_count++;

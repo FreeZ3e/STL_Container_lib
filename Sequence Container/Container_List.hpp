@@ -156,7 +156,7 @@ class list
 			alloc(list_size);
 		}
 
-		list(const size_t& size)
+		explicit list(const size_t& size)
 		{
 		#if _LIB_DEBUG_LEVEL == 1
 

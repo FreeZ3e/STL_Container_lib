@@ -92,7 +92,7 @@ class Unordered_Multiset
 	public:
 		Unordered_Multiset() = delete;
 
-		Unordered_Multiset(const size_t& size)
+		explicit Unordered_Multiset(const size_t& size)
 		{
 			ptr = new hash_table<Ty, alloc , Equal_Compare>(size);
 		}

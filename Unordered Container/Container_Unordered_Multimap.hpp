@@ -100,7 +100,7 @@ class Unordered_Multimap
 	public:
 		Unordered_Multimap() = delete;
 
-		Unordered_Multimap(const size_t& size)
+		explicit Unordered_Multimap(const size_t& size)
 		{
 			ptr = new hash_table(size);
 		}

@@ -91,7 +91,7 @@ class Unordered_Set
 	public:
 		Unordered_Set() = delete;
 
-		Unordered_Set(const size_t& size)
+		explicit Unordered_Set(const size_t& size)
 		{
 			ptr = new hash_table<Ty , alloc>(size);
 		}
