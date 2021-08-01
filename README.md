@@ -1,4 +1,4 @@
-# 类STL的容器库(**1.3.0-alpha**)
+# 类STL的容器库(**v1.0.0**)
 
 ### 介绍
 1. 该容器库为STL中容器和迭代器的简单实现.
@@ -33,9 +33,9 @@
 6. **memory(elem_destory)**
 7. **errors**
 8. **memory allocator**
+9. **container lock
 
 
 
 ### 最近更新 
-#### 2021/7/27:
-- 新增了针对容器的线程锁thread_lock类,该类对传入的容器进行加锁包装.实现在container_lock.hpp下.
+v1.0.0
