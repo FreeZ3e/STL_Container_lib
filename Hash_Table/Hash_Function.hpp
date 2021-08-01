@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.3.0-alpha
+ * version : 1.0.0
  *
  * author : Mashiro
  *
@@ -32,7 +32,7 @@ struct hash_function
 	//is pointer
 	static _NODISCARD inline size_t _is_ptr_hash(const Ty& elem , true_type_tag) noexcept
 	{
-		unsigned long h = (*elem > 0) ? (*elem) : -(*elem);
+		unsigned long h = sizeof(*elem);
 		return (size_t)h;
 	}
 
@@ -105,7 +105,7 @@ struct pair_hash
 	//is pointer
 	static _NODISCARD inline size_t _is_ptr_hash(const key& elem , true_type_tag) noexcept
 	{
-		unsigned long h = (*elem > 0) ? (*elem) : -(*elem);
+		unsigned long h = sizeof(*elem);
 		return (size_t)h;
 	}
 

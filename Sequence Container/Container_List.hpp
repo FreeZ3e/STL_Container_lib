@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.3.0-alpha
+ * version : 1.0.0
  *
  * author : Mashiro
  *
@@ -16,7 +16,7 @@
  *
  *-------------------------------README------------------------------------
  *
- * template<typename Ty,int default_size = 0,typename _alloc = _default_allocator>
+ * template<typename Ty,int default_size = 8,typename _alloc = _default_allocator>
  * class list
  * {
  *		//iterator : List_iterator
@@ -198,7 +198,7 @@ class list
 			}
 		}
 
-		explicit list(const list<Ty , default_size , _alloc>& obj) noexcept
+		list(const list<Ty , default_size , _alloc>& obj) noexcept
 		{
 			list_size = obj.list_size;
 			alloc(list_size);

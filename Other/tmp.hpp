@@ -4,7 +4,7 @@
 *
 * This File is part of CONTAINER LIBRARY project.
 *
-* version : 1.3.0-alpha
+* version : 1.0.0
 *
 * author : Mashiro
 *

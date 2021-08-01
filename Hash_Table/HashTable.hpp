@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.3.0-alpha
+ * version : 1.0.0
  *
  * author : Mashiro
  *
@@ -499,7 +499,22 @@ class hash_table
 
 			for (int n = 0; n < (int)bucket_size ; ++n)
 			{
-				buckets[n] = obj.buckets[n];
+				hash_node<Ty>* ptr = obj.buckets[n];
+				if (ptr != nullptr)
+				{
+					buckets[n] = new hash_node<Ty>;
+					hash_node<Ty>* temp = buckets[n];
+
+					while (ptr != nullptr)
+					{
+						if (temp == nullptr)
+							temp = new hash_node<Ty>;
+
+						temp->val = ptr->val;
+						temp = temp->next;
+						ptr = ptr->next;
+					}
+				}
 			}
 
 			this->bucket_size = obj.bucket_size;

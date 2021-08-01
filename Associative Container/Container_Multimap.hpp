@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.3.0-alpha
+ * version : 1.0.0
  *
  * author : Mashiro
  *
@@ -121,7 +121,7 @@ class Multimap
 			}
 		}
 
-		explicit Multimap(const Multimap<key , value , alloc>& obj) noexcept
+		Multimap(const Multimap<key , value , alloc>& obj) noexcept
 		{
 			tree = new RB_Tree();
 
@@ -136,8 +136,6 @@ class Multimap
 
 		~Multimap() noexcept
 		{
-			tree->Destory();
-
 			delete tree;
 			tree = nullptr;
 		}

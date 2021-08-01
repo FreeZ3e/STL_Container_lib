@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.3.0-alpha
+ * version : 1.0.0
  *
  * author : Mashiro
  *
@@ -107,7 +107,7 @@ class Unordered_Set
 			}
 		}
 
-		explicit Unordered_Set(const Unordered_Set<Ty , alloc>& obj) noexcept
+		Unordered_Set(const Unordered_Set<Ty , alloc>& obj) noexcept
 		{
 			size_t size = obj.ptr->buckets_count();
 			ptr = new hash_table<Ty , alloc>(size);
@@ -121,7 +121,6 @@ class Unordered_Set
 
 		~Unordered_Set() noexcept
 		{
-			ptr->~hash_table();
 			delete ptr;
 			ptr = nullptr;
 		}

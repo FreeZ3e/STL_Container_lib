@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.3.0-alpha
+ * version : 1.0.0
  *
  * author : Mashiro
  *
@@ -116,7 +116,7 @@ class Unordered_Multimap
 			}
 		}
 
-		explicit Unordered_Multimap(const Unordered_Multimap<key , value , alloc>& obj) noexcept
+		Unordered_Multimap(const Unordered_Multimap<key , value , alloc>& obj) noexcept
 		{
 			size_t size = obj.ptr->buckets_count();
 			ptr = new hash_table(size);
@@ -130,7 +130,6 @@ class Unordered_Multimap
 
 		~Unordered_Multimap() noexcept
 		{
-			ptr->~hash_table();
 			delete ptr;
 			ptr = nullptr;
 		}

@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.3.0-alpha
+ * version : 1.0.0
  *
  * author : Mashiro
  *
@@ -177,7 +177,7 @@ class deque
 			last_insert = (int)body_size;
 		}
 
-		explicit deque(const deque<Ty , _alloc>& obj) noexcept
+		deque(const deque<Ty , _alloc>& obj) noexcept
 		{
 			elem_count = obj.elem_count;
 			buffer_distance = obj.buffer_distance;

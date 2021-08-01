@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.3.0-alpha
+ * version : 1.0.0
  *
  * author : Mashiro
  *
@@ -146,7 +146,7 @@ class RB_Tree
 		int NodeCount = 0;
 
 	public:
-		explicit RB_Tree(const RB_Tree<Ty , Compare_Class , alloc>& obj) noexcept :RB_Tree()
+		RB_Tree(const RB_Tree<Ty , Compare_Class , alloc>& obj) noexcept :RB_Tree()
 		{
 			TreeCopy(obj.head);
 		}

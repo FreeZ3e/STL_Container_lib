@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.3.0-alpha
+ * version : 1.0.0
  *
  * author : Mashiro
  *
@@ -116,7 +116,7 @@ class Unordered_Map
 			}
 		}
 
-		explicit Unordered_Map(const Unordered_Map<key , value , alloc>& obj) noexcept
+		Unordered_Map(const Unordered_Map<key , value , alloc>& obj) noexcept
 		{
 			size_t size = obj.ptr->buckets_count();
 			ptr = new hash_table(size);
@@ -130,7 +130,6 @@ class Unordered_Map
 
 		~Unordered_Map() noexcept
 		{
-			ptr->~hash_table();
 			delete ptr;
 			ptr = nullptr;
 		}

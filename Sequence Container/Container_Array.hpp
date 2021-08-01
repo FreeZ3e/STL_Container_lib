@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.3.0-alpha
+ * version : 1.0.0
  *
  * author : Mashiro
  *
@@ -16,7 +16,7 @@
  *
  *-------------------------------README------------------------------------
  *
- * template<typename Ty,size_t _size = 10,alloc = _default_allocator>
+ * template<typename Ty,size_t _size = 8,alloc = _default_allocator>
  * class array
  * {
  *		//iterator : random_iterator
@@ -122,7 +122,7 @@ class array
 			}
 		}
 
-		explicit array(const array<Ty , _size , alloc>& obj) noexcept
+		array(const array<Ty , _size , alloc>& obj) noexcept
 		{
 			for (int i = 0; i < obj.elem_count; ++i)
 			{

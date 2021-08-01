@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.3.0-alpha
+ * version : 1.0.0
  *
  * author : Mashiro
  *
@@ -112,7 +112,7 @@ class set
 			}
 		}
 
-		explicit set(const set<Ty , alloc>& obj) noexcept
+		set(const set<Ty , alloc>& obj) noexcept
 		{
 			tree = new RB_Tree<Ty , Unique_Compare , alloc>();
 
@@ -127,8 +127,6 @@ class set
 
 		~set() noexcept
 		{
-			clear();
-
 			delete tree;
 			tree = nullptr;
 		}

@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.3.0-alpha
+ * version : 1.0.0
  *
  * author : Mashiro
  *
@@ -90,7 +90,7 @@
 #endif  // _LIB_DEBUG_LEVEL == 1
 
 using std::initializer_list;
-//using allocator::simple_alloc;
+
 
 template<typename Ty , typename alloc = _default_allocator>
 class vector
@@ -156,7 +156,7 @@ class vector
 			}
 		}
 
-		explicit vector(const vector<Ty , alloc>& obj) noexcept
+		vector(const vector<Ty , alloc>& obj) noexcept
 		{
 			arr_size = obj.arr_size;
 			arr = simple_allocator(alloc , Ty)::allocate((int)arr_size);

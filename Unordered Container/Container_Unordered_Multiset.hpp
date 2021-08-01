@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.3.0-alpha
+ * version : 1.0.0
  *
  * author : Mashiro
  *
@@ -108,7 +108,7 @@ class Unordered_Multiset
 			}
 		}
 
-		explicit Unordered_Multiset(const Unordered_Multiset<Ty , alloc>& obj) noexcept
+		Unordered_Multiset(const Unordered_Multiset<Ty , alloc>& obj) noexcept
 		{
 			size_t size = obj.ptr->buckets_count();
 			ptr = new hash_table<Ty, alloc , Equal_Compare>(size);
@@ -122,7 +122,6 @@ class Unordered_Multiset
 
 		~Unordered_Multiset() noexcept
 		{
-			ptr->~hash_table();
 			delete ptr;
 			ptr = nullptr;
 		}

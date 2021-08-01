@@ -4,7 +4,7 @@
  *
  * This File is part of CONTAINER LIBRARY project.
  *
- * version : 1.3.0-alpha
+ * version : 1.0.0
  *
  * author : Mashiro
  *
@@ -114,7 +114,7 @@ class Multiset
 			}
 		}
 
-		explicit Multiset(const Multiset<Ty , alloc>& obj) noexcept
+		Multiset(const Multiset<Ty , alloc>& obj) noexcept
 		{
 			tree = new RB_Tree();
 
@@ -129,8 +129,6 @@ class Multiset
 
 		~Multiset() noexcept
 		{
-			tree->Destory();
-
 			delete tree;
 			tree = nullptr;
 		}
