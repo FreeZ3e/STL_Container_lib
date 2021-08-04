@@ -4,7 +4,7 @@
 * 
 * This File is part of CONTAINER LIBRARY project.
 * 
-* version : 1.0.0
+* version : 1.0.1
 * 
 * author : Mashiro
 * 
@@ -194,289 +194,246 @@ namespace lib_algo
 
 	//default sort compare function
 	template<typename t>
-	static inline t less_compare(t elem1 , t elem2) noexcept
+	static inline t default_compare(t elem1 , t elem2) noexcept
 	{
 		return elem1 < elem2 ? elem1 : elem2;
 	}
 
-	
-
+	//compare function define
 	template<typename t>
-	void _PercolateDown(t p_begin , int index , int size) noexcept
+	using pred = t(*)(t , t);
+
+
+
+	//insert_sort
+	template<typename iterator>
+	void insert_sort(iterator p_beg , iterator p_end ,
+					 pred<typename iterator::TypeValue> compare)
 	{
-		int min = 0;
+		int step = p_end.step() - p_beg.step();
+		iterator beg = p_beg;
 
-		while (index * 2 + 1 < size)
+		for (int n = 0; n < step; ++n)
 		{
-			min = index * 2 + 1;
-
-			if (index * 2 + 2 < size)
+			iterator next = beg + 1;
+			while (next > p_beg && compare(*(next) , *(next - 1)) == *next)
 			{
-				if (*(p_begin + min) > *(p_begin + (index * 2 + 2)))
-					min = index * 2 + 2;
+				auto temp = *next;
+				*next = *(next - 1);
+				*(next - 1) = temp;
+
+				--next;
 			}
 
-			if (*(p_begin + index) < *(p_begin + min))
-				break;
-			else
-			{
-				auto temp = *(p_begin + index);
-				*(p_begin + index) = *(p_begin + min);
-				*(p_begin + min) = temp;
-
-				index = min;
-			}
+			beg++;
 		}
 	}
 
-	template<typename t>
-	void _PercolateUp(t p_begin, int index , int size) noexcept
+	//heap sort
+	template<typename iterator>
+	void precolate(iterator& p_beg , int index , int size ,
+					  pred<typename iterator::TypeValue> compare)
 	{
-		int max = 0;
+		int max;
+		int step = (index * 2) + 1;
 
-		while (index * 2 + 1 < size)
+		while (step < size)//lchild exist
 		{
-			max = index * 2 + 1;
-
-			if (index * 2 + 2 < size)
+			max = step;
+			if (step + 1 < size)//rchild exist
 			{
-				if(*(p_begin+max) < *(p_begin+(index * 2 + 2)))
-				   max = index * 2 + 2;
+				iterator lchild = p_beg + step;
+				iterator rchild = p_beg + (step + 1);
+
+				if (compare(*lchild , *rchild) == *lchild)
+					max = step + 1;
 			}
 
-			if(*(p_begin + index) > *(p_begin + max))
+			iterator p_index = p_beg + index;
+			iterator p_max = p_beg + max;
+			if (compare(*p_index , *p_max) == *p_max)//index value is max
 				break;
 			else
 			{
-				auto temp = *(p_begin + index);
-				*(p_begin + index) = *(p_begin + max);
-				*(p_begin + max) = temp;
+				auto temp = *p_index;
+				*p_index = *p_max;
+				*p_max = temp;
 
 				index = max;
+				step = (index * 2) + 1;
 			}
 		}
 	}
 
-	template<typename t>
-	void _heap_built(t p_begin , t p_end,
-					 typename t::TypeValue(*compare)(typename t::TypeValue , typename t::TypeValue) = less_compare) noexcept
+	template<typename iterator>
+	void build_heap(iterator& p_beg , iterator& p_end ,
+					pred<typename iterator::TypeValue> compare)
 	{
-		for (int n = (p_end.step() - p_begin.step()) / 2 - 1; n >= 0; --n)
+		int size = p_end.step() - p_beg.step();
+
+		for (int n = size / 2 - 1; n >= 0; --n)
 		{
-			if(compare(1,2) == 1)
-				_PercolateUp(p_begin , n , p_end.step() - p_begin.step());
-			else
-				_PercolateDown(p_begin , n , p_end.step() - p_begin.step());
+			precolate(p_beg , n , size , compare);
 		}
 	}
 
-	//heap_sort
-	template<typename t>
-	void _heap_sort(t p_begin , t p_end,
-				   typename t::TypeValue(*compare)(typename t::TypeValue , typename t::TypeValue) = less_compare) noexcept
+	template<typename iterator>
+	void heap_sort(iterator& p_beg , iterator& p_end ,
+				   pred<typename iterator::TypeValue> compare)
 	{
-		int size = p_end.step() - p_begin.step();
-		_heap_built(p_begin,p_end,compare);
+		build_heap(p_beg , p_end , compare);
 
-		auto beg = p_begin;
-		auto cur = p_end - 1;
-		for (int n = size - 1; n >= 1; --n)
+		int size = p_end.step() - p_beg.step() + 1;
+
+		for (int n = size - 1; n > 0; --n)
 		{
-			auto temp = *beg;
-			*beg = *cur;
-			*cur = temp;
+			//swap
+			auto temp = *p_beg;
+			*p_beg = *(p_beg + n);
+			*(p_beg + n) = temp;
 
-			--cur;
-			--size;
-
-			if (compare(1 , 2) == 1)
-				_PercolateUp(p_begin , 0 , size);
-			else
-				_PercolateDown(p_begin , 0 , size);
-		}
-	}
-	
-
-	//insert sort
-	template<typename t>
-	void _insert_sort(t p_begin , t p_end ,
-					  typename t::TypeValue(*compare)(typename t::TypeValue , typename t::TypeValue) = less_compare) noexcept
-	{
-		int step = p_end.step() - p_begin.step();
-		auto beg = p_begin;
-		auto next = p_begin + 1;
-
-		for (int n = 0; n < step - 1; ++n)
-		{
-			next = p_begin + 1;
-			for (auto p = p_begin; p >= beg; --p)
-			{
-				if (compare(*next , *p) != *p)
-				{
-					//swap
-					auto tmp = *next;
-					*next = *p;
-					*p = tmp;
-
-					//next reset
-					next = p;
-				}
-			}
-
-			p_begin++;
+			size--;
+			precolate(p_beg , 0 , size , compare);
 		}
 	}
 
-
-	//quick_sort_helper
-	template<typename t,typename value>
-	void _quick_sort_less(t& beg , t& end , const value& key) noexcept
-	{
-		while (beg < end)
-		{
-			while (*end >= key && beg < end)
-				--end;
-			while (*beg <= key && beg < end)
-				++beg;
-
-			if (beg < end)
-			{
-				auto temp = *beg;
-				*beg = *end;
-				*end = temp;
-			}
-		}
-	}
-
-	template<typename t,typename value>
-	void _quick_sort_max(t& beg , t& end , const value& key) noexcept
-	{
-		while (beg < end)
-		{
-			while (*end <= key && beg < end)
-				--end;
-			while (*beg >= key && beg < end)
-				++beg;
-
-			if (beg < end)
-			{
-				auto temp = *beg;
-				*beg = *end;
-				*end = temp;
-			}
-		}
-	}
-
-
-	//median3 pivot
-	template<typename t>
-	auto _median3(t p_begin , t p_end) noexcept	//retrun pivot value of container
-	{
-		int middle = (p_end.step() - p_begin.step()) / 2;	//middle point
-
-		//keep left val min
-		if (*p_begin > *p_end)
-		{
-			auto temp = *p_begin;
-			*p_begin = *p_end;
-			*p_end = temp;
-		}
-		if (*(p_begin + middle) > *p_end)
-		{
-			auto temp = *(p_begin + middle);
-			*(p_begin + middle) = *p_end;
-			*p_end = temp;
-		}
-		if (*(p_begin + middle) > *p_begin)
-		{
-			auto temp = *(p_begin + middle);
-			*(p_begin + middle) = *p_begin;
-			*p_begin = temp;
-		}
-
-		return *p_end;
-	}
-
-	template<typename t>
-	auto _median3_max(t p_begin , t p_end) noexcept	//retrun pivot value of container
-	{
-		int middle = (p_end.step() - p_begin.step()) / 2;	//middle point
-
-		//keep left val min
-		if (*p_begin < *p_end)
-		{
-			auto temp = *p_begin;
-			*p_begin = *p_end;
-			*p_end = temp;
-		}
-		if (*(p_begin + middle) < *p_end)
-		{
-			auto temp = *(p_begin + middle);
-			*(p_begin + middle) = *p_end;
-			*p_end = temp;
-		}
-		if (*(p_begin + middle) < *p_begin)
-		{
-			auto temp = *(p_begin + middle);
-			*(p_begin + middle) = *p_begin;
-			*p_begin = temp;
-		}
-
-		return *p_end;
-	}
 
 	//quick_sort
-	template<typename t>
-	void _quick_sort(t p_begin , t p_end , int depth_limit , 
-					 typename t::TypeValue(*compare)(typename t::TypeValue , typename t::TypeValue) = less_compare) noexcept
+	template<typename iterator>
+	auto median3(iterator& p_beg , iterator& p_end)
 	{
-		if (p_end.step() - p_begin.step() <= 32)	//threshold = 32
+		int middle = (p_end.step() - p_beg.step()) / 2;
+		iterator p_mid = p_beg + middle;
+
+		if (*p_beg > *p_end)
 		{
-			_insert_sort(p_begin , p_end , compare);	//trun to insert sort
-			return;
+			auto temp = *p_beg;
+			*p_beg = *p_end;
+			*p_end = temp;
+		}
+		if (*p_mid > *p_end)
+		{
+			auto temp = *p_mid;
+			*p_mid = *p_end;
+			*p_end = temp;
+		}
+		if (*p_mid > *p_beg)
+		{
+			auto temp = *p_mid;
+			*p_mid = *p_beg;
+			*p_beg = temp;
 		}
 
-
-		if (depth_limit <= 0)		//if too many divisions
-		{
-			_heap_sort(p_begin , p_end , compare);		//trun to heap sort
-			return;
-		}
-
-		depth_limit = (depth_limit >> 1) + (depth_limit >> 2);	//allow 1.5 log2(N) divisions
-		
-		auto key = *p_begin;	//find pivot by median3
-		if (compare(1 , 2) == 1)
-			key = _median3(p_begin , p_end - 1);
-		else
-			key = _median3_max(p_begin , p_end - 1);
-
-		auto _beg = p_begin;
-		auto _end = p_end-1;
-
-
-		if (compare(1 , 2) == 1)
-			_quick_sort_less(_beg , _end , key);
-		else
-			_quick_sort_max(_beg , _end , key);
-
-
-		*p_begin = *_beg;
-		*_beg = key;
-
-
-		auto middle = _beg;
-		if (middle.step() != -1)
-		{
-			_quick_sort(p_begin , middle - 1 , depth_limit , compare);	//into left loop
-			_quick_sort(middle + 1 , p_end , depth_limit , compare);	//into right loop
-		}
+		//*p_mid <= *p_beg <= *p_end
+		return *p_beg;
 	}
 
 
-	//quick sort depth limit
+	template<typename iterator>
+	void quick_sort(iterator p_beg , iterator p_end , int depth_limit ,
+					pred<typename iterator::TypeValue> compare)
+	{
+		if (p_end.step() - p_beg.step() <= 4)//threshold = 4
+		{
+			insert_sort(p_beg , p_end , compare);
+			return;
+		}
+
+		if (depth_limit <= 0)
+		{
+			heap_sort(p_beg , p_end , compare);
+			return;
+		}
+
+		depth_limit--;
+
+		iterator beg = p_beg;
+		iterator end = p_end;
+
+		//range equal pivot
+		iterator right = p_end;
+		iterator left = p_beg;
+		int right_len = 0;
+		int left_len = 0;
+
+		//set pivot midian
+		auto pivot = median3(p_beg , p_end);
+
+		while (beg < end)
+		{
+			while (beg < end && compare(*end , pivot) == pivot)
+			{
+				if (*end == pivot)
+				{
+					auto temp = *end;
+					*end = *right;
+					*right = temp;
+
+					--right;
+					++right_len;
+				}
+
+				--end;
+			}
+
+			*beg = *end;
+
+			while (beg < end && compare(*beg , pivot) == *beg)
+			{
+				if (*beg == pivot)
+				{
+					auto temp = *beg;
+					*beg = *left;
+					*left = temp;
+
+					++left;
+					++left_len;
+				}
+
+				++beg;
+			}
+
+			*end = *beg;
+		}
+
+		*beg = pivot;
+
+		//move the val(= pivot) to around pivot
+		iterator p_pivot = beg - 1;
+		iterator pos = p_beg;
+
+		while (pos < left && *p_pivot != pivot)
+		{
+			auto temp = *p_pivot;
+			*p_pivot = *pos;
+			*pos = temp;
+
+			--p_pivot;
+			++pos;
+		}
+
+		p_pivot = beg + 1;
+		pos = p_end;
+
+		while (pos > right && *p_pivot != pivot)
+		{
+			auto temp = *p_pivot;
+			*p_pivot = *pos;
+			*pos = temp;
+
+			++p_pivot;
+			--pos;
+		}
+
+
+		quick_sort(p_beg , beg - 1 - left_len , depth_limit , compare);
+		quick_sort(beg + 1 + right_len , p_end , depth_limit , compare);
+	}
+
+
+	//get depth_limit
 	inline int limit(int n) noexcept
-	{ 
+	{
 		int res = 0;
 		for (; n > 1; n >>= 1)
 			++res;
@@ -485,37 +442,41 @@ namespace lib_algo
 	}
 
 
-	//sort
-	template<typename t>
-	void sort(t p_begin , t p_end ,
-			   typename t::TypeValue(*compare)(typename t::TypeValue , typename t::TypeValue) = less_compare) noexcept
+	template<typename iterator>
+	void sort(iterator p_beg , iterator p_end ,
+				   pred<typename iterator::TypeValue> compare = default_compare)
 	{
-		if (p_begin != p_end)
+		if (p_beg != p_end)
 		{
-			if (p_end.step() - p_begin.step() < 32)		//threshold = 32
-				_insert_sort(p_begin , p_end, compare);
-
+			if (p_end.step() - p_beg.step() <= 4)
+				insert_sort(p_beg , p_end , compare);
 			else
 			{
-				_quick_sort(p_begin , p_end, limit(p_end.step() - p_begin.step()) * 2 , compare);
+				int depth = limit(p_end.step() - p_beg.step()+1) * 2;
+				quick_sort(p_beg , p_end , depth , compare);
 			}
 		}
 	}
 
-	template<typename t>
-	void sort(t& obj ,
-			   typename t::TypeValue(*compare)(typename t::TypeValue , typename t::TypeValue) = less_compare) noexcept
+	template<typename coll>
+	void sort(coll& obj , pred<typename coll::TypeValue > compare = default_compare)
 	{
-		if (!obj.empty())
+		int size = obj.size();
+		auto beg = obj.begin();
+		auto end = obj.end()-1;
+
+		if (size > 0)
 		{
-			if (obj.size() < 32)		//threshold = 32
-				_insert_sort(obj.begin() , obj.end() , compare);
+			if (size <= 4)
+				insert_sort(beg , end , compare);
 			else
 			{
-				_quick_sort(obj.begin() , obj.end() , limit(obj.size()) * 2 , compare);
+				int depth = limit(size) * 2;
+				quick_sort(beg , end , depth , compare);
 			}
 		}
 	}
+
 
 	//---------------------------------------------------------------
 
