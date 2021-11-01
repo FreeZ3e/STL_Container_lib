@@ -1,18 +1,17 @@
-# 类STL的容器库(**v1.0.1**)
+# 类STL的容器库(**v1.1.0**)
 
 ### 介绍
 1. 该容器库为STL中容器和迭代器的简单实现.
-2. 在使用前请阅读test下的QuickStart以及各容器文件下的README.
-3. 更新日志见Log.md.
+2. 更新日志见Log.md.
 
 
 
 ### 容器
-1. 序列式容器：Container_Array,Container_Vector,Container_Deque,Container_List.
+1. 序列式容器：array,vector,deque,list.
     
-2. 关联式容器：Container_Map,Container_Set,Container_Multimap,Container_Multiset.
+2. 关联式容器：map,set,multimap,multiset.
 
-3. 无序容器: Container_Unordered_Map,Container_Unordered_Set,Container_Unordered_Multimap,Container_Unordered_Multiset.
+3. 无序容器: unordered_map,unordered_set,unordered_multimap,unordered_multiset.
 
 4. 底层容器: RB_Tree,hash_table.
 
@@ -33,9 +32,9 @@
 6. **memory(elem_destory)**
 7. **errors**
 8. **memory allocator**
-9. **container lock
+9. **container lock**
 
 
 
 ### 最近更新 
-## v1.0.1:重写了sort函数
+## v1.1.0
