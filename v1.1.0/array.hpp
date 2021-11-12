@@ -194,52 +194,52 @@ class array
 
 		_NODISCARD iterator begin() noexcept
 		{
-			return iterator(arr , 0);
+			return iterator(arr , 0 , elem_count);
 		}
 
 		_NODISCARD iterator end() noexcept
 		{
-			return iterator(arr + elem_count , elem_count);
+			return iterator(arr + elem_count , elem_count , elem_count);
 		}
 
 		_NODISCARD iterator begin() const noexcept
 		{
-			return iterator(arr , 0);
+			return iterator(arr , 0 , elem_count);
 		}
 
 		_NODISCARD iterator end() const noexcept
 		{
-			return iterator(arr + elem_count , elem_count);
+			return iterator(arr + elem_count , elem_count , elem_count);
 		}
 
 		_NODISCARD const_iterator cbegin() const noexcept
 		{
-			return const_iterator(arr , 0);
+			return const_iterator(arr , 0 , elem_count);
 		}
 
 		_NODISCARD const_iterator cend() const noexcept
 		{
-			return const_iterator(arr + elem_count , elem_count);
+			return const_iterator(arr + elem_count , elem_count , elem_count);
 		}
 
 		_NODISCARD reverse_iterator rbegin() noexcept
 		{
-			return reverse_iterator(iterator(arr + elem_count , elem_count));
+			return reverse_iterator(iterator(arr + elem_count , elem_count , elem_count));
 		}
 
 		_NODISCARD reverse_iterator rend() noexcept
 		{
-			return reverse_iterator(iterator(arr , 0));
+			return reverse_iterator(iterator(arr , 0 , elem_count));
 		}
 
 		_NODISCARD const_reverse_iterator crbegin() const noexcept
 		{
-			return const_reverse_iterator(const_iterator(arr + elem_count , elem_count));
+			return const_reverse_iterator(const_iterator(arr + elem_count , elem_count , elem_count));
 		}
 
 		_NODISCARD const_reverse_iterator crend() const noexcept
 		{
-			return const_reverse_iterator(const_iterator(arr , 0));
+			return const_reverse_iterator(const_iterator(arr , 0 , elem_count));
 		}
 
 

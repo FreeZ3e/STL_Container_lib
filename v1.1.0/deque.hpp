@@ -859,40 +859,40 @@ class deque
 		_NODISCARD iterator begin() noexcept
 		{
 			if (head_insert == body_size - 1)
-				return iterator(map_ptr , 0 , head_flag + 1 , (int)body_size , 0);
+				return iterator(map_ptr , 0 , head_flag + 1 , (int)body_size , 0 , elem_count);
 			else
-				return iterator(map_ptr , head_insert + 1 , head_flag , (int)body_size , 0);
+				return iterator(map_ptr , head_insert + 1 , head_flag , (int)body_size , 0 , elem_count);
 		}
 
 		_NODISCARD iterator begin() const noexcept
 		{
 			if (head_insert == body_size - 1)
-				return iterator(map_ptr , 0 , head_flag + 1 , (int)body_size , 0);
+				return iterator(map_ptr , 0 , head_flag + 1 , (int)body_size , 0 , elem_count);
 			else
-				return iterator(map_ptr , head_insert + 1 , head_flag , (int)body_size , 0);
+				return iterator(map_ptr , head_insert + 1 , head_flag , (int)body_size , 0 , elem_count);
 		}
 
 		_NODISCARD iterator end() noexcept
 		{
-			return iterator(map_ptr , last_insert , last_flag , (int)body_size , elem_count);
+			return iterator(map_ptr , last_insert , last_flag , (int)body_size , elem_count , elem_count);
 		}
 
 		_NODISCARD iterator end() const noexcept
 		{
-			return iterator(map_ptr , last_insert , last_flag , (int)body_size , elem_count);
+			return iterator(map_ptr , last_insert , last_flag , (int)body_size , elem_count , elem_count);
 		}
 
 		_NODISCARD const_iterator cbegin() const noexcept
 		{
 			if (head_insert == body_size - 1)
-				return const_iterator(map_ptr , 0 , head_flag + 1 , (int)body_size , 0);
+				return const_iterator(map_ptr , 0 , head_flag + 1 , (int)body_size , 0 , elem_count);
 			else
-				return const_iterator(map_ptr , head_insert + 1 , head_flag , (int)body_size , 0);
+				return const_iterator(map_ptr , head_insert + 1 , head_flag , (int)body_size , 0 , elem_count);
 		}
 
 		_NODISCARD const_iterator cend() const noexcept
 		{
-			return const_iterator(map_ptr , last_insert , last_flag , (int)body_size , elem_count);
+			return const_iterator(map_ptr , last_insert , last_flag , (int)body_size , elem_count , elem_count);
 		}
 
 		_NODISCARD reverse_iterator rbegin() noexcept

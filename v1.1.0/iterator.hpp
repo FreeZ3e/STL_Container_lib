@@ -16,6 +16,14 @@
  */
 
 #pragma once
+#include"errors.hpp"
+
+#if _LIB_DEBUG_LEVEL == 1
+
+#include<assert.h>
+
+#endif //_LIB_DEBUG_LEVEL
+
 
 //compare struct
 struct Compare_Method
@@ -195,7 +203,7 @@ class reverse_iterator
 			return iter;
 		}
 
-		_NODISCARD auto& operator*() const noexcept
+		_NODISCARD decltype(auto) operator*() const noexcept
 		{
 			iterator_t temp = iter;
 			return *--temp;
@@ -519,6 +527,7 @@ struct Random_iterator
 		Ty* ptr = nullptr;
 
 		int step_count = 0;
+		size_t limit = 0;
 
 	public:
 		using self = Random_iterator<Ty>;
@@ -527,13 +536,13 @@ struct Random_iterator
 	public:
 		Random_iterator() = default;
 
-		explicit Random_iterator(Ty* InitPtr) :ptr(InitPtr)
+		explicit Random_iterator(Ty* InitPtr , size_t size) :ptr(InitPtr) , limit(size)
 		{}
 
-		explicit Random_iterator(Ty* InitPtr,int num):ptr(InitPtr),step_count(num)
-		{ }
+		explicit Random_iterator(Ty* InitPtr , int num , size_t size) :ptr(InitPtr) , step_count(num) , limit(size)
+		{}
 
-		Random_iterator(const self& obj) :ptr(obj.ptr),step_count(obj.step_count)
+		Random_iterator(const self& obj) :ptr(obj.ptr),step_count(obj.step_count),limit(obj.limit)
 		{ }
 
 		~Random_iterator() noexcept
@@ -543,11 +552,25 @@ struct Random_iterator
 
 		_NODISCARD Ty& operator*() noexcept
 		{
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY((step_count < limit) , "out of range");
+			assert(step_count < limit);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
+
 			return *ptr;
 		}
 
 		_NODISCARD const Ty& operator*() const noexcept
 		{
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY((step_count < limit) , "out of range");
+			assert(step_count < limit);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
+
 			return *ptr;
 		}
 
@@ -605,6 +628,7 @@ struct Random_iterator
 			auto temp = obj.ptr;
 			ptr = temp;
 			step_count = obj.step_count;
+			limit = obj.limit;
 
 			return *this;
 		}
@@ -845,6 +869,7 @@ struct const_Random_iterator
 		Ty* ptr = nullptr;
 
 		int step_count = 0;
+		size_t limit = 0;
 
 	public:
 		using self = const_Random_iterator<Ty>;
@@ -855,12 +880,13 @@ struct const_Random_iterator
 		{
 			this->ptr = obj.ptr;
 			this->step_count = obj.step_count;
+			this->limit = obj.limit;
 		}
 
-		explicit const_Random_iterator(Ty* InitPtr) :ptr(InitPtr)
+		explicit const_Random_iterator(Ty* InitPtr , size_t size) :ptr(InitPtr) , limit(size)
 		{}
 
-		explicit const_Random_iterator(Ty* InitPtr , int num):ptr(InitPtr),step_count(num)
+		explicit const_Random_iterator(Ty* InitPtr , int num , size_t size) :ptr(InitPtr) , step_count(num) , limit(size)
 		{}
 
 		~const_Random_iterator()
@@ -870,6 +896,13 @@ struct const_Random_iterator
 
 		_NODISCARD const Ty& operator*() const noexcept
 		{
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY((step_count < limit) , "out of range");
+			assert(step_count < limit);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
+
 			return *ptr;
 		}
 
@@ -971,6 +1004,7 @@ struct List_iterator
 		Ty* ptr = nullptr;
 
 		int step_count = 0;
+		size_t limit = 0;
 
 	public:
 		using self = List_iterator<Ty>;
@@ -979,13 +1013,13 @@ struct List_iterator
 	public:
 		List_iterator() = default;
 
-		explicit List_iterator(Ty* InitPtr):ptr(InitPtr)
+		explicit List_iterator(Ty* InitPtr , size_t size) :ptr(InitPtr) , limit(size)
 		{}
 
-		explicit List_iterator(Ty* InitPtr,int num):ptr(InitPtr),step_count(num)
+		explicit List_iterator(Ty* InitPtr , int num , size_t size) :ptr(InitPtr) , step_count(num) , limit(size)
 		{}
 
-		List_iterator(const self& obj):ptr(obj.ptr),step_count(obj.step_count)
+		List_iterator(const self& obj) :ptr(obj.ptr) , step_count(obj.step_count) , limit(obj.limit)
 		{ }
 
 		~List_iterator()
@@ -995,11 +1029,25 @@ struct List_iterator
 
 		_NODISCARD value_type& operator*() noexcept
 		{
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY((step_count < limit) , "out of range");
+			assert(step_count < limit);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
+
 			return ptr->data;
 		}
 
 		_NODISCARD const value_type& operator*() const noexcept
 		{
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY((step_count < limit) , "out of range");
+			assert(step_count < limit);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
+
 			return ptr->data;
 		}
 
@@ -1092,6 +1140,7 @@ struct List_iterator
 
 			this->ptr = temp;
 			step_count = obj.step_count;
+			limit = obj.limit;
 
 			return *this;
 		}
@@ -1148,6 +1197,7 @@ struct const_List_iterator
 		Ty* ptr = nullptr;
 
 		int step_count = 0;
+		size_t limit = 0;
 
 	public:
 		using self = const_List_iterator<Ty>;
@@ -1158,12 +1208,13 @@ struct const_List_iterator
 		{
 			this->ptr = obj.ptr;
 			this->step_count = obj.step_count;
+			this->limit = obj.limit;
 		}
 
-		explicit const_List_iterator(Ty* InitPtr) :ptr(InitPtr)
+		explicit const_List_iterator(Ty* InitPtr , size_t size) :ptr(InitPtr) , limit(size)
 		{}
 
-		explicit const_List_iterator(Ty* InitPtr,int num):ptr(InitPtr),step_count(num)
+		explicit const_List_iterator(Ty* InitPtr , int num , size_t size) :ptr(InitPtr) , step_count(num) , limit(size)
 		{}
 
 		~const_List_iterator()
@@ -1174,6 +1225,13 @@ struct const_List_iterator
 
 		_NODISCARD const value_type& operator*() const noexcept
 		{
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY((step_count < limit) , "out of range");
+			assert(step_count < limit);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
+
 			return ptr->data;
 		}
 
@@ -1314,6 +1372,7 @@ struct RB_Tree_iterator
 		Ty* ptr = nullptr;
 
 		int step_count = 0;
+		size_t limit = 0;
 
 	public:
 		using self = RB_Tree_iterator<Ty>;
@@ -1322,13 +1381,13 @@ struct RB_Tree_iterator
 	public:
 		RB_Tree_iterator() = default;
 
-		explicit RB_Tree_iterator(Ty* p):ptr(p)
+		explicit RB_Tree_iterator(Ty* p , size_t size) :ptr(p) , limit(size)
 		{}
 
-		explicit RB_Tree_iterator(Ty* p,int num):ptr(p),step_count(num)
+		explicit RB_Tree_iterator(Ty* p , int num , size_t size) :ptr(p) , step_count(num) , limit(size)
 		{}
 
-		RB_Tree_iterator(const self& obj):ptr(obj.ptr),step_count(obj.step_count)
+		RB_Tree_iterator(const self& obj) :ptr(obj.ptr) , step_count(obj.step_count) , limit(obj.limit)
 		{}
 
 		~RB_Tree_iterator()
@@ -1338,11 +1397,25 @@ struct RB_Tree_iterator
 
 		_NODISCARD value_type& operator*() noexcept
 		{
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY((step_count < limit) , "out of range");
+			assert(step_count < limit);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
+
 			return ptr->data;
 		}
 
 		_NODISCARD const value_type& operator*() const noexcept
 		{
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY((step_count < limit) , "out of range");
+			assert(step_count < limit);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
+
 			return ptr->data;
 		}
 
@@ -1420,6 +1493,7 @@ struct RB_Tree_iterator
 			auto temp = obj.ptr;
 			this->ptr = temp;
 			step_count = obj.step_count;
+			limit = obj.limit;
 
 			return *this;
 		}
@@ -1537,6 +1611,7 @@ struct const_RB_Tree_iterator
 		Ty* ptr = nullptr;
 
 		int step_count = 0;
+		size_t limit = 0;
 
 	public:
 		using self = const_RB_Tree_iterator<Ty>;
@@ -1547,12 +1622,13 @@ struct const_RB_Tree_iterator
 		{
 			this->ptr = obj.ptr;
 			this->step_count = obj.step_count;
+			this->limit = obj.limit;
 		}
 
-		explicit const_RB_Tree_iterator(Ty* p) :ptr(p)
+		explicit const_RB_Tree_iterator(Ty* p , size_t size) :ptr(p) , limit(size)
 		{}
 
-		explicit const_RB_Tree_iterator(Ty* p,int num):ptr(p),step_count(num)
+		explicit const_RB_Tree_iterator(Ty* p , int num , size_t size) :ptr(p) , step_count(num) , limit(size)
 		{}
 
 		~const_RB_Tree_iterator()
@@ -1562,6 +1638,13 @@ struct const_RB_Tree_iterator
 
 		_NODISCARD const value_type& operator*() const noexcept
 		{
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY((step_count < limit) , "out of range");
+			assert(step_count < limit);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
+
 			return ptr->data;
 		}
 
@@ -1639,6 +1722,7 @@ struct const_RB_Tree_iterator
 			auto temp = obj.ptr;
 			this->ptr = temp;
 			step_count = obj.step_count;
+			limit = obj.limit;
 
 			return *this;
 		}
@@ -1763,6 +1847,8 @@ struct hash_table_iterator
 		int count = 0;
 		int step_count = 0;
 
+		size_t limit = 0;
+
 	public:
 		using self = hash_table_iterator<Ty,Hash>;
 		using value_type = typename Hash::value_type;
@@ -1770,7 +1856,8 @@ struct hash_table_iterator
 	public:
 		hash_table_iterator() = default;
 
-		explicit hash_table_iterator(Ty head , Hash* InitPtr , int size,int step,int jump_count = 0) :node(head) , ptr(InitPtr) , bucket_size(size),step_count(step),count(jump_count)
+		explicit hash_table_iterator(Ty head , Hash* InitPtr , int size,int step,size_t elem_count,int jump_count = 0) :
+			node(head) , ptr(InitPtr) , bucket_size(size),step_count(step),count(jump_count),limit(elem_count)
 		{
 			if(node == nullptr && step == 0)//head == nullptr
 				bucket_jump();
@@ -1783,6 +1870,7 @@ struct hash_table_iterator
 			bucket_size = obj.bucket_size;
 			count = obj.count;
 			step_count = obj.step_count;
+			limit = obj.limit;
 		}
 
 		~hash_table_iterator()
@@ -1798,11 +1886,25 @@ struct hash_table_iterator
 
 		_NODISCARD value_type& operator*() noexcept
 		{
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY((step_count < limit) , "out of range");
+			assert(step_count < limit);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
+
 			return node->val;
 		}
 
 		_NODISCARD const value_type& operator*() const noexcept
 		{
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY((step_count < limit) , "out of range");
+			assert(step_count < limit);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
+
 			return node->val;
 		}
 
@@ -1813,6 +1915,7 @@ struct hash_table_iterator
 			this->bucket_size = obj.bucket_size;
 			this->count = obj.count;
 			this->step_count = obj.step_count;
+			this->limit = obj.limit;
 
 			return *this;
 		}
@@ -1847,7 +1950,7 @@ struct hash_table_iterator
 			auto return_node = node;
 			node = cur_node_save;
 
-			return self(return_node,ptr,bucket_size,step_count+n,count);
+			return self(return_node,ptr,bucket_size,step_count+n,limit,count);
 		}
 
 		self operator++(int) noexcept
@@ -1932,6 +2035,8 @@ struct const_hash_table_iterator
 		int count = 0;
 		int step_count = 0;
 
+		size_t limit = 0;
+
 	public:
 		using self = const_hash_table_iterator<Ty , Hash>;
 		using value_type = typename Hash::value_type;
@@ -1939,9 +2044,10 @@ struct const_hash_table_iterator
 	public:
 		const_hash_table_iterator() = delete;
 
-		explicit const_hash_table_iterator(Ty head , Hash* InitPtr , int size , int step,int jump_count = 0) :node(head) , ptr(InitPtr) , bucket_size(size) , step_count(step),count(jump_count)
+		explicit const_hash_table_iterator(Ty head , Hash* InitPtr , int size , int step,size_t elem_count ,int jump_count = 0) :
+			node(head) , ptr(InitPtr) , bucket_size(size) , step_count(step),count(jump_count),limit(elem_count)
 		{
-			if (node == nullptr)//head == nullptr
+			if (node == nullptr && step == 0)//head == nullptr
 				bucket_jump();
 		}
 
@@ -1952,6 +2058,7 @@ struct const_hash_table_iterator
 			bucket_size = obj.bucket_size;
 			count = obj.count;
 			step_count = obj.step_count;
+			limit = obj.limit;
 		}
 
 		~const_hash_table_iterator()
@@ -1967,6 +2074,13 @@ struct const_hash_table_iterator
 
 		_NODISCARD const value_type& operator*() const noexcept
 		{
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY((step_count < limit) , "out of range");
+			assert(step_count < limit);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
+
 			return node->val;
 		}
 
@@ -1977,6 +2091,7 @@ struct const_hash_table_iterator
 			this->bucket_size = obj.bucket_size;
 			this->count = obj.count;
 			this->step_count = obj.step_count;
+			this->limit = obj.limit;
 
 			return *this;
 		}
@@ -2011,7 +2126,7 @@ struct const_hash_table_iterator
 			auto return_node = node;
 			node = cur_node_save;
 
-			return self(return_node , ptr , bucket_size , step_count + n , count);
+			return self(return_node , ptr , bucket_size , step_count + n , limit , count);
 		}
 
 		self operator++(int) noexcept
@@ -2094,6 +2209,7 @@ class deque_iterator
 		int buffer_count = 0;
 		int body_size = 0;
 		int step_count = 0;
+		size_t limit = 0;
 
 	public:
 		using self = deque_iterator<Ty>;
@@ -2102,7 +2218,8 @@ class deque_iterator
 	public:
 		deque_iterator() = delete;
 
-		explicit deque_iterator(Ty** init_ptr , int insert , int buffer , int body , int count) :ptr(init_ptr) , insert_count(insert) , buffer_count(buffer) , body_size(body) , step_count(count)
+		explicit deque_iterator(Ty** init_ptr , int insert , int buffer , int body , int count , size_t size) :
+			ptr(init_ptr) , insert_count(insert) , buffer_count(buffer) , body_size(body) , step_count(count) , limit(size)
 		{}
 
 		deque_iterator(const self& obj)
@@ -2112,6 +2229,7 @@ class deque_iterator
 			buffer_count = obj.buffer_count;
 			body_size = obj.body_size;
 			step_count = obj.step_count;
+			limit = obj.limit;
 		}
 
 		~deque_iterator()
@@ -2137,11 +2255,25 @@ class deque_iterator
 
 		_NODISCARD Ty& operator*() noexcept
 		{
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY((step_count < limit) , "out of range");
+			assert(step_count < limit);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
+
 			return ptr[buffer_count][insert_count];
 		}
 
 		_NODISCARD const Ty& operator*() const noexcept
 		{
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY((step_count < limit) , "out of range");
+			assert(step_count < limit);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
+
 			return ptr[buffer_count][insert_count];
 		}
 
@@ -2152,6 +2284,7 @@ class deque_iterator
 			this->buffer_count = obj.buffer_count;
 			this->insert_count = obj.insert_count;
 			this->step_count = obj.step_count;
+			this->limit = obj.limit;
 
 			return *this;
 		}
@@ -2196,7 +2329,7 @@ class deque_iterator
 			buffer_count = buffer_count_save;
 			insert_count = insert_count_save;
 
-			return self(ptr , return_insert_count , return_buffer_count , body_size , step_count + n);
+			return self(ptr , return_insert_count , return_buffer_count , body_size , step_count + n , limit);
 		}
 
 		self operator++(int) noexcept
@@ -2257,7 +2390,7 @@ class deque_iterator
 			buffer_count = buffer_count_save;
 			insert_count = insert_count_save;
 
-			return self(ptr , return_insert_count , return_buffer_count , body_size , step_count - n);
+			return self(ptr , return_insert_count , return_buffer_count , body_size , step_count - n , limit);
 		}
 
 		self operator--(int) noexcept
@@ -2333,6 +2466,7 @@ class const_deque_iterator
 		int buffer_count = 0;
 		int body_size = 0;
 		int step_count = 0;
+		size_t limit = 0;
 
 	public:
 		using self = const_deque_iterator<Ty>;
@@ -2341,7 +2475,8 @@ class const_deque_iterator
 	public:
 		const_deque_iterator() = delete;
 
-		explicit const_deque_iterator(Ty** init_ptr , int insert , int buffer , int body , int count) :ptr(init_ptr) , insert_count(insert) , buffer_count(buffer) , body_size(body) , step_count(count)
+		explicit const_deque_iterator(Ty** init_ptr , int insert , int buffer , int body , int count , size_t size) :
+			ptr(init_ptr) , insert_count(insert) , buffer_count(buffer) , body_size(body) , step_count(count) , limit(size)
 		{}
 
 		const_deque_iterator(const self& obj)
@@ -2351,6 +2486,7 @@ class const_deque_iterator
 			buffer_count = obj.buffer_count;
 			body_size = obj.body_size;
 			step_count = obj.step_count;
+			limit = obj.limit;
 		}
 
 		~const_deque_iterator()
@@ -2366,6 +2502,13 @@ class const_deque_iterator
 
 		_NODISCARD const Ty& operator*() const noexcept
 		{
+		#if _LIB_DEBUG_LEVEL == 1
+
+			_BUG_VERIFY((step_count < limit) , "out of range");
+			assert(step_count < limit);
+
+		#endif // _LIB_DEBUG_LEVEL == 1
+
 			return ptr[buffer_count][insert_count];
 		}
 
@@ -2376,6 +2519,7 @@ class const_deque_iterator
 			this->buffer_count = obj.buffer_count;
 			this->insert_count = obj.insert_count;
 			this->step_count = obj.step_count;
+			this->limit = obj.limit;
 
 			return *this;
 		}
@@ -2420,7 +2564,7 @@ class const_deque_iterator
 			buffer_count = buffer_count_save;
 			insert_count = insert_count_save;
 
-			return self(ptr , return_insert_count , return_buffer_count , body_size , step_count + n);
+			return self(ptr , return_insert_count , return_buffer_count , body_size , step_count + n , limit);
 		}
 
 		self operator++(int) noexcept
@@ -2481,7 +2625,7 @@ class const_deque_iterator
 			buffer_count = buffer_count_save;
 			insert_count = insert_count_save;
 
-			return self(ptr , return_insert_count , return_buffer_count , body_size , step_count - n);
+			return self(ptr , return_insert_count , return_buffer_count , body_size , step_count - n , limit);
 		}
 
 		self operator--(int) noexcept

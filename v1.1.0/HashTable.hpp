@@ -631,22 +631,22 @@ class hash_table
 
 		_NODISCARD iterator begin() noexcept
 		{
-			return iterator(buckets[0],this,bucket_size,0);
+			return iterator(buckets[0],this,bucket_size,0, elem_count);
 		}
 
 		_NODISCARD iterator end() noexcept
 		{
-			return iterator(nullptr,this,bucket_size,elem_count);
+			return iterator(nullptr,this,bucket_size,elem_count,elem_count);
 		}
 
 		_NODISCARD const_iterator cbegin() noexcept
 		{
-			return const_iterator(buckets[0] , this , bucket_size,0);
+			return const_iterator(buckets[0] , this , bucket_size,0, elem_count);
 		}
 
 		_NODISCARD const_iterator cend() noexcept
 		{
-			return const_iterator(nullptr , this , bucket_size,elem_count);
+			return const_iterator(nullptr , this , bucket_size,elem_count,elem_count);
 		}
 
 

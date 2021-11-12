@@ -310,32 +310,32 @@ class RB_Tree
 		//iterator
 		_NODISCARD iterator begin() noexcept
 		{
-			return iterator(header->Lchild,0);
+			return iterator(header->Lchild,0 , NodeCount);
 		}
 
 		_NODISCARD iterator end() noexcept
 		{
-			return iterator(header,NodeCount);
+			return iterator(header , NodeCount , NodeCount);
 		}
 
 		_NODISCARD iterator begin() const noexcept
 		{
-			return iterator(header->Lchild , 0);
+			return iterator(header->Lchild , 0 , NodeCount);
 		}
 
 		_NODISCARD iterator end() const noexcept
 		{
-			return iterator(header , NodeCount);
+			return iterator(header , NodeCount , NodeCount);
 		}
 
 		_NODISCARD const_iterator cbegin() const noexcept
 		{
-			return const_iterator(header->Lchild,0);
+			return const_iterator(header->Lchild,0 , NodeCount);
 		}
 
 		_NODISCARD const_iterator cend() const noexcept
 		{
-			return const_iterator(header,NodeCount);
+			return const_iterator(header,NodeCount , NodeCount);
 		}
 
 		_NODISCARD reverse_iterator rbegin()

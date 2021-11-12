@@ -767,32 +767,32 @@ class list
 
 		_NODISCARD iterator begin() noexcept
 		{
-			return iterator(Head , 0);
+			return iterator(Head , 0 , elem_count);
 		}
 
 		_NODISCARD iterator end() noexcept
 		{
-			return iterator(CurPtr , elem_count);
+			return iterator(CurPtr , elem_count , elem_count);
 		}
 
 		_NODISCARD iterator begin() const noexcept
 		{
-			return iterator(Head , 0);
+			return iterator(Head , 0 , elem_count);
 		}
 
 		_NODISCARD iterator end() const noexcept
 		{
-			return iterator(CurPtr , elem_count);
+			return iterator(CurPtr , elem_count , elem_count);
 		}
 
 		_NODISCARD const_iterator cbegin() const noexcept
 		{
-			return const_iterator(Head , 0);
+			return const_iterator(Head , 0 , elem_count);
 		}
 
 		_NODISCARD const_iterator cend() const noexcept
 		{
-			return const_iterator(CurPtr , elem_count);
+			return const_iterator(CurPtr , elem_count , elem_count);
 		}
 
 		_NODISCARD reverse_iterator rbegin() noexcept

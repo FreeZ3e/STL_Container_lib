@@ -550,33 +550,128 @@ namespace lib_algo
 
 	//search-----------------------------------------------------------
 
-	template<typename t,typename any>
-	_NODISCARD bool search(const t& obj , any&& elem)
+	template<typename con1,typename con2>
+	_NODISCARD decltype(auto) search(const con1& obj1 , const con2& obj2)
 	{
-		auto p = obj.cbegin();
-		auto p_end = obj.cend();
+		if (obj2.cbegin() == obj2.cend())
+			return obj2.cbegin();
 
-		for (; p != p_end; ++p)
+		auto beg1 = obj1.cbegin();
+		auto end1 = obj1.cend();
+		auto beg2 = obj2.cbegin();
+		auto end2 = obj2.cend();
+
+		while (beg1 != end1)
 		{
-			if (*p == elem)
-				return true;
+			auto it1 = beg1;
+			auto it2 = beg2;
+
+			while (*it1 == *it2)
+			{
+				++it1;
+				++it2;
+
+				if (it2 == end2)
+					return beg1;
+				if (it1 == end1)
+					return end1;
+			}
+
+			++beg1;
 		}
 
-		return false;
+		return end1;
 	}
 
-	template<typename t,typename any>
-	_NODISCARD bool search(t p_begin , t p_end , any&& elem)
+	template<typename iter1,typename iter2>
+	_NODISCARD decltype(auto) search(iter1 p_begin1 , iter1 p_end1 ,iter2 p_begin2 , iter2 p_end2)
 	{
-		while (p_begin != p_end)
-		{
-			if (*p_begin == elem)
-				return true;
+		if (p_begin2 == p_end2)
+			return p_begin1;
 
-			++p_begin;
+		while (p_begin1 != p_end1)
+		{
+			iter1 it1 = p_begin1;
+			iter2 it2 = p_begin2;
+
+			while (*it1 == *it2)
+			{
+				++it1;
+				++it2;
+
+				if (it2 == p_end2)
+					return p_begin1;
+				if (it1 == p_end1)
+					return p_end1;
+			}
+
+			++p_begin1;
 		}
 
-		return false;
+		return p_begin1-1;
+	}
+
+	template<typename con1 , typename con2>
+	_NODISCARD decltype(auto) search(const con1& obj1 , const con2& obj2 ,
+						   bool(*pred)(typename con1::value_type,typename con2::value_type))
+	{
+		if (obj2.cbegin() == obj2.cend())
+			return obj2.cbegin();
+
+		auto beg1 = obj1.cbegin();
+		auto end1 = obj1.cend();
+		auto beg2 = obj2.cbegin();
+		auto end2 = obj2.cend();
+
+		while (beg1 != end1)
+		{
+			auto it1 = beg1;
+			auto it2 = beg2;
+
+			while (pred(*it1,*it2))
+			{
+				++it1;
+				++it2;
+
+				if (it2 == end2)
+					return beg1;
+				if (it1 == end1)
+					return end1;
+			}
+
+			++beg1;
+		}
+
+		return end1;
+	}
+
+	template<typename iter1 , typename iter2>
+	_NODISCARD decltype(auto) search(iter1 p_begin1 , iter1 p_end1 , iter2 p_begin2 , iter2 p_end2,
+						   bool(*pred)(typename iter1::value_type , typename iter2::value_type))
+	{
+		if (p_begin2 == p_end2)
+			return p_begin1;
+
+		while (p_begin1 != p_end1)
+		{
+			iter1 it1 = p_begin1;
+			iter2 it2 = p_begin2;
+
+			while (pred(*it1 , *it2))
+			{
+				++it1;
+				++it2;
+
+				if (it2 == p_end2)
+					return p_begin1;
+				if (it1 == p_end1)
+					return p_end1;
+			}
+
+			++p_begin1;
+		}
+
+		return p_begin1 - 1;
 	}
 
 	//-----------------------------------------------------------------
@@ -585,7 +680,7 @@ namespace lib_algo
 	//search_n---------------------------------------------------------
 
 	template<typename t,typename arg>
-	_NODISCARD auto search_n(const t& obj , const arg& elem , int n)
+	_NODISCARD decltype(auto) search_n(const t& obj , const arg& elem , int n)
 	{
 		if (n <= 0)
 			return obj.cbegin();
@@ -596,11 +691,17 @@ namespace lib_algo
 
 		while (p != p_end)
 		{
-			if ((*p) == elem)
-				count++;
-			
-			if (count == n)
-				return find(obj , elem);
+			auto it = p;
+			count = 0;
+
+			while (*it == elem)
+			{
+				++count;
+				++it;
+
+				if (count == n)
+					return p;
+			}
 
 			++p;
 		}
@@ -609,7 +710,7 @@ namespace lib_algo
 	}
 
 	template<typename t,typename arg>
-	_NODISCARD auto search_n(t p_begin , t p_end , const arg& elem , int n)
+	_NODISCARD decltype(auto) search_n(t p_begin , t p_end , const arg& elem , int n)
 	{
 		if (n <= 0)
 			return p_begin;
@@ -619,11 +720,78 @@ namespace lib_algo
 
 		while (p != p_end)
 		{
-			if ((*p) == elem)
-				count++;
+			auto it = p;
+			count = 0;
 
-			if (count == n)
-				return find(p_begin , p_end , elem);
+			while (*it == elem)
+			{
+				++count;
+				++it;
+
+				if (count == n)
+					return p;
+			}
+
+			++p;
+		}
+
+		return p_end - 1;
+	}
+
+	template<typename t , typename arg>
+	_NODISCARD decltype(auto) search_n(const t& obj , const arg& elem , int n ,
+							 bool(*pred)(typename t::value_type , arg))
+	{
+		if (n <= 0)
+			return obj.cbegin();
+
+		auto p = find(obj , elem);
+		auto p_end = obj.cend();
+		int count = 0;
+
+		while (p != p_end)
+		{
+			auto it = p;
+			count = 0;
+
+			while (pred(*p,elem))
+			{
+				++count;
+				++it;
+
+				if (count == n)
+					return p;
+			}
+
+			++p;
+		}
+
+		return p_end - 1;
+	}
+
+	template<typename t , typename arg>
+	_NODISCARD decltype(auto) search_n(t p_begin , t p_end , const arg& elem , int n ,
+							 bool(*pred)(typename t::value_type , arg))
+	{
+		if (n <= 0)
+			return p_begin;
+
+		auto p = find(p_begin , p_end , elem);
+		int count = 0;
+
+		while (p != p_end)
+		{
+			auto it = p;
+			count = 0;
+
+			while (pred(*p , elem))
+			{
+				++count;
+				++it;
+
+				if (count == n)
+					return p;
+			}
 
 			++p;
 		}
@@ -1047,7 +1215,7 @@ namespace lib_algo
 	//return first diff elem iterator position in same container
 
 	template<typename t>
-	_NODISCARD auto mismatch_element(const t& obj)
+	_NODISCARD decltype(auto) mismatch_element(const t& obj)
 	{
 		auto p = obj.cbegin();
 		auto p_end = obj.cend();
@@ -1063,6 +1231,8 @@ namespace lib_algo
 				return ptr;
 			}
 		}
+
+		return p_end;
 	}
 
 	template<typename t>
@@ -1081,6 +1251,8 @@ namespace lib_algo
 				return ptr;
 			}
 		}
+
+		return p_end;
 	}
 
 	//------------------------------------------------------------------
@@ -1090,7 +1262,7 @@ namespace lib_algo
 	//return first diff elem between two different containers
 
 	template<typename t1,typename t2>
-	_NODISCARD auto mismatch(const t1& obj1 , const t2& obj2)			//obj1:greater range  obj2:less range
+	_NODISCARD decltype(auto) mismatch(const t1& obj1 , const t2& obj2)			//obj1:greater range  obj2:less range
 	{																	//return less range container's iterator
 		auto p1 = obj1.cbegin();
 		auto p2 = obj2.cbegin();
@@ -1107,7 +1279,7 @@ namespace lib_algo
 	}
 
 	template<typename t1,typename t2>
-	_NODISCARD auto mismatch(t1 p_begin1 , t1 p_end1,			// greater range
+	_NODISCARD decltype(auto) mismatch(t1 p_begin1 , t1 p_end1,			// greater range
 							t2 p_begin2 , t2 p_end2)			// less range
 	{
 		for (; p_begin1 != p_end1 , p_begin2 != p_end2; ++p_begin1 , ++p_begin2)
@@ -1206,7 +1378,7 @@ namespace lib_algo
 	//find equal adjacent elements in range.
 
 	template<typename t>
-	_NODISCARD auto adjacent_find(const t& obj)
+	_NODISCARD decltype(auto) adjacent_find(const t& obj)
 	{
 		auto p = obj.cbegin();
 		auto p_end = obj.cend();
@@ -1221,10 +1393,12 @@ namespace lib_algo
 				return p;
 			}
 		}
+
+		return p_end;
 	}
 
 	template<typename t>
-	_NODISCARD auto adjacent_find(t p_begin , t p_end)
+	_NODISCARD decltype(auto) adjacent_find(t p_begin , t p_end)
 	{
 		int step = p_end.step() - p_begin.step();
 
@@ -1238,6 +1412,8 @@ namespace lib_algo
 				return p_begin;
 			}
 		}
+
+		return p_end;
 	}
 
 	//------------------------------------------------------------------
@@ -1344,7 +1520,7 @@ namespace lib_algo
 	//support different type containers
 
 	template<typename t1,typename t2,typename t3>
-	_NODISCARD auto merge(const t1& obj1 , const t2& obj2 , t3& result)
+	_NODISCARD decltype(auto) merge(const t1& obj1 , const t2& obj2 , t3& result)
 	{
 		auto p1 = obj1.cbegin();
 		auto p2 = obj2.cbegin();
@@ -1387,7 +1563,7 @@ namespace lib_algo
 
 	
 	template<typename t1,typename t2,typename t3>
-	_NODISCARD auto merge(t1 p_begin1 , t1 p_end1 ,
+	_NODISCARD decltype(auto) merge(t1 p_begin1 , t1 p_end1 ,
 			   t2 p_begin2 , t2 p_end2 , t3& result)
 	{
 		while (p_begin1 != p_end1 && p_begin2 != p_end2)
