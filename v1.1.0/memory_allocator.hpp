@@ -468,11 +468,7 @@ class _buddy_allocator
 			//initialization
 			if (is_init == 0)
 			{
-				if (size > MIN_BLOCK_SIZE)
-					buddy_init(size * 2);
-				else
-					buddy_init();
-
+				buddy_init();//default initialization(1024,16)
 				is_init = 1;
 			}
 
