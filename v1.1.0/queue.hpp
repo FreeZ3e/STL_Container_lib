@@ -20,21 +20,21 @@
 #include"deque.hpp"
 
 
-template<typename Ty>
+template<typename Ty , template <typename type> typename container = deque>
 class queue
 {
 	private:
-		deque<Ty>* arr = nullptr;
+		container<Ty>* arr = nullptr;
 	public:
-		using self = queue<Ty>;
+		using self = queue<Ty , container>;
 		using value_type = Ty;
-		using iterator = typename deque<Ty>::iterator;
-		using const_iterator = typename deque<Ty>::const_iterator;
+		using iterator = typename container<Ty>::iterator;
+		using const_iterator = typename container<Ty>::const_iterator;
 
 	public:
 		queue()
 		{
-			arr = new deque<Ty>;
+			arr = new container<Ty>;
 		}
 
 		queue(const initializer_list<Ty>& list) :queue()
@@ -47,7 +47,7 @@ class queue
 
 		queue(const self& obj)
 		{
-			arr = new deque<Ty>(4);
+			arr = new container<Ty>(4);
 
 			for (auto p : obj)
 				push(p);
@@ -55,12 +55,12 @@ class queue
 
 		queue(self&& obj)
 		{
-			arr = new deque<Ty>(obj.size());
+			arr = new container<Ty>(obj.size());
 
 			for (auto p : obj)
 				push(p);
 
-			obj.arr->~deque();
+			obj.arr->~container<Ty>();
 			obj.arr = nullptr;
 		}
 
@@ -124,7 +124,7 @@ class queue
 
 		[[noreturn]] void swap(self& obj)
 		{
-			deque<Ty>* temp = new deque<Ty>(obj.size());
+			container<Ty>* temp = new container<Ty>(obj.size());
 
 			for (auto p : obj)
 			{
