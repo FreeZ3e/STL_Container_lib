@@ -37,5 +37,8 @@
 
 
 ### 最近更新 
-### 2022/1/17:
-- 修改了queue及stack的模板参数,使其支持除deque外的更多容器.
+### 2022/1/15:
+- 对self_string进行了更新,新增insert,append,assgin,replace等修改函数.
+- 对迭代器的潜在错误进行了修复,并对各容器调用迭代器构造函数的错误进行了修复.
+- 对hash_table中的hash_node的operator new[]及delete[]函数中的分配器调用错误进行了修复.
+- 对algorithm中的replace函数新增了两类关于迭代器范围及初始化列表的重载.
