@@ -183,12 +183,15 @@ class queue
 
 		self& operator=(const self& obj)
 		{
-			this->clear();
-
-			auto p = obj.cbegin();
-			for (; p != obj.cend(); ++p)
+			if (*this != obj)
 			{
-				arr->push_back((*p));
+				this->clear();
+
+				auto p = obj.cbegin();
+				for (; p != obj.cend(); ++p)
+				{
+					arr->push_back((*p));
+				}
 			}
 
 			return *this;

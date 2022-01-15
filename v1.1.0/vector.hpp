@@ -631,18 +631,21 @@ class vector
 
 		self& operator=(const self& obj)
 		{
-			if (arr_size < obj.arr_size)
+			if (*this != obj)
 			{
-				arr_size = obj.arr_size;
-				MemoryExpand(arr_size);
-			}
+				if (arr_size < obj.arr_size)
+				{
+					arr_size = obj.arr_size;
+					MemoryExpand(arr_size);
+				}
 
-			for (int n = 0; n < obj.elem_count; ++n)
-			{
-				this->arr[n] = obj.arr[n];
-			}
+				for (int n = 0; n < obj.elem_count; ++n)
+				{
+					this->arr[n] = obj.arr[n];
+				}
 
-			this->elem_count = obj.elem_count;
+				this->elem_count = obj.elem_count;
+			}
 
 			return *this;
 		}

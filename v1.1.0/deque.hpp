@@ -944,12 +944,15 @@ class deque
 
 		self& operator=(const self& obj)
 		{
-			clear();
-
-			auto p = obj.cbegin();
-			for (; p != obj.cend(); ++p)
+			if (*this != obj)
 			{
-				push_back(*p);
+				clear();
+
+				auto p = obj.cbegin();
+				for (; p != obj.cend(); ++p)
+				{
+					push_back(*p);
+				}
 			}
 
 			return *this;

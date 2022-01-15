@@ -270,12 +270,15 @@ class array
 
 		self& operator=(const self& obj)
 		{
-			for (int n = 0; n < obj.elem_count; ++n)
+			if (*this != obj)
 			{
-				this->arr[n] = obj.arr[n];
-			}
+				for (int n = 0; n < obj.elem_count; ++n)
+				{
+					this->arr[n] = obj.arr[n];
+				}
 
-			this->elem_count = obj.elem_count;
+				this->elem_count = obj.elem_count;
+			}
 
 			return *this;
 		}

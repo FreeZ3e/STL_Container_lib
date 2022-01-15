@@ -341,12 +341,15 @@ class unordered_map
 
 		self& operator=(const self& obj)
 		{
-			clear();
-
-			typename self::const_iterator p = obj.cbegin();
-			for (; p != obj.cend(); ++p)
+			if (*this != obj)
 			{
-				insert(*p);
+				clear();
+
+				typename self::const_iterator p = obj.cbegin();
+				for (; p != obj.cend(); ++p)
+				{
+					insert(*p);
+				}
 			}
 
 			return *this;

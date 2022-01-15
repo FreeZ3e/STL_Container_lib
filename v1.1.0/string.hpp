@@ -1432,15 +1432,18 @@ class self_string
 
 		self_string& operator=(const self_string& obj) noexcept
 		{
-			delete[] arr;
-			arr = new char[obj.arr_size];
-
-			elem_count = 0;
-			arr_size = obj.arr_size;
-
-			for (int n = 0; n < obj.elem_count; ++n)
+			if (*this != obj)
 			{
-				arr[elem_count++] = obj.arr[n];
+				delete[] arr;
+				arr = new char[obj.arr_size];
+
+				elem_count = 0;
+				arr_size = obj.arr_size;
+
+				for (int n = 0; n < obj.elem_count; ++n)
+				{
+					arr[elem_count++] = obj.arr[n];
+				}
 			}
 
 			return *this;

@@ -363,11 +363,14 @@ class RB_Tree
 		//operator overload
 		self& operator=(const self& obj) noexcept
 		{
-			typename RB_Tree<Ty , Compare_Class , alloc>::const_iterator p = obj.cbegin();
-			for (; p != obj.cend(); ++p)
+			if (*this != obj)
 			{
-				Insert((*p));
-				NodeCount++;
+				typename RB_Tree<Ty , Compare_Class , alloc>::const_iterator p = obj.cbegin();
+				for (; p != obj.cend(); ++p)
+				{
+					Insert((*p));
+					NodeCount++;
+				}
 			}
 
 			return *this;

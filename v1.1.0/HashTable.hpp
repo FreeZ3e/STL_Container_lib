@@ -71,6 +71,7 @@ class hash_table
 
 		void* operator new[](size_t size)
 		{
+			size /= sizeof(hash_node<value , alloc>);
 			return simple_allocator(alloc , hash_node<value>)::allocate(size);
 		}
 
@@ -128,7 +129,7 @@ class hash_table
 
 		~hash_table() noexcept
 		{
-			clear();
+			simple_allocator(alloc , hash_node<Ty>*)::deallocate(buckets , sizeof(hash_node<Ty>*) * bucket_size);
 			buckets = nullptr;
 		}
 			
@@ -666,32 +667,35 @@ class hash_table
 
 		self& operator=(const self& obj)
 		{
-			simple_allocator(alloc , hash_node<Ty>*)::deallocate(buckets , sizeof(hash_node<Ty>*) * bucket_size);
-			buckets = simple_allocator(alloc , hash_node<Ty>*)::allocate(obj.bucket_size);
-			init_bucket(obj.bucket_size);
-
-			for (int n = 0; n < (int)bucket_size ; ++n)
+			if (*this != obj)
 			{
-				hash_node<Ty>* ptr = obj.buckets[n];
-				if (ptr != nullptr)
+				simple_allocator(alloc , hash_node<Ty>*)::deallocate(buckets , sizeof(hash_node<Ty>*) * bucket_size);
+				buckets = simple_allocator(alloc , hash_node<Ty>*)::allocate(obj.bucket_size);
+				init_bucket(obj.bucket_size);
+
+				for (int n = 0; n < (int)bucket_size; ++n)
 				{
-					buckets[n] = new hash_node<Ty>;
-					hash_node<Ty>* temp = buckets[n];
-
-					while (ptr != nullptr)
+					hash_node<Ty>* ptr = obj.buckets[n];
+					if (ptr != nullptr)
 					{
-						if (temp == nullptr)
-							temp = new hash_node<Ty>;
+						buckets[n] = new hash_node<Ty>;
+						hash_node<Ty>* temp = buckets[n];
 
-						temp->val = ptr->val;
-						temp = temp->next;
-						ptr = ptr->next;
+						while (ptr != nullptr)
+						{
+							if (temp == nullptr)
+								temp = new hash_node<Ty>;
+
+							temp->val = ptr->val;
+							temp = temp->next;
+							ptr = ptr->next;
+						}
 					}
 				}
-			}
 
-			this->bucket_size = obj.bucket_size;
-			this->elem_count = obj.elem_count;
+				this->bucket_size = obj.bucket_size;
+				this->elem_count = obj.elem_count;
+			}
 
 			return *this;
 		}
