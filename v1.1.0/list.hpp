@@ -239,14 +239,14 @@ class list
 		}
 
 		template<typename iter>
-		[[noreturn]] void assgin(iter beg , iter end)
+		[[noreturn]] void assgin(iter beg , iter p_end)
 		{
-			int size = end.step() - beg.step();
+			int size = p_end.step() - beg.step();
 
 			if (size > elem_count)
 			{
 				auto temp = begin();
-				while (temp.step() != end.step())
+				while (temp.step() != end().step())
 				{
 					*temp = (*beg++);
 					++temp;

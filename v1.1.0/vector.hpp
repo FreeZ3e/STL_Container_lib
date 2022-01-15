@@ -152,16 +152,15 @@ class vector
 				arr_size = arr_size * 2;
 			}
 
-			iterator temp = end();
+			iterator temp = iterator(arr + elem_count , elem_count , (size_t)elem_count+1);
 
-			while (temp.step() > pos.step())
+			while (temp > pos && temp > begin())
 			{
 				*temp = *(temp - 1);
 				--temp;
 			}
 
 			*temp = elem;
-
 			elem_count++;
 		}
 
@@ -173,16 +172,15 @@ class vector
 				arr_size = arr_size * 2;
 			}
 
-			iterator temp = end();
-			
-			while (temp.step() > pos.step())
+			iterator temp = iterator(arr + elem_count , elem_count , (size_t)elem_count + 1);
+
+			while (temp > pos && temp > begin())
 			{
 				*temp = *(temp - 1);
 				--temp;
 			}
 
 			*temp = elem;
-
 			elem_count++;
 		}
 
@@ -219,6 +217,7 @@ class vector
 
 			while (size < elem_count)
 				pop_back();
+			elem_count = size;
 		}
 
 		template<typename iter>
@@ -238,6 +237,7 @@ class vector
 
 			while (step < elem_count)
 				pop_back();
+			elem_count = step;
 		}
 
 		[[noreturn]] void assgin(const initializer_list<value_type>& list)
@@ -256,6 +256,7 @@ class vector
 
 			while (list.size() < elem_count)
 				pop_back();
+			elem_count = list.size();
 		}
 
 		[[noreturn]] void push_back(const_reference elem)
@@ -313,7 +314,7 @@ class vector
 			new(iter) value_type(arg...);
 
 
-			return iterator(arr + pos.step() , pos.step());
+			return iterator(arr + pos.step() , pos.step() , elem_count);
 		}
 
 		template<typename... value>
@@ -384,7 +385,7 @@ class vector
 
 			elem_count = count;
 
-			return iterator(&arr[del] , del);
+			return iterator(&arr[del] , del , elem_count);
 		}
 
 		_NODISCARD const_iterator erase(const_iterator ptr)
@@ -418,7 +419,7 @@ class vector
 
 			elem_count = count;
 
-			return const_iterator(&arr[del] , del);
+			return const_iterator(&arr[del] , del , elem_count);
 
 		}
 

@@ -66,17 +66,17 @@ class hash_table
 
 		void operator delete(void* ptr , size_t size)
 		{
-			simple_allocator(alloc , hash_node<value>)::deallocate((hash_node<value>*)ptr , sizeof(hash_node<value>**));
+			simple_allocator(alloc , hash_node<value>)::deallocate((hash_node<value>*)ptr , sizeof(hash_node<value>));
 		}
 
 		void* operator new[](size_t size)
 		{
-			return simple_allocator(alloc , hash_node<value>*)::allocate(1);
+			return simple_allocator(alloc , hash_node<value>)::allocate(size);
 		}
 
 		void operator delete[](void* ptr , size_t size)
 		{
-			simple_allocator(alloc , hash_node<value>*)::deallocate((hash_node<value>**)ptr , sizeof(hash_node<value>**));
+			simple_allocator(alloc , hash_node<value>)::deallocate((hash_node<value>*)ptr , sizeof(hash_node<value>) * size);
 		}
 	};
 
@@ -120,7 +120,7 @@ class hash_table
 
 		#endif // _LIB_DEBUG_LEVEL == 1
 
-			buckets = new hash_node<Ty>*[size * 2];
+			buckets = simple_allocator(alloc , hash_node<Ty>*)::allocate(size * 2);
 			this->bucket_size = size * 2;
 
 			init_bucket(bucket_size);
@@ -395,13 +395,13 @@ class hash_table
 			{
 				erase(*temp);
 
-				return iterator(nullptr , this , bucket_size , step);
+				return iterator(nullptr , this , bucket_size , step , elem_count);
 			}
 
 			Ty elem = (*(++p));
 			erase(*temp);
 
-			return iterator(find(elem) , this , bucket_size , step);
+			return iterator(find(elem) , this , bucket_size , step , elem_count);
 		}
 
 		_NODISCARD const_iterator erase(const_iterator p)
@@ -413,13 +413,13 @@ class hash_table
 			{
 				erase(*temp);
 
-				return const_iterator(nullptr , this , bucket_size , step);
+				return const_iterator(nullptr , this , bucket_size , step , elem_count);
 			}
 
 			Ty elem = (*(++p));
 			erase(*temp);
 
-			return const_iterator(find(elem) , this , bucket_size , step);
+			return const_iterator(find(elem) , this , bucket_size , step , elem_count);
 		}
 
 		[[noreturn]] void erase(iterator p_begin , iterator p_end)
@@ -433,8 +433,8 @@ class hash_table
 
 		[[noreturn]] void clear() noexcept
 		{
-			delete[] buckets;
-			buckets = new hash_node<Ty>*[bucket_size];
+			simple_allocator(alloc , hash_node<Ty>*)::deallocate(buckets , sizeof(hash_node<Ty>*) * bucket_size);
+			buckets = simple_allocator(alloc , hash_node<Ty>*)::allocate(bucket_size);
 			init_bucket(bucket_size);
 
 			elem_count = 0;
@@ -666,8 +666,8 @@ class hash_table
 
 		self& operator=(const self& obj)
 		{
-			delete[] buckets;
-			buckets = new hash_node<Ty>*[obj.bucket_size];
+			simple_allocator(alloc , hash_node<Ty>*)::deallocate(buckets , sizeof(hash_node<Ty>*) * bucket_size);
+			buckets = simple_allocator(alloc , hash_node<Ty>*)::allocate(obj.bucket_size);
 			init_bucket(obj.bucket_size);
 
 			for (int n = 0; n < (int)bucket_size ; ++n)
@@ -762,7 +762,7 @@ class hash_table
 
 		#endif // _LIB_DEBUG_LEVEL == 1
 
-			hash_node<Ty>** temp = new hash_node<Ty>*[bucket_size];
+			hash_node<Ty>** temp = simple_allocator(alloc , hash_node<Ty>*)::allocate(bucket_size);
 
 			//keep old data
 			for (int n = 0; n < (int)bucket_size; n++)
@@ -774,11 +774,11 @@ class hash_table
 			}
 
 			//alloc new buckets
-			delete[] buckets;
+			simple_allocator(alloc , hash_node<Ty>*)::deallocate(buckets , sizeof(hash_node<Ty>*) * bucket_size);
 
 			if (resize >= bucket_size)
 			{
-				buckets = new hash_node<Ty>*[resize * 2];
+				buckets = simple_allocator(alloc , hash_node<Ty>*)::allocate(resize * 2);
 				init_bucket(resize * 2);
 
 				//get old data
@@ -789,7 +789,7 @@ class hash_table
 			}
 			else
 			{
-				buckets = new hash_node<Ty>*[resize];
+				buckets = simple_allocator(alloc , hash_node<Ty>*)::allocate(resize);
 				init_bucket(resize);
 
 				for (int n = 0; n < resize; n++)
@@ -799,7 +799,7 @@ class hash_table
 			}
 
 			//set temp free
-			delete[] temp;
+			simple_allocator(alloc , hash_node<Ty>*)::deallocate(temp , sizeof(hash_node<Ty>*) * bucket_size);
 			temp = nullptr;
 		}
 

@@ -16,8 +16,10 @@
  */
 
 #pragma once
+#include<initializer_list>
 #include"type_traits.hpp"
 using namespace lib_type;
+using std::initializer_list;
 
 namespace lib_algo
 {
@@ -1172,6 +1174,37 @@ namespace lib_algo
 		{
 			*p_begin = elem;
 			++p_begin;
+		}
+	}
+
+	template<typename t , typename any>
+	void replace(t p_begin , t p_end , const initializer_list<any>& list)
+	{
+		int step = p_end.step() - p_begin.step();
+		auto it = list.begin();
+
+		for (int n = 0; n < step; ++n)
+		{
+			*p_begin = *it++;
+			++p_begin;
+
+			if (it == list.end())
+				break;
+		}
+	}
+
+	template<typename t1,typename t2>
+	void replace(t1 p_begin , t1 p_end , t2 beg , t2 end)
+	{
+		int step = p_end.step() - p_begin.step();
+
+		for (int n = 0; n < step; ++n)
+		{
+			*p_begin = *beg++;
+			++p_begin;
+
+			if (beg == end)
+				break;
 		}
 	}
 

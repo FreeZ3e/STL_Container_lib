@@ -33,7 +33,7 @@ class unordered_multiset
 		using hash_table = hash_table<Ty , alloc , compare , Hash>;
 		using iterator = hash_table_iterator<typename hash_table::NodeType* , hash_table>;
 		using const_iterator = const_hash_table_iterator<typename hash_table::NodeType* , hash_table>;
-		using self = unordered_multiset<Ty , alloc>;
+		using self = unordered_multiset<Ty , Hash ,alloc>;
 		using size_type = size_t;
 
 	private:

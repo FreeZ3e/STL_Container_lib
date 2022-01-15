@@ -205,7 +205,7 @@ class RB_Tree
 
 			DeleteNode(cur_num);
 
-			return iterator(Self_Search(next_num , head),step);
+			return iterator(Self_Search(next_num , head),step,NodeCount);
 		}
 
 		_NODISCARD const_iterator erase(const_iterator& ptr) noexcept
@@ -233,7 +233,7 @@ class RB_Tree
 
 			DeleteNode(cur_num);
 
-			return const_iterator(Self_Search(next_num , head) , step);
+			return const_iterator(Self_Search(next_num , head) , step , NodeCount);
 		}
 
 		[[noreturn]] void erase(iterator p_begin , iterator p_end) noexcept

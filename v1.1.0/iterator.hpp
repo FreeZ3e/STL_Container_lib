@@ -581,12 +581,12 @@ struct Random_iterator
 
 		_NODISCARD self operator+(int n) const noexcept
 		{
-			return self(ptr + n , step_count + n);
+			return self(ptr + n , step_count + n , limit);
 		}
 
 		_NODISCARD self operator-(int n) const noexcept
 		{
-			return self(ptr - n , step_count - n);
+			return self(ptr - n , step_count - n , limit);
 		}
 
 		self& operator--() noexcept
@@ -908,12 +908,12 @@ struct const_Random_iterator
 
 		_NODISCARD self operator+(int n) const noexcept
 		{
-			return self(ptr + n , step_count + n);
+			return self(ptr + n , step_count + n , limit);
 		}
 
 		_NODISCARD self operator-(int n) const noexcept
 		{
-			return self(ptr - n , step_count - n);
+			return self(ptr - n , step_count - n , limit);
 		}
 
 		self& operator--() noexcept
@@ -1070,7 +1070,7 @@ struct List_iterator
 				}
 			}
 
-			return self(temp , step_count + count);
+			return self(temp , step_count + count , limit);
 		}
 
 		_NODISCARD self operator-(int n) const noexcept
@@ -1087,7 +1087,7 @@ struct List_iterator
 				}
 			}
 
-			return self(temp , step_count - count);
+			return self(temp , step_count - count , limit);
 		}
 
 		self& operator++() noexcept
@@ -1254,7 +1254,7 @@ struct const_List_iterator
 				}
 			}
 
-			return self(temp , step_count + count);
+			return self(temp , step_count + count , limit);
 		}
 
 		_NODISCARD self operator-(int n) const noexcept
@@ -1271,7 +1271,7 @@ struct const_List_iterator
 				}
 			}
 
-			return self(temp , step_count - count);
+			return self(temp , step_count - count , limit);
 		}
 
 		self& operator++() noexcept
@@ -1436,7 +1436,7 @@ struct RB_Tree_iterator
 			auto return_ptr = ptr;
 			ptr = cur_ptr_save;
 
-			return self(return_ptr , step_count + n);
+			return self(return_ptr , step_count + n , limit);
 		}
 
 		_NODISCARD self operator-(int n) noexcept
@@ -1451,7 +1451,7 @@ struct RB_Tree_iterator
 			auto return_ptr = ptr;
 			ptr = cur_ptr_save;
 
-			return self(return_ptr , step_count - n);
+			return self(return_ptr , step_count - n , limit);
 		}
 
 		self& operator++() noexcept
@@ -1665,7 +1665,7 @@ struct const_RB_Tree_iterator
 			auto return_ptr = ptr;
 			ptr = cur_ptr_save;
 
-			return self(return_ptr , step_count + n);
+			return self(return_ptr , step_count + n , limit);
 		}
 
 		_NODISCARD self operator-(int n) noexcept
@@ -1680,7 +1680,7 @@ struct const_RB_Tree_iterator
 			auto return_ptr = ptr;
 			ptr = cur_ptr_save;
 
-			return self(return_ptr , step_count - n);
+			return self(return_ptr , step_count - n , limit);
 		}
 
 		self& operator++() noexcept
