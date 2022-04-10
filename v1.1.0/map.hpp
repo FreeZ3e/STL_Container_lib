@@ -345,14 +345,14 @@ class map
 			return tree->end();
 		}
 
-		_NODISCARD iterator begin() const noexcept
+		_NODISCARD const_iterator begin() const noexcept
 		{
-			return tree->begin();
+			return tree->cbegin();
 		}
 
-		_NODISCARD iterator end() const noexcept
+		_NODISCARD const_iterator end() const noexcept
 		{
-			return tree->end();
+			return tree->cend();
 		}
 
 		_NODISCARD const_iterator cbegin() const noexcept

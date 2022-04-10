@@ -775,14 +775,14 @@ class list
 			return iterator(CurPtr , elem_count , elem_count);
 		}
 
-		_NODISCARD iterator begin() const noexcept
+		_NODISCARD const_iterator begin() const noexcept
 		{
-			return iterator(Head , 0 , elem_count);
+			return const_iterator(Head , 0 , elem_count);
 		}
 
-		_NODISCARD iterator end() const noexcept
+		_NODISCARD const_iterator end() const noexcept
 		{
-			return iterator(CurPtr , elem_count , elem_count);
+			return const_iterator(CurPtr , elem_count , elem_count);
 		}
 
 		_NODISCARD const_iterator cbegin() const noexcept
@@ -880,12 +880,12 @@ class list
 		}
 
 	private:
-		[[noreturn]] void alloc(size_type list_size)
+		[[noreturn]] void alloc(size_type size)
 		{
 		#if _LIB_DEBUG_LEVEL == 1
 
-			_BUG_VERIFY((list_size > 0) , "container size error");
-			assert(list_size > 0);
+			_BUG_VERIFY((size > 0) , "container size error");
+			assert(size > 0);
 
 		#endif // _LIB_DEBUG_LEVEL == 1
 
@@ -898,7 +898,7 @@ class list
 			node* ptr = CurPtr;
 
 			//alloc memory
-			for (int n = 0; n < list_size; ++n)
+			for (int n = 0; n < size; ++n)
 			{
 				ptr->next = new node;
 				ptr->next->last = ptr;

@@ -306,14 +306,14 @@ class unordered_map
 			return ptr->end();
 		}
 
-		_NODISCARD iterator begin() const noexcept
+		_NODISCARD const_iterator begin() const noexcept
 		{
-			return ptr->begin();
+			return ptr->cbegin();
 		}
 
-		_NODISCARD iterator end() const noexcept
+		_NODISCARD const_iterator end() const noexcept
 		{
-			return ptr->end();
+			return ptr->cend();
 		}
 
 		_NODISCARD const_iterator cbegin() const noexcept

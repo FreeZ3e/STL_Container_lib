@@ -20,13 +20,14 @@
 #include"deque.hpp"
 
 
-template<typename Ty , template <typename type> typename container = deque>
+template<typename Ty, 
+	template <typename type, typename alloc = _default_allocator> typename container = deque>
 class stack
 {
 	private:
 		container<Ty>* arr = nullptr;
 	public:
-		using self = stack<Ty , container>;
+		using self = stack<Ty, container>;
 		using value_type = Ty;
 		using iterator = typename container<Ty>::iterator;
 		using const_iterator = typename container<Ty>::const_iterator;
@@ -158,14 +159,14 @@ class stack
 			return arr->end();
 		}
 
-		_NODISCARD iterator begin() const noexcept
+		_NODISCARD const_iterator begin() const noexcept
 		{
-			return arr->begin();
+			return arr->cbegin();
 		}
 
-		_NODISCARD iterator end() const noexcept
+		_NODISCARD const_iterator end() const noexcept
 		{
-			return arr->end();
+			return arr->cend();
 		}
 
 		_NODISCARD const_iterator cbegin() const noexcept
@@ -205,7 +206,7 @@ class stack
 			auto p1 = cbegin();
 			auto p2 = obj.cbegin();
 
-			for (; p1 != cend() , p2 != obj.cend(); ++p1 , ++p2)
+			for (; p1 != cend(), p2 != obj.cend(); ++p1, ++p2)
 			{
 				if ((*p1) != (*p2))
 					return false;

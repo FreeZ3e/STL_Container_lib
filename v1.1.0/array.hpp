@@ -202,14 +202,14 @@ class array
 			return iterator(arr + elem_count , elem_count , elem_count);
 		}
 
-		_NODISCARD iterator begin() const noexcept
+		_NODISCARD const_iterator begin() const noexcept
 		{
-			return iterator(arr , 0 , elem_count);
+			return const_iterator(arr , 0 , elem_count);
 		}
 
-		_NODISCARD iterator end() const noexcept
+		_NODISCARD const_iterator end() const noexcept
 		{
-			return iterator(arr + elem_count , elem_count , elem_count);
+			return const_iterator(arr + elem_count , elem_count , elem_count);
 		}
 
 		_NODISCARD const_iterator cbegin() const noexcept
