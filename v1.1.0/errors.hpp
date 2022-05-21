@@ -28,9 +28,9 @@
 
 
 //mes_print
-#define _mes_print(mes) std::cout<<"file:"<<__FILE__<<std::endl			\
-							   <<"line:"<<__LINE__<<std::endl			\
-							   <<"message:"<<mes<<std::endl;			\
+#define _mes_print(mes) std::cout<<"file:"<<__FILE__<<'\n'		\
+							   <<"line:"<<__LINE__<<'\n'		\
+							   <<"message:"<<mes<<'\n';			\
 
 
 #if _LIB_DEBUG_LEVEL == 1 
@@ -46,13 +46,12 @@
 
 //out_of_memory_handler_check----------
 #define _BAD_ALLOC_THROW		      \
-		_mes_print("bad alloc error") \
+		_mes_print("bad alloc error");\
 		throw;						  \
 //-------------------------------------
 
 
 //memory_free_check--------------------
-#define _MEMORY_FREE_CHECK			   \
-		_mes_print("memory free error")\
+#define _MEMORY_FREE_CHECK _mes_print("memory free error")
 //-------------------------------------
 
